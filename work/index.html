@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Logbook — Sai Siddhanth Challa</title>
+  <meta name="description" content="Every project by Sai Siddhanth Challa: college work at IIIT Hyderabad, research, hackathons and personal builds.">
+  <meta name="theme-color" content="#0c1334">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..700,0..100,0..1;1,9..144,300..700,0..100,0..1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="../assets/css/base.css">
+  <link rel="stylesheet" href="../assets/css/pages.css">
+  <script>document.documentElement.classList.add('js')</script>
+  <script type="module" src="../assets/js/pages/work.js"></script>
+</head>
+<body data-page="work">
+  <a class="skip" href="#results">Skip to projects</a>
+  <main class="page wrap">
+    <header class="page-head">
+      <p class="kicker reveal"><span class="dot"></span>The logbook</p>
+      <h1 class="reveal">Everything I’ve built, studied <em class="serif">&amp; shipped.</em></h1>
+      <p class="lede reveal">Filter by where it happened, search by technology, or open any entry for the full case study. Every view has its own link.</p>
+      <div class="stats reveal" data-stats></div>
+    </header>
+    <div class="toolbar reveal">
+      <div class="pills" role="group" aria-label="Filter by category" data-filters></div>
+      <div class="row" style="flex:1;justify-content:flex-end">
+        <label class="search"><span class="sr-only">Search projects</span><input class="field" type="search" placeholder="Search — try “python”" data-q data-own-slash><kbd>/</kbd></label>
+        <div class="pills" role="group" aria-label="View" data-views>
+          <button class="pill" data-view="grid" aria-pressed="true">Grid</button>
+          <button class="pill" data-view="timeline" aria-pressed="false">Timeline</button>
+          <button class="pill" data-view="sky" aria-pressed="false">Constellation</button>
+        </div>
+      </div>
+    </div>
+    <p class="cat-blurb meta" data-blurb aria-live="polite"></p>
+    <section id="results" aria-label="Projects" data-results></section>
+  </main>
+  <dialog class="case" aria-labelledby="case-title"><article class="case-box" data-case></article></dialog>
+</body>
+</html>

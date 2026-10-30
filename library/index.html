@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Library — Sai Siddhanth Challa</title>
+  <meta name="description" content="Books, papers and courses Sai Siddhanth Challa reads, with links to free copies where they exist.">
+  <meta name="theme-color" content="#2a1d4c">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..700,0..100,0..1;1,9..144,300..700,0..100,0..1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="../assets/css/base.css">
+  <link rel="stylesheet" href="../assets/css/pages.css">
+  <script>document.documentElement.classList.add('js')</script>
+  <script type="module" src="../assets/js/pages/library.js"></script>
+</head>
+<body data-page="library">
+  <a class="skip" href="#shelves">Skip to the shelves</a>
+  <main class="page wrap">
+    <header class="page-head">
+      <p class="kicker reveal"><span class="dot"></span>The library</p>
+      <h1 class="reveal">Books that shape <em class="serif">how I think.</em></h1>
+      <p class="lede reveal">A growing shelf across computer science, AI and the human sciences. Green tags mean you can read it free, legally, right now.</p>
+      <div class="stats reveal" data-stats></div>
+    </header>
+    <div class="toolbar reveal">
+      <div class="pills" role="group" aria-label="Filter by status" data-status></div>
+      <div class="row" style="flex:1;justify-content:flex-end">
+        <label class="search"><span class="sr-only">Search the library</span><input class="field" type="search" placeholder="Title, author, topic…" data-q data-own-slash><kbd>/</kbd></label>
+        <button class="btn small" type="button" data-random>Surprise me ✦</button>
+      </div>
+    </div>
+    <div id="shelves" data-shelves></div>
+    <p class="meta reveal">Covers from <a href="https://openlibrary.org" target="_blank" rel="noopener">Open Library</a>. Add a book in <code>content/books.js</code>.</p>
+  </main>
+  <dialog class="bookview" aria-labelledby="book-title"><div class="bookview-box panel" data-book></div></dialog>
+</body>
+</html>

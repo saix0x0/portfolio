@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Compass — Sai Siddhanth Challa</title>
+  <meta name="description" content="A departures board of useful websites.">
+  <meta name="theme-color" content="#101a4c">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..700,0..100,0..1;1,9..144,300..700,0..100,0..1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="../assets/css/base.css">
+  <link rel="stylesheet" href="../assets/css/pages.css">
+  <script>document.documentElement.classList.add('js')</script>
+  <script type="module" src="../assets/js/pages/compass.js"></script>
+</head>
+<body data-page="compass">
+  <a class="skip" href="#board">Skip to links</a>
+  <main class="page wrap">
+    <header class="page-head">
+      <p class="kicker reveal"><span class="dot"></span>The compass</p>
+      <h1 class="reveal">Where I go <em class="serif">every day.</em></h1>
+      <p class="lede reveal">My departures board — set it as your browser’s homepage. Type to filter, <kbd>↑</kbd><kbd>↓</kbd> to choose, <kbd>↵</kbd> to fly.</p>
+    </header>
+    <section class="board reveal" id="board" aria-label="Departures">
+      <div class="board-head">
+        <div class="flap" aria-label="Departures" data-flap></div>
+        <label class="search" style="max-width:340px"><span class="sr-only">Filter links</span><input class="field" type="search" placeholder="Where to?" data-q data-own-slash autocomplete="off"></label>
+        <span class="board-clock" data-clock></span>
+      </div>
+      <div data-groups></div>
+      <details class="dep-group"><summary class="meta" style="cursor:pointer">+ Add a link (saved in this browser only)</summary>
+        <form class="add-link" data-add>
+          <input class="field" name="name" placeholder="Name" required>
+          <input class="field" name="url" type="url" placeholder="https://…" required>
+          <input class="field" name="note" placeholder="Note (optional)">
+          <button class="btn small" type="submit">Add</button>
+        </form>
+        <p class="meta">To make a link permanent for everyone, add it to <code>content/links.js</code>.</p>
+      </details>
+    </section>
+  </main>
+</body>
+</html>

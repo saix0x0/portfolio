@@ -1,0 +1,7 @@
+# Plaintext for the encrypted sections. NEVER commit these.
+# Only the sealed (encrypted) JSON in vault/ and observatory/ is public.
+private/
+
+.DS_Store
+node_modules/
+*.log

@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Off the map</title>
+  <meta name="robots" content="noindex">
+  <!-- Self-contained: GitHub Pages serves this at any missing URL depth, so no relative assets. -->
+  <style>
+    html, body { margin: 0; height: 100%; }
+    body { display: grid; place-items: center; text-align: center; color: #fff7ee; font: 17px/1.6 Georgia, 'Iowan Old Style', serif; padding: 16px;
+      background: linear-gradient(180deg, #0c1334 0%, #33387e 45%, #d65a7a 78%, #ff9e54 100%); overflow: hidden; }
+    .sun { position: fixed; left: 50%; bottom: 14vh; width: 140px; height: 140px; margin-left: -70px; border-radius: 50%;
+      background: radial-gradient(circle, #fff1c8 0 40%, rgba(255, 160, 80, 0.6) 55%, transparent 72%); animation: sink 9s ease-in-out infinite alternate; }
+    @keyframes sink { to { transform: translateY(70px); } }
+    .sea { position: fixed; left: 0; right: 0; bottom: 0; height: 18vh; background: linear-gradient(#2a1840, #120818); }
+    main { position: relative; z-index: 1; max-width: 34rem; }
+    h1 { font-weight: 400; font-size: clamp(2.6rem, 9vw, 5.5rem); line-height: 1; margin: 0 0 16px; letter-spacing: -0.03em; }
+    h1 em { color: #ffe3c2; }
+    p { color: rgba(255, 247, 238, 0.8); }
+    a { display: inline-block; margin-top: 14px; padding: 12px 22px; border-radius: 999px; background: #fff7ee; color: #1b1030; text-decoration: none; font: 500 15px system-ui, sans-serif; }
+  </style>
+</head>
+<body>
+  <div class="sun" aria-hidden="true"></div><div class="sea" aria-hidden="true"></div>
+  <main>
+    <h1>You’ve flown <em>off the map.</em></h1>
+    <p>This page doesn’t exist — but the sun is still setting somewhere.</p>
+    <a id="home" href="/">Fly home →</a>
+  </main>
+  <script>
+    // On a GitHub Pages project site (user.github.io/repo/) home is /repo/, not /.
+    var seg = location.pathname.split('/')[1];
+    if (/\.github\.io$/.test(location.hostname) && seg) document.getElementById('home').href = '/' + seg + '/';
+  </script>
+</body>
+</html>
