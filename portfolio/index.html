@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Sai Siddhanth Challa — a journey through five sunsets</title>
+  <meta name="description" content="Portfolio of Sai Siddhanth Challa — Computer Science and Computing & Human Sciences at IIIT Hyderabad. Projects, college work, skills and contact.">
+  <meta name="theme-color" content="#1d2858">
+  <meta property="og:title" content="Sai Siddhanth Challa">
+  <meta property="og:description" content="Engineer across disciplines. A portfolio you travel through.">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..700,0..100,0..1;1,9..144,300..700,0..100,0..1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="../assets/css/base.css">
+  <link rel="stylesheet" href="../assets/css/home.css">
+  <script>document.documentElement.classList.add('js')</script>
+  <script type="module" src="../assets/js/pages/home.js"></script>
+</head>
+<body data-page="home">
+  <a class="skip" href="#rome">Skip to my work</a>
+  <noscript><p style="padding:100px 24px;max-width:640px;margin:auto">This site paints its skies with JavaScript. Without it, you can still read <a href="../work/">all my projects</a> and <a href="../library/">the library</a>.</p></noscript>
+
+  <!-- Fixed landscape layers; filled by home.js -->
+  <div class="world" aria-hidden="true"></div>
+
+  <main id="journey">
+    <!-- 01 PARIS — who I am -->
+    <section class="chapter" id="paris" data-scene="paris" data-tz="Europe/Paris" data-lat="48.8584" data-lon="2.2945" aria-labelledby="paris-title">
+      <div class="wrap hero">
+        <p class="kicker reveal"><span class="dot"></span><span data-chapter-meta>Chapter 01 · Paris</span></p>
+        <h1 id="paris-title" class="hero-name shadowed" data-name></h1>
+        <p class="lede shadowed reveal" data-tagline></p>
+        <div class="row hero-cta reveal">
+          <a class="btn primary" href="../work/">See my work <span class="arr">→</span></a>
+          <a class="btn" href="../work/#college">College projects</a>
+          <button class="btn" type="button" data-open-quick>The 60-second version</button>
+          <a class="btn" href="#contact">Say hello</a>
+        </div>
+        <label class="sun-scrub reveal">
+          <span class="meta">Drag the sun</span>
+          <input type="range" min="-100" max="100" value="0" step="1" aria-label="Time of day: afternoon to night">
+          <span class="scrub-labels meta" aria-hidden="true"><span>afternoon</span><span>golden hour</span><span>night</span></span>
+        </label>
+      </div>
+      <div class="wrap about">
+        <div class="about-text reveal">
+          <h2 class="section-title">The <em class="serif">beginning.</em></h2>
+          <div data-bio></div>
+          <dl class="facts" data-facts></dl>
+        </div>
+        <aside class="now panel reveal" aria-labelledby="now-title">
+          <p class="kicker" id="now-title"><span class="dot pulse"></span>Right now</p>
+          <ul data-now></ul>
+          <p class="meta" style="margin:18px 0 8px">Interested in</p>
+          <div class="chips" data-interests></div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- 02 ROME — the academy -->
+    <section class="chapter" id="rome" data-scene="rome" data-tz="Europe/Rome" data-lat="41.8902" data-lon="12.4922" aria-labelledby="rome-title">
+      <div class="wrap">
+        <header class="chapter-head">
+          <p class="kicker reveal"><span class="dot"></span><span data-chapter-meta>Chapter 02 · Rome</span></p>
+          <h2 id="rome-title" class="shadowed reveal">The <em class="serif">academy.</em></h2>
+          <p class="lede shadowed reveal">Rome wasn’t built in a day. Here is what I’ve built at <span data-college></span> — course projects, research and hackathons.</p>
+        </header>
+        <ol class="ledger panel reveal" data-college-list></ol>
+        <div class="row reveal" style="margin-top:22px">
+          <a class="btn primary" href="../work/#college">All college work <span class="arr">→</span></a>
+          <a class="btn" href="../work/#research">Research</a>
+          <a class="btn" href="../work/#hackathon">Hackathons</a>
+        </div>
+        <div class="coursework reveal"><p class="meta">Coursework</p><div class="chips" data-coursework></div></div>
+      </div>
+    </section>
+
+    <!-- 03 RIO — adventures & extracurriculars -->
+    <section class="chapter" id="rio" data-scene="rio" data-tz="America/Sao_Paulo" data-lat="-22.9519" data-lon="-43.2105" aria-labelledby="rio-title">
+      <div class="wrap">
+        <header class="chapter-head">
+          <p class="kicker reveal"><span class="dot"></span><span data-chapter-meta>Chapter 03 · Rio de Janeiro</span></p>
+          <h2 id="rio-title" class="shadowed reveal">The <em class="serif">carnival.</em></h2>
+          <p class="lede shadowed reveal">Clubs, events, debates, teams and adventures — the life around the code.</p>
+        </header>
+        <div class="tiles" data-extras></div>
+      </div>
+    </section>
+
+    <!-- 04 NEW YORK — the workshop -->
+    <section class="chapter" id="nyc" data-scene="nyc" data-tz="America/New_York" data-lat="40.7505" data-lon="-73.9934" aria-labelledby="nyc-title">
+      <div class="wrap">
+        <header class="chapter-head">
+          <p class="kicker reveal"><span class="dot"></span><span data-chapter-meta>Chapter 04 · New York</span></p>
+          <h2 id="nyc-title" class="shadowed reveal">The <em class="serif">workshop.</em></h2>
+          <p class="lede shadowed reveal">The city that never sleeps. What I work with, what I’ve built, and what I’m looking for.</p>
+        </header>
+        <div class="workshop">
+          <div class="skills panel reveal" data-skills></div>
+          <div class="hire panel reveal" data-hire></div>
+        </div>
+        <h3 class="sub-title reveal">Selected work</h3>
+        <div class="showcase" data-featured></div>
+      </div>
+    </section>
+
+    <!-- 05 ARCTIC — the observatory -->
+    <section class="chapter" id="arctic" data-scene="arctic" data-tz="Europe/Oslo" data-lat="69.6492" data-lon="18.9553" aria-labelledby="arctic-title">
+      <div class="wrap">
+        <header class="chapter-head">
+          <p class="kicker reveal"><span class="dot"></span><span data-chapter-meta>Chapter 05 · Tromsø</span></p>
+          <h2 id="arctic-title" class="shadowed reveal">The <em class="serif">observatory.</em></h2>
+          <p class="lede shadowed reveal">Under the northern lights: what I read, where I wander online, and a way to reach me.</p>
+        </header>
+        <div class="doors">
+          <a class="door reveal glow" href="../library/"><span class="meta">Library</span><b>Books, papers &amp; courses</b><span class="covers" data-covers></span><span class="go">Browse the shelves →</span></a>
+          <a class="door reveal glow" href="../compass/"><span class="meta">Compass</span><b>The websites I live on</b><span class="go">Open the departures board →</span></a>
+          <a class="door reveal glow" href="../lab/"><span class="meta">Lab · beyond the horizon</span><b>Experiments &amp; half-ideas</b><span class="go">Enter the lab →</span></a>
+        </div>
+        <section id="contact" class="contact reveal" aria-labelledby="contact-title">
+          <h3 id="contact-title" class="sub-title">Send a postcard</h3>
+          <div data-contact></div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <!-- Flight path: where you are in the journey -->
+  <nav class="flightpath" aria-label="Chapters">
+    <ol data-flight></ol>
+  </nav>
+  <div class="cityclock" aria-live="off" data-clock></div>
+</body>
+</html>

@@ -14,10 +14,11 @@ import { linkGroups } from '../../../content/links.js';
 import { experiments } from '../../../lab/experiments/index.js';
 
 export const NAV = [
-  { key: 'home', label: 'Journey', path: '', note: 'Five cities' },
+  { key: 'hotel', label: 'Hotel ▸', path: '', note: 'Enter the world' },
+  { key: 'home', label: 'Journey', path: 'portfolio/', note: 'Five cities' },
   { key: 'work', label: 'Work', path: 'work/', note: 'Every project' },
   { key: 'college', label: 'College', path: 'work/#college', note: 'IIIT Hyderabad' },
-  { key: 'hire', label: 'Hire me', path: '#nyc', note: 'Skills & résumé' },
+  { key: 'hire', label: 'Hire me', path: 'portfolio/#nyc', note: 'Skills & résumé' },
   { key: 'library', label: 'Library', path: 'library/', note: 'Books & papers' },
   { key: 'compass', label: 'Compass', path: 'compass/', note: 'Useful sites' },
   { key: 'lab', label: 'Lab', path: 'lab/', note: 'Experiments' },
@@ -32,14 +33,14 @@ export const CHAPTERS = [
   { id: 'arctic', n: '05', title: 'The observatory', city: 'Tromsø', about: 'Library, reading & contact' },
 ];
 
-const navHref = (item) => (item.path.startsWith('#') ? href('') + item.path : href(item.path));
+const navHref = (item) => href(item.path);
 
 function header(page) {
   const links = NAV.filter((n) => n.key !== 'hire' || true)
     .map((n) => `<a href="${navHref(n)}" class="${n.cls || ''}" ${n.key === page ? 'aria-current="page"' : ''}>${esc(n.label)}</a>`)
     .join('');
   const bar = h(`<header class="topbar">
-    <a class="brand" href="${href('')}" aria-label="${esc(site.fullName)} — home"><span class="brand-sun" aria-hidden="true"></span>${esc(site.name)}</a>
+    <a class="brand" href="${href('portfolio/')}" aria-label="${esc(site.fullName)} — home"><span class="brand-sun" aria-hidden="true"></span>${esc(site.name)}</a>
     <nav class="topnav" aria-label="Main">${links}</nav>
     <div class="top-actions">
       <button class="search-btn" type="button" data-open-search aria-label="Search everything"><span class="label">Search</span><kbd>⌘K</kbd></button>
@@ -83,15 +84,15 @@ function buildIndex() {
   const I = [];
   const add = (group, icon, title, sub, url, extra = '') => I.push({ group, icon, title, sub, url, hay: `${title} ${sub} ${extra}`.toLowerCase() });
   NAV.forEach((n) => add('Pages', '→', n.label, n.note, navHref(n)));
-  CHAPTERS.forEach((c) => add('Journey', c.n, `${c.city} — ${c.title}`, c.about, href('') + '#' + c.id));
+  CHAPTERS.forEach((c) => add('Journey', c.n, `${c.city} — ${c.title}`, c.about, href('portfolio/') + '#' + c.id));
   Object.entries(CATEGORIES).forEach(([k, c]) => add('Work', '▦', `${c.label} projects`, c.blurb, href('work/') + '#' + k));
   projects.forEach((p) => add('Projects', '◆', p.title, `${CATEGORIES[p.category]?.label || ''} · ${p.summary || ''}`, href('work/') + '#p/' + p.id, `${p.tech?.join(' ')} ${p.course || ''} ${p.subtitle || ''}`));
-  extracurriculars.forEach((x) => add('Experiences', '✺', x.title, `${x.org} · ${x.role}`, href('') + '#rio', x.summary));
+  extracurriculars.forEach((x) => add('Experiences', '✺', x.title, `${x.org} · ${x.role}`, href('portfolio/') + '#rio', x.summary));
   skillGroups.forEach((g) => g.skills.forEach((s) => add('Skills', '⚙', s, g.name, href('work/') + '?q=' + encodeURIComponent(s))));
   books.forEach((b) => add('Library', '❦', b.title, b.author, href('library/') + '#' + encodeURIComponent(b.isbn || b.title), (b.shelves || []).join(' ')));
   linkGroups.forEach((g) => g.links.forEach((l) => add('Compass', '↗', l.name, l.note || l.url, l.url, g.name)));
   experiments.forEach((x) => add('Lab', '✧', x.title, x.blurb, href('lab/') + '#' + x.id));
-  add('Actions', '✉', 'Send me a message', 'Postcard form', href('') + '#contact');
+  add('Actions', '✉', 'Send me a message', 'Postcard form', href('portfolio/') + '#contact');
   add('Actions', '⏱', 'The 60-second version', 'Everything a recruiter needs', '#quick');
   if (site.email) add('Actions', '⧉', 'Copy my email', site.email, '#copy-email');
   if (site.hiring.resume) add('Actions', '⇩', 'Résumé', 'PDF', href(site.hiring.resume));
@@ -210,7 +211,7 @@ export function openQuick() {
         <a class="btn primary" href="${href('work/')}">All projects <span class="arr">→</span></a>
         <a class="btn" href="${href('work/')}#college">College work</a>
         ${site.hiring.resume ? `<a class="btn" href="${href(site.hiring.resume)}">Résumé ⇩</a>` : ''}
-        <a class="btn" href="${href('')}#contact">Contact</a>
+        <a class="btn" href="${href('portfolio/')}#contact">Contact</a>
       </div>
       <div class="quick-grid">
         <div><h3>Featured work</h3><ul>${feat.map((p) => `<li><a href="${href('work/')}#p/${p.id}">${esc(p.title)}</a>${p.placeholder ? ' <span class="badge-placeholder">Placeholder</span>' : ''}<div class="meta">${esc(p.tech?.slice(0, 3).join(' · ') || '')}</div></li>`).join('')}</ul></div>

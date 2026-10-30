@@ -1,5 +1,11 @@
 # CLAUDE.md — instructions for any session continuing this project
 
+## CRITICAL: PRESERVE THE WORLD
+The home page (`/`) is a playable side-view pixel-art hotel (`assets/js/world/`). Before touching it, read `docs/WORLD_DESIGN.md`. Never redesign a floor just to add content, never make floors look alike, and never swap themed rooms for cards or dashboards. Content goes in `content/*.js`, and the rooms render it through their existing slots.
+**Scope for now (owner's call):** local only. No auth, no deployment, no backends or live APIs, no pushes unless asked. Locked floors use simple local unlocks on purpose.
+Portfolio Mode (the older scrolling site) lives at `/portfolio/` plus `/work/`, `/library/` etc.
+
+
 ## What this is
 The personal portfolio of **Sai Siddhanth Challa** (IIIT Hyderabad, CS + Computing & Human Sciences). It's a scroll journey through five sunset cities, plus pages for work, library, links, lab and two encrypted private rooms. Central principle: **a beautiful world that is also a serious, fast, professional portfolio.** Neither side gets sacrificed.
 
