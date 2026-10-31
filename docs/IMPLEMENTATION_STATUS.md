@@ -1,6 +1,31 @@
 # Implementation status
 
-_Last updated: 2026-10-31, 3D rooms (World Mode)._
+_Last updated: 2026-10-31, front page + hotel upgrade._
+
+## Front page `/` (new) and hotel at `/hotel/`
+The professional site now opens first (`index.html`, `assets/js/pages/front.js`, `assets/css/front.css`). The hotel moved to `/hotel/`, and the old journey is still at `/portfolio/`.
+| Feature | How it was verified |
+|---|---|
+| Opening construction-line intro (once per session, skipped on any input) | Screenshots |
+| Hero: starfield canvas, golden-ratio geometry, split-word name, pixel buddy with speech bubble | Desktop 1440×900 and 375×812 screenshots |
+| About statement with highlight sweep; torn-paper edges between dark and parchment chapters | Screenshots |
+| Work: giant sticky plate word, then a pinned horizontal rail (desktop ≥961 px) or a swipe rail (phone) | Scripted scroll + screenshots at both sizes |
+| Academy ledger with hover art; Off-screen live Pit Wall card (Jolpica); shelf; doors | Screenshots; live data showed the 2026 US GP result and Mexico City countdown |
+| Hotel window: a live, slowly panning render of the real hotel | Screenshots at both sizes |
+| Contact "Say hello." stroke-fill, reach list (shows "not set yet" until `site.email`/socials are filled) | Screenshots |
+| Header flips to ink when over a parchment chapter | Scripted scroll check (`on-paper` class) |
+| Phone 375 px: no horizontal overflow on `/` or `/hotel/` | Emulated 375×812, `scrollWidth === innerWidth` |
+| Not yet verified | Real-time scroll feel and the pixel-dissolve into the hotel in a visible browser (the test pane is hidden, so rAF, scroll events and IntersectionObserver are throttled); reduced motion toggled in an emulator |
+
+## Hotel upgrade (same branch)
+| Feature | How it was verified |
+|---|---|
+| New character sprites (rounded heads, blinking, four iso facings, talking), wardrobe (Lobby mirror + Penthouse) | Sprite sheet screenshot; wardrobe saved and reloaded |
+| Boost: Shift / ⚡ button / automatic on long click-walks, with dust and afterimages | Scripted; real-time feel not checked |
+| Penthouse rebuilt as the owner's private floor: notes desk (sticky notes, idea jar, to-do, lines, doodles, scratchpad), curio shelf, records (synth loops), telescope, piano, bed (nap cycles the sky), workstation | Screenshots and panel clicks |
+| Live F1 on the Pavilion Pit Wall (podium, results, standings, next race) + "lights out" reaction game | Live data loaded; reaction game played |
+| 7 rubber ducks (one per floor), sound with mute toggle, toasts | Scripted collection |
+| Auto-walk to every object on every floor (69 objects) | Scripted travel loop, 0 failures |
 
 ## World Mode — isometric 3D (branch `world/3d-rooms`)
 | Feature | How it was verified |

@@ -93,7 +93,7 @@ export function dyn(ctx, f, t) {
 }
 
 export function npcs(f) {
-  return [new Walker({ id: 'operator', name: 'Switchboard operator', look: LOOKS.guestB, floor: f.id, x: 1100, min: 900, max: 1300, speed: 10, lines: ['Every message from that terminal goes straight to the owner.', 'Looking to hire? The desk by the window has the details.'] })];
+  return [new Walker({ id: 'operator', name: 'Switchboard operator', look: LOOKS.astronaut, floor: f.id, x: 1100, min: 900, max: 1300, speed: 10, lines: ['Houston, we have a… no, all good. Every message from that terminal reaches the owner.', 'Looking to hire? The desk by the window has the details.'] })];
 }
 
 export function objects() {
@@ -116,5 +116,5 @@ register('hiring', () => {
   return `<p class="px-kicker">Opportunities desk · ${h.open ? 'open' : 'not looking'}</p><h2 id="panel-title">${todo(h.headline)}</h2>
     <ul class="px-list">${h.lookingFor.map((l) => `<li>${todo(l)}</li>`).join('')}</ul>${h.note ? `<p>${esc(h.note)}</p>` : ''}
     <div class="px-row">${h.resume ? `<a class="px-btn primary" href="${href(h.resume)}" download>Résumé ⇩</a>` : '<span class="px-note">Résumé: add a PDF path in content/site.js</span>'}
-    <button class="px-btn" type="button" data-panel="contact">Get in touch</button><a class="px-btn" href="${href('portfolio/')}#nyc">Skills & projects ↗</a></div>`;
+    <button class="px-btn" type="button" data-panel="contact">Get in touch</button><a class="px-btn" href="${href('')}#work">Skills & projects ↗</a></div>`;
 });

@@ -2,7 +2,9 @@
 //  FLOOR 3 — RACING PAVILION & CINEMA  (theme: pavilion — asphalt, racing red,
 //  kerb stripes, timing-screen green)
 //  Garage (car + tyres) · Track Room · Pit Wall · Hall of Champions · Cinema
-//  Data: content/f1.js (static). The cinema screen plays the chosen channel.
+//  Data: content/f1.js (history) + core/f1live.js (this season, live from the
+//  Jolpica API). The Pit Wall screens show real standings; the start gantry
+//  in the garage is a reaction-time game. The cinema plays the chosen channel.
 // ─────────────────────────────────────────────────────────────────────────────
 import { THEMES, INK } from '../themes.js';
 import { shell, sign, lamp, lightCone, partition, screen, R, P, text, glow, mix } from '../kit.js';
@@ -10,9 +12,13 @@ import { Walker, LOOKS } from '../actors.js';
 import { register } from '../panels.js';
 import { esc } from '../../core/base.js';
 import { iconicCars, circuits, champions, tyres } from '../../../../content/f1.js';
+import { f1Live, countdown, teamColour } from '../../core/f1live.js';
+
+let LIVE = null; // filled once the API answers; screens show "LOADING" until then
+f1Live().then((d) => (LIVE = d));
 
 const T = THEMES.pavilion;
-const X = { car: 190, tyres: 74, map0: 430, map1: 700, pit0: 818, pit1: 960, hall0: 972, hall1: 1094, cinema0: 1126, screen0: 1176, screen1: 1460, terminal: 1146 };
+const X = { lights: 334, car: 190, tyres: 74, map0: 430, map1: 700, pit0: 818, pit1: 960, hall0: 972, hall1: 1094, cinema0: 1126, screen0: 1176, screen1: 1460, terminal: 1146 };
 const doorX = [404, 1110];
 const CHANNELS = { race: 'Grand Prix replay', warp: 'Deep space warp', eq: 'Music visualiser', lofi: 'Rooftop sunset' };
 
@@ -77,6 +83,11 @@ export function paint(ctx, f) {
     R(ctx, tx, ty, 12, 9, '#0c0c10');
     R(ctx, tx, ty + 4, 12, 1, tyres[(i + j) % 3].color);
   }
+  // start-light gantry (reaction game)
+  R(ctx, X.lights - 34, f.top + 40, 68, 16, '#141418');
+  R(ctx, X.lights - 34, f.top + 40, 68, 1, '#3a3c44');
+  R(ctx, X.lights - 2, f.top + 30, 4, 10, '#2a2c34');
+  text(ctx, 'LIGHTS OUT', X.lights - 19, f.top + 60, '#a8aab8');
   R(ctx, 312, y - 26, 30, 22, '#8a1a20'); // tool cart
   for (let k = 0; k < 3; k++) R(ctx, 314, y - 24 + k * 7, 26, 1, '#5a1014');
   R(ctx, 316, y - 4, 3, 4, INK);
@@ -158,15 +169,34 @@ export function dyn(ctx, f, t, G) {
     const a = t * (0.8 + k * 0.2);
     P(ctx, ox + 24 + Math.cos(a) * 18, f.top + 54 + Math.sin(a) * 14, '#ff2a3a');
   }
-  // pit wall timing screens (sample data)
-  for (let i = 0; i < 4; i++) {
-    const sx = X.pit0 + 8 + i * 34;
-    const sy = y - 68;
-    R(ctx, sx, sy, 28, 20, '#04100a');
-    for (let r = 0; r < 3; r++) {
-      const v = Math.floor((t * 3 + i * 7 + r * 3) % 9);
-      R(ctx, sx + 2, sy + 3 + r * 6, 6 + v * 2, 3, r === 0 && i === 1 ? '#b07cff' : '#3dff9a');
-    }
+  // start gantry: idles through a lights-out sequence every few seconds
+  const seq = (t % 7) / 0.6;
+  for (let i = 0; i < 5; i++) {
+    const on = seq > i + 1 && seq < 7.5;
+    R(ctx, X.lights - 30 + i * 13, f.top + 43, 9, 10, '#0a0a0c');
+    R(ctx, X.lights - 28 + i * 13, f.top + 45, 5, 6, on ? '#ff2a3a' : '#2a0a0e');
+  }
+  // pit wall: four live timing screens (this season, from the API)
+  const scr = (i) => [X.pit0 + 8 + i * 34, y - 68];
+  for (let i = 0; i < 4; i++) R(ctx, ...scr(i), 28, 20, '#04100a');
+  if (!LIVE) {
+    for (let i = 0; i < 4; i++) if (Math.sin(t * 3 + i) > 0) text(ctx, '...', scr(i)[0] + 8, scr(i)[1] + 8, '#3dff9a');
+  } else {
+    // 1: championship top 3
+    LIVE.drivers.slice(0, 3).forEach((d, r) => {
+      const [sx, sy] = scr(0);
+      R(ctx, sx + 1, sy + 2 + r * 6, 1, 5, teamColour(d.team));
+      text(ctx, d.code, sx + 3, sy + 2 + r * 6, r ? '#3dff9a' : '#ffd23a');
+    });
+    // 2: points of the top 3
+    LIVE.drivers.slice(0, 3).forEach((d, r) => text(ctx, String(d.pts), scr(1)[0] + 3, scr(1)[1] + 2 + r * 6, '#3dff9a'));
+    // 3: last winner
+    const w = LIVE.last?.results[0];
+    if (w) { text(ctx, 'WIN', scr(2)[0] + 3, scr(2)[1] + 3, '#b07cff'); text(ctx, w.code, scr(2)[0] + 3, scr(2)[1] + 11, '#f4f0ff'); }
+    // 4: next race countdown
+    const [nx, ny] = scr(3);
+    text(ctx, 'NEXT', nx + 3, ny + 3, '#ffd23a');
+    text(ctx, LIVE.next ? countdown(LIVE.next.at).split(' ')[0].toUpperCase() : 'FIN', nx + 3, ny + 11, '#3dff9a');
   }
   // terminal
   R(ctx, X.terminal - 10, y - 44, 20, 14, '#0a0612');
@@ -237,17 +267,18 @@ export function dyn(ctx, f, t, G) {
 
 export function npcs(f) {
   return [
-    new Walker({ id: 'mechanic', name: 'Pit mechanic', look: LOOKS.guestA, floor: f.id, x: 300, min: 110, max: 380, speed: 14, lines: ['Tyres stacked by compound: red soft, yellow medium, white hard.', 'Inspect the car — the museum card has the legends.'] }),
-    new Walker({ id: 'fan', name: 'F1 fan', look: LOOKS.student, floor: f.id, x: 1000, min: 830, max: 1090, speed: 12, lines: ['Seven titles each. Hamilton and Schumacher. Still can’t pick.', 'Live timing’s coming to the Pit Wall someday.'] }),
+    new Walker({ id: 'mechanic', name: 'Pit mechanic', look: LOOKS.mechanic, floor: f.id, x: 300, min: 110, max: 380, speed: 14, lines: ['Box, box! …sorry, habit.', 'The Pit Wall is live now — real standings from this season.', 'Fancy your reflexes? The start lights by the garage time you to the millisecond.'] }),
+    new Walker({ id: 'fan', name: 'F1 fan', look: { skin: '#e2b08a', hair: 'long', hairC: '#8a5a2e', top: 'tee', topC: '#e8002d', legs: '#2a3a5a', shoes: '#f0f0f4', sole: '#e8002d', acc: ['cap'], accC: '#e8002d' }, floor: f.id, x: 1000, min: 830, max: 1090, speed: 12, lines: ['Lights out and away we go!', 'Seven titles each. Hamilton and Schumacher. Still can’t pick.', 'Check the Pit Wall — it knows when the next race is.'] }),
   ];
 }
 
 export function objects(f) {
   return [
+    { id: 'lights', x: X.lights, label: 'Start lights', verb: 'Race', panel: 'lightsout' },
     { id: 'car', x: X.car, label: 'Display car', verb: 'Inspect', panel: 'cars' },
     { id: 'tyres', x: X.tyres + 10, label: 'Tyre stack', verb: 'Inspect', panel: 'tyres' },
     { id: 'tracks', x: (X.map0 + X.map1) / 2, label: 'Track Room', verb: 'Study', panel: 'circuits' },
-    { id: 'pitwall', x: (X.pit0 + X.pit1) / 2, label: 'Pit Wall', verb: 'Read', panel: 'pitwall' },
+    { id: 'pitwall', x: (X.pit0 + X.pit1) / 2, label: 'Pit Wall · live', verb: 'Read', panel: 'pitwall' },
     { id: 'champions', x: (X.hall0 + X.hall1) / 2, label: 'Hall of Champions', verb: 'View', panel: 'champions' },
     { id: 'cinema', x: X.terminal, label: 'Cinema terminal', verb: 'Use', panel: 'cinema' },
   ];
@@ -262,9 +293,77 @@ register('tyres', () => `<p class="px-kicker">The Garage</p><h2 id="panel-title"
 register('circuits', () => `<p class="px-kicker">Track Room</p><h2 id="panel-title">Circuits</h2>
   <ul class="px-floors">${circuits.map((c) => `<li><button type="button"><b>${esc(String(c.since))}</b><span>${esc(c.name)} · ${esc(c.country)}</span><em>${c.km} km · ${c.laps} laps</em></button></li>`).join('')}</ul>
   <p class="px-note">Year = first Formula One World Championship race held there.</p>`);
-register('pitwall', () => `<p class="px-kicker">Pit Wall</p><h2 id="panel-title">Race weekend, decoded</h2>
-  <ul class="px-list"><li><b>Practice</b> — teams test set-ups.</li><li><b>Qualifying</b> — Q1, Q2, Q3 decide the grid.</li><li><b>Race</b> — points for the top 10: 25, 18, 15, 12, 10, 8, 6, 4, 2, 1.</li></ul>
-  <p class="px-note">The screens show sample timing. Live standings will come later.</p>`);
+register('pitwall', () => {
+  const el = document.createElement('div');
+  const draw = (d) => {
+    if (!d) {
+      el.innerHTML = `<p class="px-kicker">Pit Wall</p><h2 id="panel-title">No signal.</h2><p>The live feed didn’t answer (offline, or the API is resting). The screens will retry next visit.</p>
+        <ul class="px-list"><li><b>Qualifying</b> — Q1, Q2, Q3 decide the grid.</li><li><b>Race</b> — points for the top 10: 25, 18, 15, 12, 10, 8, 6, 4, 2, 1.</li></ul>`;
+      return;
+    }
+    const row = (pos, code, name, team, val) => `<li><span class="f1-pos">${pos}</span><span class="f1-bar" style="background:${teamColour(team)}"></span><b>${esc(code)}</b><span>${esc(name)}</span><em>${esc(val)}</em></li>`;
+    const L = d.last;
+    const mins = Math.round((Date.now() - d.fetched) / 60000);
+    el.innerHTML = `<p class="px-kicker">Pit Wall · live · ${esc(d.season)} season</p><h2 id="panel-title">${L ? esc(L.name) : 'Season ' + esc(d.season)}</h2>
+      ${L ? `<p class="px-note">Round ${L.round} of ${d.rounds} · ${esc(L.circuit)} · ${esc(L.place)} · ${esc(new Date(L.date).toLocaleDateString(undefined, { day: 'numeric', month: 'short' }))}</p>
+      <div class="f1-podium">${[1, 0, 2].map((i) => L.results[i] ? `<div class="p${i + 1}"><b>${esc(L.results[i].code)}</b><span>${esc(L.results[i].team)}</span><i>${i + 1}</i></div>` : '').join('')}</div>
+      <h3>Race result</h3><ol class="f1-table">${L.results.map((r) => row(r.pos, r.code, r.name + (r.fastest ? ' ⏱' : ''), r.team, r.time)).join('')}</ol>` : ''}
+      ${d.next ? `<div class="f1-next"><span>NEXT</span><b>${esc(d.next.name)}</b><em data-cd>${esc(countdown(d.next.at))}</em><small>${esc(d.next.place)} · ${esc(new Date(d.next.at).toLocaleString(undefined, { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }))} your time</small></div>` : '<p>The season is over. See you at the next lights out.</p>'}
+      <div class="px-cols"><div><h3>Drivers</h3><ol class="f1-table">${d.drivers.map((r) => row(r.pos, r.code, r.name, r.team, r.pts + ' pts')).join('')}</ol></div>
+      <div><h3>Constructors</h3><ol class="f1-table">${d.teams.map((r) => row(r.pos, r.name.slice(0, 3).toUpperCase(), r.name, r.name, r.pts + ' pts')).join('')}</ol></div></div>
+      <p class="px-note">Live data from the free Jolpica F1 API · refreshed ${mins < 1 ? 'just now' : mins + ' min ago'}.</p>`;
+  };
+  el.innerHTML = '<p class="px-kicker">Pit Wall</p><h2 id="panel-title">Connecting to timing…</h2>';
+  f1Live().then(draw);
+  return el;
+});
+
+// ── Lights out: a reaction-time game on the garage's start gantry
+register('lightsout', (a, g) => {
+  const el = document.createElement('div');
+  el.innerHTML = `<p class="px-kicker">The Garage · start gantry</p><h2 id="panel-title">Lights out.</h2>
+    <p>Five red lights come on one by one. When they all go out — go. Click, tap or press Space.</p>
+    <button class="lights" type="button" autofocus aria-label="Start lights. Press to start, then press again when the lights go out.">${'<i></i>'.repeat(5)}</button>
+    <p class="lights-msg" aria-live="polite">Press to line up on the grid.</p>
+    <p class="px-note">Your best: <b data-best>${g.flags.reaction ? g.flags.reaction + ' ms' : '—'}</b> · F1 drivers average around 200 ms.</p>`;
+  const btn = el.querySelector('.lights');
+  const lamps = [...btn.querySelectorAll('i')];
+  const msg = el.querySelector('.lights-msg');
+  let state = 'idle';
+  let timers = [];
+  let outAt = 0;
+  const clear = () => (timers.forEach(clearTimeout), (timers = []));
+  const verdict = (ms) => ms < 150 ? 'Are you sure you’re not a robot?' : ms < 200 ? 'Pole-position reflexes.' : ms < 260 ? 'Solid launch. Points finish.' : ms < 350 ? 'Bogged down a little. Midfield.' : 'Stalled on the grid. Again?';
+  const press = () => {
+    if (state === 'idle' || state === 'done') {
+      clear();
+      state = 'arming';
+      lamps.forEach((l) => l.classList.remove('on'));
+      msg.textContent = 'Eyes on the lights…';
+      lamps.forEach((l, i) => timers.push(setTimeout(() => l.classList.add('on'), 700 + i * 900)));
+      timers.push(setTimeout(() => {
+        lamps.forEach((l) => l.classList.remove('on'));
+        state = 'go';
+        outAt = performance.now();
+      }, 700 + 4 * 900 + 400 + Math.random() * 2600));
+    } else if (state === 'arming') {
+      clear();
+      state = 'done';
+      lamps.forEach((l) => l.classList.add('jump'));
+      setTimeout(() => lamps.forEach((l) => l.classList.remove('jump', 'on')), 600);
+      msg.textContent = 'JUMP START! Drive-through penalty. Press to try again.';
+    } else if (state === 'go') {
+      const ms = Math.round(performance.now() - outAt);
+      state = 'done';
+      const best = !g.flags.reaction || ms < g.flags.reaction;
+      if (best) g.setFlag('reaction', ms), (el.querySelector('[data-best]').textContent = ms + ' ms');
+      msg.innerHTML = `<b>${ms} ms</b> — ${esc(verdict(ms))}${best ? ' <span class="tag">new best</span>' : ''} Press to go again.`;
+    }
+  };
+  btn.addEventListener('pointerdown', (e) => (e.preventDefault(), press()));
+  btn.addEventListener('keydown', (e) => { if (e.key === ' ' || e.key === 'Enter') e.preventDefault(), press(); });
+  return el;
+});
 register('champions', () => `<p class="px-kicker">Hall of Champions</p><h2 id="panel-title">Most drivers’ titles</h2>
   <ul class="px-floors">${champions.map((c) => `<li><button type="button"><b>${c.titles}×</b><span>${esc(c.name)}</span><em>${esc(c.years)}</em></button></li>`).join('')}</ul>
   <p class="px-note">Through the 2024 season.</p>`);

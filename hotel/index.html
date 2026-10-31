@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <title>Cyberverse Hotel — Sai Siddhanth Challa</title>
+  <meta name="description" content="The personal world of Sai Siddhanth Challa: a playable pixel-art hotel. Prefer a classic portfolio? It's one click away.">
+  <meta name="theme-color" content="#0b0520">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=JetBrains+Mono:wght@400;500;700&family=Caveat:wght@500;700&display=swap">
+  <link rel="stylesheet" href="../assets/css/world.css">
+  <script type="module" src="../assets/js/world/main.js"></script>
+</head>
+<body>
+  <a class="skip" href="../">Skip the hotel → the website</a>
+  <canvas id="game" tabindex="0" aria-label="The Cyberverse Hotel. Use W A S D or the arrow keys to walk, Shift to boost, E to interact, M for the map."></canvas>
+
+  <div class="hud" id="hud">
+    <div class="hud-top">
+      <div class="where" data-where aria-live="polite"></div>
+      <div class="hud-actions">
+        <button class="hud-btn" type="button" data-act="guide" title="Guide (H)">? GUIDE</button>
+        <button class="hud-btn" type="button" data-act="map" title="Map (M)">▦ MAP</button>
+        <button class="hud-btn" type="button" data-act="mute" title="Sound on/off" aria-pressed="true">♪ ON</button>
+        <a class="hud-btn mode" href="../" title="Back to the website">⇠ WEBSITE</a>
+      </div>
+    </div>
+    <div class="prompt" data-prompt aria-live="polite"></div>
+    <div class="toast" data-toast aria-live="polite"></div>
+    <div class="keys-hint">WASD walk · SHIFT boost · E interact · M map · click to walk</div>
+    <div class="touch" aria-hidden="true">
+      <div class="dpad">
+        <button type="button" data-hold="w" class="up">▲</button>
+        <button type="button" data-hold="a" class="lt">◀</button>
+        <button type="button" data-hold="s" class="dn">▼</button>
+        <button type="button" data-hold="d" class="rt">▶</button>
+      </div>
+      <div class="acts"><button type="button" data-act="boost" class="boost" aria-label="Boost">⚡</button><button type="button" data-act="use" class="use">E</button></div>
+    </div>
+  </div>
+
+  <noscript><p class="noscript">The hotel needs JavaScript. <a href="../">The website</a> works without it.</p></noscript>
+</body>
+</html>

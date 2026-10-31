@@ -17,7 +17,9 @@ college/ projects/ hire/ books/  → tiny redirect pages (short, shareable URLs)
 ## Routes & deep links
 | URL | Result |
 |---|---|
-| `/#paris` … `/#arctic`, `/#contact` | Jump to a chapter |
+| `/` | Professional front page (`#about`, `#work`, `#academy`, `#offscreen`, `#hotel`, `#contact`) |
+| `/hotel/`, `/hotel/#<floor>` | The pixel hotel, optionally starting on an open floor |
+| `/portfolio/#paris` … `#arctic` | The older sunset journey |
 | `/#quick` (any page) | Opens the 60-second version |
 | `/work/#<category>` | Filter: `college`, `research`, `hackathon`, `personal`, `open-source`, `work`, `experience` |
 | `/work/#p/<id>` | Case study dialog. Prev/next, copy link |
@@ -70,3 +72,5 @@ One `<canvas>`, a DPR capped at 1.25–1.5, and one rAF loop that pauses when th
 | Client-side encryption for private rooms | It's the only zero-cost, zero-account option that keeps content genuinely unreadable in a public repo. Limits are documented above. |
 | `mailto:` default, Web3Forms optional | Works with zero setup, and real delivery is one key away with no backend to run. |
 | Content as JS modules | Comments inline, and importable by both the browser and Node (`check.mjs`). |
+| Live F1 from Jolpica (`core/f1live.js`), client-side | The owner asked for the latest race results. Public, keyless, CORS-open; cached 20 min in `localStorage`; every view falls back gracefully when offline. No backend. |
+| Front page first, hotel at `/hotel/` (2026-10-31) | The owner wants recruiters to land on a fast professional page, with the game one click away. |

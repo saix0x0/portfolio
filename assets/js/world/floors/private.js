@@ -1,10 +1,10 @@
 // ─────────────────────────────────────────────────────────────────────────────
 //  LOCKED FLOORS — simple local unlocks, not security (owner's choice).
 //  B  MYSTERY BASEMENT (theme: basement) — keycard from the Study.
-//  PH PENTHOUSE        (theme: penthouse) — code 1729, clue in the basement.
+//  (The Penthouse, code 1729 with its clue down here, is floors/penthouse.js.)
 // ─────────────────────────────────────────────────────────────────────────────
-import { THEMES, INK } from '../themes.js';
-import { shell, sign, windowHole, lightCone, screen, plant, R, P, text, glow, mix } from '../kit.js';
+import { THEMES } from '../themes.js';
+import { shell, sign, lightCone, screen, R, P, text, glow, mix } from '../kit.js';
 import { register } from '../panels.js';
 import { href } from '../../core/base.js';
 
@@ -79,51 +79,3 @@ register('bterminal', (a, g) => `<p class="px-kicker">Old terminal</p><h2 id="pa
 register('archive', () => `<p class="px-kicker">Archive door</p><h2 id="panel-title">The archive</h2>
   <p>The archive is a separate sealed room on the site.</p>
   <div class="px-row"><a class="px-btn primary" href="${href('observatory/')}">Enter the archive ↗</a></div>`);
-
-// ── PH · Penthouse ───────────────────────────────────────────────────────────
-const TP = THEMES.penthouse;
-export const penthouse = {
-  paint(ctx, f) {
-    shell(ctx, f, TP, f.x0, f.x1, { panel: 56, wainscot: 14, floor: 'planks' });
-    const y = f.y - 8;
-    windowHole(ctx, 120, f.top + 18, 560, y - 34 - f.top - 18, TP.trim, 7);
-    windowHole(ctx, 860, f.top + 18, 520, y - 34 - f.top - 18, TP.trim, 6);
-    sign(ctx, 'PENTHOUSE', 400, f.top + 30, TP.neonB, 1, false);
-    // workstation desk
-    R(ctx, 280, y - 24, 120, 4, '#c8c8e0');
-    R(ctx, 284, y - 20, 3, 20, TP.trimLo);
-    R(ctx, 393, y - 20, 3, 20, TP.trimLo);
-    for (const sx of [296, 336]) screen(ctx, sx, y - 50, 34, 20, '#2a2a40');
-    // lounge chair, plants, piano
-    R(ctx, 980, y - 26, 30, 12, '#3a3a5a');
-    R(ctx, 976, y - 14, 38, 8, '#4a4a6a');
-    plant(ctx, 940, y, '#4a9a6a', '#3a3a5a');
-    plant(ctx, 1360, y, '#4a9a6a', '#3a3a5a');
-    R(ctx, 1140, y - 26, 70, 18, '#101018');
-    R(ctx, 1140, y - 30, 70, 4, '#1a1a26');
-    for (let k = 0; k < 14; k++) R(ctx, 1144 + k * 5, y - 12, 3, 3, k % 3 ? '#e8e8f0' : '#101018');
-    R(ctx, 1146, y - 8, 3, 8, INK);
-    R(ctx, 1201, y - 8, 3, 8, INK);
-  },
-  lights(l, f) {
-    glow(l, 330, f.y - 40, 50, TP.neonC, 0.18);
-    for (const x of [500, 1100]) lightCone(l, x, f.top + 12, f, TP.light, 8, 80, 0.07);
-  },
-  dyn(ctx, f, t) {
-    const y = f.y - 8;
-    for (const [i, sx] of [296, 336].entries()) {
-      R(ctx, sx, y - 50, 34, 20, '#0a0a18');
-      for (let r = 0; r < 4; r++) R(ctx, sx + 3, y - 47 + r * 4, 10 + ((Math.sin(t * 1.3 + r + i * 3) * 0.5 + 0.5) * 18) | 0, 2, i ? '#9b8cff' : '#ffd8a8');
-    }
-  },
-  objects() {
-    return [
-      { id: 'workstation', x: 340, label: 'Owner workstation', verb: 'Use', panel: 'workstation' },
-      { id: 'piano', x: 1175, label: 'Piano', verb: 'Play', panel: 'piano' },
-    ];
-  },
-};
-register('workstation', () => `<p class="px-kicker">Penthouse</p><h2 id="panel-title">The owner’s desk</h2>
-  <p>Private notes, ideas and the scratchpad live here.</p>
-  <div class="px-row"><a class="px-btn primary" href="${href('vault/')}">Private notes (vault) ↗</a><a class="px-btn" href="${href('lab/')}#notebook">Scratchpad ↗</a><a class="px-btn" href="${href('compass/')}">My links ↗</a></div>`);
-register('piano', () => `<p class="px-kicker">Penthouse</p><h2 id="panel-title">♪ ♫ ♪</h2><p>You play three notes. The city outside seems to slow down for a second.</p>`);

@@ -59,7 +59,7 @@ export const FLOOR_DEFS = [
   { id: 'gallery', n: '2', name: 'Art Gallery', h: 144, status: 'open', theme: 'gallery' },
   { id: 'pavilion', n: '3', name: 'Racing Pavilion & Cinema', h: 144, status: 'open', theme: 'pavilion' },
   { id: 'study', n: '4', name: 'The Study', h: 144, status: 'open', theme: 'study' },
-  { id: 'penthouse', n: 'PH', name: 'Penthouse', h: 128, status: 'locked', lock: 'code', theme: 'penthouse' },
+  { id: 'penthouse', n: 'PH', name: 'The Penthouse', h: 128, status: 'locked', lock: 'code', theme: 'penthouse' },
 ];
 
 // per storey on screen: slab + floor plane + visible back wall (h includes the old 8px floor band)

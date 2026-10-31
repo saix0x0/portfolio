@@ -8,11 +8,23 @@
 import { R, P, text, textWidth, hexA } from './gfx.js';
 import { City, SKYVIEWS } from './city.js';
 import { buildHotel } from './hotel.js';
-import { drawPerson, drawBot, LOOKS } from './actors.js';
+import { drawPerson, drawBot, playerLook, viewFor } from './actors.js';
 import { IW, IH, IN_L, IN_R, ELV_X0, ELV_X1, ELV_CX, FLOORS, floorById, WALL, TILT, OX, FD, Z_MIN, Z_MAX, LANE, SHAFT_Z, GAP0, GAP1, DEPTH, SLAB, proj, unproj, ceilY } from './layout.js';
 import { openPanel, closePanel, panelOpen, registerGame } from './panels.js';
 import { wallPieces, sideX, faceZ, top, onFace } from './kit.js';
-import { THEMES } from './themes.js';
+import { THEMES, INK } from './themes.js';
+import { loop, RECORDS, quack, chime, isMuted, setMuted } from './sound.js';
+
+// Rubber ducks hidden around the hotel, one per floor. Find all seven → the golden duck.
+export const DUCKS = [
+  { floor: 'lobby', x: 1506, z: 86 },
+  { floor: 'comms', x: 640, z: 88 },
+  { floor: 'gallery', x: 1488, z: 24 },
+  { floor: 'pavilion', x: 96, z: 86 },
+  { floor: 'study', x: 1460, z: 88 },
+  { floor: 'basement', x: 700, z: 62 },
+  { floor: 'penthouse', x: 1514, z: 84 },
+];
 
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const SAVE = 'hotel:v1';
@@ -32,11 +44,17 @@ export class Game {
     this.t = 0;
     const s = load();
     this.flags = s.flags || {};
+    delete this.flags.record; // music never auto-plays on load
     this.introDone = !!s.introDone;
     if (s.sky) this.city.setMode(s.sky), (this.city.fade = 0);
 
-    const start = floorById(s.floor) && floorById(s.floor).status === 'open' ? floorById(s.floor) : floorById('lobby');
-    this.player = { floor: start.idx, x: s.x ?? 300, z: s.z ?? LANE, facing: 1, phase: 0, moving: false, inCar: false, vx: 0, vz: 0 };
+    // a #floor link (e.g. hotel/#pavilion) starts you on that floor; otherwise resume where you were
+    const linked = floorById(location.hash.slice(1));
+    const deep = linked && linked.status === 'open' ? linked : null;
+    const start = deep || (floorById(s.floor) && floorById(s.floor).status === 'open' ? floorById(s.floor) : floorById('lobby'));
+    if (deep) (s.x = 300), (s.z = LANE);
+    this.player = { floor: start.idx, x: s.x ?? 300, z: s.z ?? LANE, facing: 1, back: false, phase: 0, moving: false, inCar: false, vx: 0, vz: 0, boost: 0 };
+    this.dust = []; // boost particles (world space)
     this.car = { floor: start.idx, y: start.yb, from: start.yb, to: start.yb, state: 'idle', door: 1, k: 0, called: null };
     this.cam = { x: 0, y: 0 };
     this.keys = new Set();
@@ -63,6 +81,13 @@ export class Game {
       sc.sort((a, b) => a.z1 - b.z1 || a.x0 - b.x0);
     }
     for (const f of FLOORS) this.objects.push({ id: 'elevator-' + f.id, floor: f.idx, x: ELV_CX, z: SHAFT_Z + 8, label: 'Elevator', verb: 'Ride', panel: 'elevator' });
+    this.ducks = DUCKS.map((d, i) => {
+      const f = floorById(d.floor);
+      const z = this.blocked(f.idx, d.x, d.z) ? this.freeZ(f.idx, d.x, d.z) : d.z;
+      const duck = { id: 'duck-' + i, floor: f.idx, x: d.x, z, label: 'Rubber duck', verb: 'Pick up', run: (g) => g.collectDuck(duck), when: (g) => !(g.flags.ducks || []).includes(duck.id) };
+      this.objects.push(duck);
+      return duck;
+    });
     if (this.blocked(this.player.floor, this.player.x, this.player.z)) this.player.z = LANE;
 
     registerGame(this);
@@ -142,7 +167,18 @@ export class Game {
       for (const ev of ['pointerup', 'pointerleave', 'pointercancel']) b.addEventListener(ev, () => this.keys.delete(k));
     }
     this.hud.querySelector('[data-act="use"]')?.addEventListener('click', () => this.interact());
+    const boostBtn = this.hud.querySelector('[data-act="boost"]');
+    if (boostBtn) {
+      boostBtn.addEventListener('pointerdown', (e) => (e.preventDefault(), this.keys.add('shift')));
+      for (const ev of ['pointerup', 'pointerleave', 'pointercancel']) boostBtn.addEventListener(ev, () => this.keys.delete('shift'));
+    }
     this.hud.querySelector('[data-act="map"]')?.addEventListener('click', () => openPanel('map'));
+    const mute = this.hud.querySelector('[data-act="mute"]');
+    if (mute) {
+      const paint = () => ((mute.textContent = isMuted() ? '♪ OFF' : '♪ ON'), mute.setAttribute('aria-pressed', !isMuted()));
+      paint();
+      mute.addEventListener('click', () => (setMuted(!isMuted()), paint()));
+    }
     this.hud.querySelector('[data-act="guide"]')?.addEventListener('click', () => openPanel('guide'));
   }
 
@@ -163,6 +199,44 @@ export class Game {
     if (f.lock === 'keycard') return !!this.flags.keycard;
     if (f.lock === 'code') return !!this.flags.penthouse;
     return false;
+  }
+  collectDuck(d) {
+    const got = new Set(this.flags.ducks || []);
+    got.add(d.id);
+    this.setFlag('ducks', [...got]);
+    quack();
+    this.toast(`🦆 Rubber duck ${got.size}/${DUCKS.length}`);
+    if (got.size === DUCKS.length && !this.flags.goldenDuck) {
+      this.setFlag('goldenDuck');
+      setTimeout(() => (chime(), openPanel('allducks')), 500);
+    }
+    this.updateHud(true);
+  }
+  toast(msg) {
+    const el = this.hud.querySelector('[data-toast]');
+    if (!el) return;
+    el.textContent = msg;
+    el.classList.remove('show');
+    void el.offsetWidth;
+    el.classList.add('show');
+  }
+  playRecord(id) {
+    this.stopMusic?.();
+    this.stopMusic = null;
+    this.flags.record = id || undefined;
+    const r = RECORDS.find((x) => x.id === id);
+    if (r) this.stopMusic = loop(r.seq, r.bpm, r.bass);
+  }
+  /** Bed in the Penthouse: fade out, the sky moves on, fade in. */
+  nap() {
+    closePanel();
+    const el = document.createElement('div');
+    el.className = 'nap';
+    el.innerHTML = '<span>Z z z…</span>';
+    document.body.append(el);
+    const modes = Object.keys(SKYVIEWS);
+    setTimeout(() => (this.city.setMode(modes[(modes.indexOf(this.city.mode) + 1) % modes.length]), (this.city.fade = 0), this.save()), 1300);
+    setTimeout(() => el.remove(), 2800);
   }
   objectVisible(o) {
     return !o.when || o.when(this);
@@ -366,8 +440,13 @@ export class Game {
     if (!mx && !mz) ({ mx, mz } = this.runTask() || { mx: 0, mz: 0 });
     if (p.inCar && this.car.state !== 'idle') mx = mz = 0;
 
-    const run = this.keys.has('shift') ? 1.8 : 1;
-    const ease = Math.min(1, dt * 12);
+    // BOOST: hold Shift (or the ⚡ button). Long auto-walks boost on their own.
+    const tk = this.task;
+    const far = tk && (tk.floor !== p.floor ? Math.abs(p.x - ELV_CX) > 160 : Math.abs(tk.x - p.x) > 160);
+    const boosting = (this.keys.has('shift') || far) && (mx || mz) && !(p.inCar && this.car.state !== 'idle');
+    p.boost += ((boosting ? 1 : 0) - p.boost) * Math.min(1, dt * 8);
+    const run = 1 + p.boost * 1.6;
+    const ease = Math.min(1, dt * (boosting ? 7 : 12));
     p.vx += (mx * 72 * run - p.vx) * ease;
     p.vz += (mz * 46 * run - p.vz) * ease;
     if (Math.abs(p.vx) < 1 && !mx) p.vx = 0;
@@ -392,9 +471,13 @@ export class Game {
     const moved = Math.hypot(p.x - ox, p.z - oz);
     p.moving = moved > 0.01;
     if (p.moving) {
-      if (Math.abs(p.x - ox) > 0.01) p.facing = p.x > ox ? 1 : -1;
-      p.phase += moved * 0.32;
+      [p.facing, p.back] = viewFor(p.x - ox, p.z - oz, [p.facing, p.back]);
+      p.phase += moved * (0.32 - p.boost * 0.1);
+      // kick up dust while boosting
+      if (p.boost > 0.5 && !reduced && Math.random() < dt * 40) this.dust.push({ f: p.floor, x: p.x - (p.x - ox) * 3, z: p.z - (p.z - oz) * 3, h: 1, vh: 10 + Math.random() * 12, life: 0.45 });
     }
+    for (const d of this.dust) (d.life -= dt), (d.h += d.vh * dt), (d.vh -= 30 * dt);
+    this.dust = this.dust.filter((d) => d.life > 0);
     if (this.task) this.task.stuck = (mx || mz) && !p.moving ? this.task.stuck + dt : 0;
 
     // guide: hovers beside you until the intro is done, then returns to the desk
@@ -455,7 +538,9 @@ export class Game {
   updateHud(force) {
     const f = this.floor;
     const el = this.hud.querySelector('[data-where]');
-    if (el) el.innerHTML = `<b>${f.n}</b> ${f.name}`;
+    const n = (this.flags.ducks || []).length;
+    const priv = f.id === 'penthouse' ? ' <i class="priv">private</i>' : '';
+    if (el) el.innerHTML = `<b>${f.n}</b> ${f.name}${priv}${n ? ` <span class="ducks" title="Rubber ducks found">🦆 ${n}/${DUCKS.length}</span>` : ''}`;
     if (force) document.title = `${f.name} — Cyberverse Hotel`;
   }
 
@@ -529,7 +614,14 @@ export class Game {
       const [gx, gy] = at(g.x, g.z);
       drawBot(ctx, gx, gy - 16 + Math.round(Math.sin(this.t * 2) * 2), this.t, '#3dffb0');
     } });
-    if (p.floor === f.idx && !p.inCar) people.push({ x: p.x, z: p.z, draw: () => drawPerson(ctx, this.feetX(), this.feetY(), LOOKS.player, p.facing, p.phase, p.moving) });
+    if (p.floor === f.idx && !p.inCar) people.push({ x: p.x, z: p.z, draw: () => this.drawPlayer(ctx) });
+    for (const d of this.ducks) if (d.floor === f.idx && d.when(this)) people.push({ x: d.x, z: d.z, draw: () => drawDuck(ctx, ...at(d.x, d.z), this.t) });
+    for (const d of this.dust) if (d.f === f.idx) people.push({ x: d.x, z: d.z, draw: () => {
+      const [dx, dy] = at(d.x, d.z);
+      ctx.globalAlpha = Math.max(0, d.life / 0.45) * 0.7;
+      R(ctx, dx - 1, dy - Math.round(d.h) - 1, 3, 2, '#d8d0f0');
+      ctx.globalAlpha = 1;
+    } });
     people.sort((a, b) => a.z - b.z);
     // a person goes after every piece of scenery they stand in front of
     const items = this.scenes[f.idx];
@@ -591,7 +683,7 @@ export class Game {
     for (let z = z0 + 6; z < z1; z += 6) top(ctx, cf, x0, x1, z, z + 1, 0, '#3a2a4a');
     faceZ(ctx, cf, z1, x0, x1, -2, 0, '#d4a64e');
     // rider
-    if (p.inCar) drawPerson(ctx, this.feetX(), this.feetY(), LOOKS.player, p.facing, p.phase, p.moving);
+    if (p.inCar) this.drawPlayer(ctx);
     // cabin roof + glass gates (slide up when open)
     faceZ(ctx, cf, z1, x0, x1, h - 2, h, '#d4a64e');
     const gate = Math.round(42 * (1 - c.door));
@@ -600,6 +692,16 @@ export class Game {
       faceZ(ctx, cf, z1, x0, x1, gate - 1, gate, '#bfe8ff');
     }
     sideX(ctx, cf, x1, z0, z1, 0, h, 'rgba(160,220,255,0.12)');
+  }
+
+  get look() {
+    return playerLook(this.flags.look);
+  }
+  drawPlayer(ctx) {
+    const p = this.player;
+    // afterimages trail behind along the screen-space velocity
+    const v = p.boost > 0.3 && p.moving ? [Math.sign(p.vx - p.vz) * p.boost, Math.sign(p.vx + p.vz) * 0.5 * p.boost] : null;
+    drawPerson(ctx, this.feetX(), this.feetY(), this.look, p.facing, p.phase, p.moving, false, this.t, p.back, { boost: v });
   }
 
   drawPrompt(ctx, o) {
@@ -627,4 +729,18 @@ export class Game {
   skyColor() {
     return { city: '#ff3d9a', sunset: '#ffb347', aurora: '#3dffb0', space: '#9b8cff' }[this.city.mode];
   }
+}
+
+/** A rubber duck, bobbing gently. */
+function drawDuck(ctx, x, y, t) {
+  const b = Math.round(Math.sin(t * 3 + x) * 1);
+  ctx.fillStyle = 'rgba(0,0,0,0.3)';
+  ctx.fillRect(x - 4, y, 9, 1);
+  R(ctx, x - 5, y - 6 + b, 10, 6, INK);
+  R(ctx, x - 4, y - 5 + b, 8, 4, '#ffd23a');
+  R(ctx, x, y - 10 + b, 6, 6, INK);
+  R(ctx, x + 1, y - 9 + b, 4, 4, '#ffd23a');
+  R(ctx, x + 5, y - 7 + b, 3, 2, '#ff8a3a');
+  P(ctx, x + 3, y - 8 + b, INK);
+  R(ctx, x - 4, y - 5 + b, 3, 1, '#fff2a0');
 }

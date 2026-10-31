@@ -14,7 +14,8 @@ import { linkGroups } from '../../../content/links.js';
 import { experiments } from '../../../lab/experiments/index.js';
 
 export const NAV = [
-  { key: 'hotel', label: 'Hotel ▸', path: '', note: 'Enter the world' },
+  { key: 'front', label: 'Home', path: '', note: 'The website' },
+  { key: 'hotel', label: 'Hotel ▸', path: 'hotel/', note: 'Enter the world' },
   { key: 'home', label: 'Journey', path: 'portfolio/', note: 'Five cities' },
   { key: 'work', label: 'Work', path: 'work/', note: 'Every project' },
   { key: 'college', label: 'College', path: 'work/#college', note: 'IIIT Hyderabad' },
@@ -40,7 +41,7 @@ function header(page) {
     .map((n) => `<a href="${navHref(n)}" class="${n.cls || ''}" ${n.key === page ? 'aria-current="page"' : ''}>${esc(n.label)}</a>`)
     .join('');
   const bar = h(`<header class="topbar">
-    <a class="brand" href="${href('portfolio/')}" aria-label="${esc(site.fullName)} — home"><span class="brand-sun" aria-hidden="true"></span>${esc(site.name)}</a>
+    <a class="brand" href="${href('')}" aria-label="${esc(site.fullName)} — home"><span class="brand-sun" aria-hidden="true"></span>${esc(site.name)}</a>
     <nav class="topnav" aria-label="Main">${links}</nav>
     <div class="top-actions">
       <button class="search-btn" type="button" data-open-search aria-label="Search everything"><span class="label">Search</span><kbd>⌘K</kbd></button>

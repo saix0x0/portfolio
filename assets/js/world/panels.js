@@ -69,6 +69,7 @@ export function closePanel() {
   if (!root || !current) return;
   const was = current;
   root.classList.remove('open');
+  for (const n of game?.npcs || []) (n.talking = false), (n.facingTo = null);
   current = null;
   if (was === 'guide' && game && !game.introDone) {
     game.introDone = true;
@@ -89,15 +90,15 @@ const HINTS = {
   pavilion: 'Inspect the car in the garage, study the circuits, or sit down and pick something for the big screen.',
   study: 'Every spine on these shelves is a real book. Some shelves are better read than others…',
   basement: 'You found the basement. Not many guests do.',
-  penthouse: 'The owner’s private floor.',
+  penthouse: 'The owner’s own floor. Every other floor belongs to the guests; this one is personal. Try the notebook on the desk.',
 };
 register('guide', (a, g) => {
   const f = g.floor;
   if (a.first || !g.introDone) {
     return `${head('Nova · hotel guide', 'Welcome to the Cyberverse Hotel.')}
-      <p>I’m Nova. This hotel is the personal world of <b>${esc(site.fullName)}</b>, and every floor holds a different part of it.</p>
+      <p>I’m Nova. This hotel is the personal world of <b>${esc(site.fullName)}</b>. Every floor is open to you and holds a different part of that world. Only the Penthouse, right at the top, is private.</p>
       <ul class="px-list">
-        <li><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> or arrow keys walk (W/S move deeper into the room) · <kbd>Shift</kbd> run</li>
+        <li><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> or arrow keys walk (W/S move deeper into the room) · <kbd>Shift</kbd> boost</li>
         <li><kbd>E</kbd> interact · <kbd>M</kbd> map · <kbd>Esc</kbd> close</li>
         <li>Or just <b>click</b> anywhere to walk there.</li>
       </ul>
@@ -108,15 +109,17 @@ register('guide', (a, g) => {
         ${btn('F1 → Pavilion', 'data-go="pavilion:300"')}
         ${btn('Say hello → Comms', 'data-go="comms:300"')}
       </div>
-      <p class="px-note">In a hurry? <a href="${href('portfolio/')}">Portfolio mode</a> has everything without the walking.</p>
+      <p class="px-note">In a hurry? The <a href="${href('')}">website</a> has everything without the walking.</p>
       <div class="px-row">${btn('Let me explore', 'data-close autofocus', true)}</div>`;
   }
   const found = ['secret_alcove', 'keycard', 'penthouse'].filter((k) => g.flags[k]).length;
+  const ducks = (g.flags.ducks || []).length;
   const secret = !g.flags.secret_alcove ? 'Rumour has it one painting in the Gallery doesn’t hang straight.' : !g.flags.keycard ? 'A strange loop… somewhere on the Study’s philosophy shelf.' : !g.flags.penthouse ? 'The basement remembers a number. Ramanujan would know it.' : 'You’ve found every secret so far. More floors are coming.';
   return `${head('Nova · ' + f.name, 'Need a hand?')}
     <p>${esc(HINTS[f.id] || 'Explore!')}</p>
     <div class="px-row">${['gallery', 'study', 'pavilion', 'comms'].map((id) => btn(floorById(id).name, `data-go="${id}:300"`)).join('')}</div>
-    <p class="px-note">Secrets found: ${found}/3. ${esc(secret)}</p>`;
+    <p class="px-note">Secrets found: ${found}/3. ${esc(secret)}</p>
+    <p class="px-note">Rubber ducks found: ${ducks}/7. ${ducks < 7 ? 'They hide near the edges of rooms. One per floor.' : 'All of them. The golden duck is waiting on a shelf at the very top.'}</p>`;
 });
 REG.guide.after = (body) => body.querySelector('[data-close]')?.addEventListener('click', closePanel);
 
@@ -126,19 +129,19 @@ register('intro', () => `${head('Reception', esc(site.fullName))}
   <div class="px-cols"><div><h3>Interested in</h3><div class="px-tags">${site.interests.map((i) => `<span class="tag">${esc(i)}</span>`).join('')}</div></div>
   <div><h3>Right now</h3><ul class="px-list">${site.now.map((n) => `<li><b>${esc(n.label)}</b> ${todo(n.text)}</li>`).join('')}</ul></div></div>
   <h3>About</h3>${site.bio.map((p) => `<p>${todo(p)}</p>`).join('')}
-  <div class="px-row">${btn('See projects', 'data-go="gallery:300"', true)}${btn('Get in touch', 'data-go="comms:300"')}<a class="px-btn" href="${href('portfolio/')}">Portfolio mode ↗</a></div>`);
+  <div class="px-row">${btn('See projects', 'data-go="gallery:300"', true)}${btn('Get in touch', 'data-go="comms:300"')}<a class="px-btn" href="${href('')}">The website ↗</a></div>`);
 
 register('directory', (a, g) => `${head('Hotel directory', 'Where to?')}
   <ul class="px-floors">${[...FLOORS].reverse().map((f) => {
     const ok = g.canStop(f.idx);
-    const state = f.status === 'open' ? '' : ok ? 'unlocked' : f.lock === 'keycard' ? 'needs keycard' : 'owner only';
+    const state = f.status === 'open' ? 'open to all' : f.lock === 'code' ? (ok ? 'private · unlocked' : 'private') : ok ? 'unlocked' : 'needs keycard';
     return `<li><button type="button" data-ride="${f.id}" class="${ok ? '' : 'locked'}"><b>${esc(f.n)}</b><span>${esc(f.id === 'basement' && !ok ? '???' : f.name)}</span><em>${esc(state)}</em></button></li>`;
   }).join('')}</ul>`);
 
 register('elevator', (a, g) => REG.directory(a, g).replace('Hotel directory', 'Glass elevator'));
 
 register('locked', ({ floor }, g) => {
-  if (floor.lock === 'code') return `${head('Penthouse', 'Owner only.')}<p>A keypad glows beside the elevator button.</p><div class="px-row">${btn('Use the keypad', 'data-panel="keypad"', true)}</div>`;
+  if (floor.lock === 'code') return `${head('The Penthouse', 'Private residence.')}<p>Every other floor is open to guests. This one is where ${esc(site.name)} actually lives: the notes, the records, the unmade bed. A keypad glows beside the PH button.</p><div class="px-row">${btn('Use the keypad', 'data-panel="keypad"', true)}</div>`;
   if (floor.lock === 'keycard') return `${head('Elevator', 'The B button won’t light.')}<p>A small card reader blinks red under it. Somebody in this hotel must have a keycard.</p>`;
   return `${head(floor.n, floor.name)}<p>Not open yet.</p>`;
 });
@@ -177,13 +180,15 @@ register('skyview', (a, g) => {
 
 register('portfolio', () => `${head('Portfolio mode', 'The same work, without the walking.')}
   <p>A clean, fast version of everything in this hotel: projects, college work, skills and contact.</p>
-  <div class="px-row"><a class="px-btn primary" href="${href('portfolio/')}" autofocus>Open portfolio mode ↗</a><a class="px-btn" href="${href('work/')}">All projects ↗</a><a class="px-btn" href="${href('work/')}#college">College work ↗</a></div>`);
+  <div class="px-row"><a class="px-btn primary" href="${href('')}" autofocus>Open the website ↗</a><a class="px-btn" href="${href('work/')}">All projects ↗</a><a class="px-btn" href="${href('work/')}#college">College work ↗</a></div>`);
 
 const SNACKS = ['NEON COLA. Tastes like static.', 'ORBIT CHIPS. Each one slightly zero-g.', 'A tiny bag of syntax sugar.', 'COFFEE.EXE — warning: may cause commits.', 'Nothing. The machine is out of moonlight.'];
 register('vending', () => `${head('Vending machine', 'Clunk.')}<p>You got: <b>${esc(SNACKS[(Math.random() * SNACKS.length) | 0])}</b></p>`);
 register('bartender', (a, g) => `${head('Bartender bot', '“What’ll it be?”')}<p>${esc(!g.flags.secret_alcove ? 'Between you and me — one of the Gallery paintings isn’t hung straight. Always bugged me.' : 'You found the alcove? Then you already know more than most guests.')}</p>`);
-register('npc', ({ npc }) => {
+register('npc', ({ npc }, g) => {
   npc.say = (npc.say ?? -1) + 1;
+  npc.talking = true; // stops, turns to face you, mouth moves
+  npc.facingTo = [g.player.x > npc.x ? 1 : -1, false];
   return `${head(npc.name, '“' + esc(npc.lines[npc.say % npc.lines.length]) + '”')}`;
 });
 register('exit', () => `${head('Entrance', 'The city is closed tonight.')}<p>One day these doors will open onto the streets outside. For now, the hotel is the whole world.</p>`);
@@ -240,3 +245,5 @@ register('map', (a, g) => {
   }).join('');
   return el;
 });
+
+register('allducks', () => `${head('Seven of seven', 'You found every duck.')}<p>Somewhere at the very top of the hotel, an empty plinth now holds a <b>golden duck</b>. Rubber-duck debugging has never looked so good.</p>`);

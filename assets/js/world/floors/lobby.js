@@ -12,7 +12,7 @@ import { drawAndroid, drawBot, Walker, LOOKS } from '../actors.js';
 import { clockIn } from '../../core/sun.js';
 
 const T = THEMES.lobby;
-const X = { entrance: 70, window0: 118, window1: 412, console: 262, desk0: 470, desk1: 676, android: 556, guide: 640, directory: 846, kiosk: 912, vending: 962, mailbox: 1008, bar0: 1060, bar1: 1330, bartender: 1200, jukebox: 1390, stairs: 1462 };
+const X = { entrance: 70, window0: 118, window1: 412, console: 262, desk0: 470, desk1: 676, android: 556, guide: 640, directory: 846, kiosk: 912, vending: 962, mailbox: 1008, mirror: 1038, bar0: 1060, bar1: 1330, bartender: 1200, jukebox: 1390, stairs: 1462 };
 
 export function paint(ctx, f) {
   shell(ctx, f, T, f.x0, f.x1, { panel: 44, wainscot: 26 });
@@ -223,6 +223,15 @@ export function props(f) {
         text(g, 'MAIL', -1, -8, T.neonA);
       });
     }),
+    // changing-room mirror (the wardrobe: restyle your character)
+    prop(X.mirror - 8, X.mirror + 8, 2, 8, 64, (c) => {
+      box(c, f, X.mirror - 8, X.mirror + 8, 2, 8, 62, { top: T.trim, front: T.trimLo, side: '#6a4a2a' });
+      onFace(c, f, X.mirror - 8, 8, 60, (g) => {
+        R(g, 2, 2, 12, 54, '#8aa0d0');
+        R(g, 3, 4, 3, 24, '#c8d8f8');
+        R(g, 8, 36, 2, 10, '#c8d8f8');
+      });
+    }),
     // bartender bot, behind the counter
     point(X.bartender, 8, (ctx, t) => {
       const [x, y] = at(X.bartender, 8);
@@ -256,9 +265,9 @@ export function props(f) {
 
 export function npcs(f) {
   return [
-    new Walker({ id: 'guest-a', name: 'Hotel guest', look: LOOKS.guestA, floor: f.id, x: 300, z: 68, min: 130, max: 420, lines: ['The Skyview window is the best seat in the hotel. Try the console under it.', 'I come here for the sunsets. Even the fake ones.'] }),
+    new Walker({ id: 'guest-a', name: 'Traveller in a long scarf', look: LOOKS.guestA, floor: f.id, x: 300, z: 68, min: 130, max: 420, lines: ['It’s bigger on the inside. The hotel, I mean.', 'The Skyview window is the best seat in the place. Try the console under it.', 'Hold Shift if you’re in a hurry. Time is relative, corridors aren’t.'] }),
     new Walker({ id: 'guest-c', name: 'Night-shift courier', look: LOOKS.guestC, floor: f.id, x: 900, z: 70, min: 830, max: 1040, lines: ['Messages go up to the Communications Lounge — first floor.', 'Heard there are floors that aren’t on the directory…'] }),
-    new Walker({ id: 'guest-b', name: 'Regular at the bar', look: LOOKS.guestB, floor: f.id, x: 1240, z: 72, min: 1100, max: 1420, lines: ['The bartender says the Gallery has a painting that doesn’t hang straight.', 'Penthouse? Owner only. Keypad by the elevator, they say.'] }),
+    new Walker({ id: 'guest-b', name: 'Detective at the bar', look: LOOKS.guestB, floor: f.id, x: 1240, z: 72, min: 1100, max: 1420, lines: ['You’ve come from the Gallery, I perceive. No? Then go — one painting there doesn’t hang straight.', 'The Penthouse is the owner’s private floor. Everything else? Open to every guest.', 'When you have eliminated the impossible, check the basement.'] }),
   ];
 }
 
@@ -272,6 +281,7 @@ export function objects(f) {
     { id: 'kiosk', x: X.kiosk, z: 40, label: 'Portfolio mode', verb: 'Use', panel: 'portfolio' },
     { id: 'vending', x: X.vending, z: 24, label: 'Vending machine', verb: 'Use', panel: 'vending' },
     { id: 'mailbox', x: X.mailbox, z: 44, label: 'Mailbox', verb: 'Use', panel: 'contact' },
+    { id: 'mirror', x: X.mirror, z: 20, label: 'Changing-room mirror', verb: 'Restyle', panel: 'wardrobe' },
     { id: 'bartender', x: X.bartender, z: 48, label: 'Bartender bot', verb: 'Talk', panel: 'bartender' },
     { id: 'jukebox', x: X.jukebox, z: 22, label: 'Jukebox', verb: 'Use', action: 'disco' },
     { id: 'stairs', x: X.stairs, z: 16, label: 'Staff stairs', verb: 'Use', panel: 'stairs' },

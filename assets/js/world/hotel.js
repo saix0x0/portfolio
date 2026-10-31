@@ -16,7 +16,8 @@ import * as gallery from './floors/gallery.js';
 import * as study from './floors/study.js';
 import * as pavilion from './floors/pavilion.js';
 import * as comms from './floors/comms.js';
-import { basement, penthouse } from './floors/private.js';
+import { basement } from './floors/private.js';
+import * as penthouse from './floors/penthouse.js';
 
 // floor id → module { paint, lights, paintIso?, lightsIso?, dyn, npcs, objects, props?, doors? }
 const MODULES = { basement, lobby, comms, gallery, pavilion, study, penthouse };

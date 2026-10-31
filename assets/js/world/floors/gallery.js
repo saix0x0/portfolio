@@ -186,7 +186,7 @@ export function dyn(ctx, f, t, G) {
 
 export function npcs(f) {
   return [
-    new Walker({ id: 'critic', name: 'Gallery visitor', look: LOOKS.guestC, floor: f.id, x: 330, min: 160, max: 620, speed: 10, lines: ['I always read the plaques. The details are in the case studies.', 'That painting by the elevator… is it just me, or is it crooked?'] }),
+    new Walker({ id: 'critic', name: 'Curator', look: LOOKS.curator, floor: f.id, x: 330, min: 160, max: 620, speed: 10, lines: ['I always read the plaques. The details are in the case studies.', 'That painting by the elevator… is it just me, or is it crooked?'] }),
     new Walker({ id: 'student-g', name: 'Student', look: LOOKS.student, floor: f.id, x: 1000, min: 830, max: 1180, speed: 12, lines: ['The College Wing has the coursework projects. Recruiters love that wing.', 'Acad Space is getting its own floor someday.'] }),
   ];
 }
