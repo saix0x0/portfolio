@@ -32,8 +32,13 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); c
   .keys-hint { display: none; }
   .touch { display: flex; position: absolute; inset: auto 12px 14px; justify-content: space-between; pointer-events: none; }
   .touch button { pointer-events: auto; width: 60px; height: 60px; font: 18px var(--px); color: var(--ink); background: rgba(11, 7, 22, 0.7); border: 2px solid var(--line); touch-action: none; }
-  .touch button:first-child { margin-right: auto; }
-  .touch button:nth-child(2) { margin-right: auto; margin-left: 8px; }
+  .touch .dpad { display: grid; grid-template-columns: repeat(3, 52px); grid-template-rows: repeat(2, 48px); gap: 4px; pointer-events: none; }
+  .touch .dpad button { width: 52px; height: 48px; }
+  .touch .up { grid-area: 1 / 2; }
+  .touch .lt { grid-area: 2 / 1; }
+  .touch .dn { grid-area: 2 / 2; }
+  .touch .rt { grid-area: 2 / 3; }
+  .touch .use { align-self: flex-end; }
   .touch .use { border-color: var(--mint); color: var(--mint); }
 }
 

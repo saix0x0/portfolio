@@ -1,6 +1,19 @@
 # Implementation status
 
-_Last updated: 2026-10-30, initial build._
+_Last updated: 2026-10-31, 3D rooms (World Mode)._
+
+## World Mode — 3D rooms (branch `world/3d-rooms`)
+| Feature | How it was verified |
+|---|---|
+| Oblique 3D projection for every floor (floor plane, left wall, slab edges, roof deck) | Whole-building overview screenshot, no console errors |
+| Lobby furniture as depth-sorted 3D props; entrance in the left wall | Screenshots of the lounge, desk/elevator and bar areas |
+| Walking in depth (WASD/arrows), sliding collision against furniture | Scripted: walking into the sofa stops at its front edge |
+| Glass elevator boarded from the front; car hidden behind slabs mid-ride | Scripted G → 2 → G rides; mid-ride screenshot |
+| 3D partition walls with sliding glass doors | Scripted walk through the Gallery doorway; screenshot |
+| Auto-walk to every object on every floor (46 objects, incl. both locked floors) | Scripted travel loop, 0 failures |
+| Phone (375 px): 4-way touch pad, no horizontal overflow, camera lifted above the pad | Emulated 375×812 |
+| Not yet verified | Real-time feel in a visible browser (the test pane throttles animation), and keyboard feel of W/S depth movement |
+
 
 ## Works and was tested in a browser
 | Feature | How it was verified |

@@ -5,6 +5,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 import { canvas, R, P } from './gfx.js';
 import { INK } from './themes.js';
+import { LANE } from './layout.js';
 
 const SW = 30;
 const SH = 44;
@@ -234,8 +235,10 @@ export function drawCat(ctx, x, y, t, awake = false) {
 
 /** Wandering resident with a patrol range and a few lines of dialogue. */
 export class Walker {
-  constructor({ id, look, floor, x, min, max, speed = 16, lines = [], name, sit = false }) {
-    Object.assign(this, { id, look, floor, x, min, max, speed, lines, name, sit });
+  constructor({ id, look, floor, x, z, min, max, speed = 16, lines = [], name, sit = false }) {
+    // z: the depth lane this resident patrols (clear of furniture)
+    z ??= LANE - 4 + ((id.length * 5) % 11);
+    Object.assign(this, { id, look, floor, x, z, min, max, speed, lines, name, sit });
     this.dir = Math.random() < 0.5 ? -1 : 1;
     this.phase = 0;
     this.pause = 0;
@@ -257,7 +260,8 @@ export class Walker {
       this.pause = 1 + Math.random() * 3;
     } else if (Math.random() < dt * 0.15) this.pause = 1 + Math.random() * 2.5;
   }
-  draw(ctx, y) {
-    drawPerson(ctx, this.x, y, this.look, this.dir, this.phase, this.moving, this.sit);
+  /** sx, sy: projected screen position of the feet. */
+  draw(ctx, sx, sy) {
+    drawPerson(ctx, sx, sy, this.look, this.dir, this.phase, this.moving, this.sit);
   }
 }

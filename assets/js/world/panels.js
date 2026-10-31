@@ -83,7 +83,7 @@ const btn = (label, attrs, primary) => `<button class="px-btn${primary ? ' prima
 
 // ── the guide ────────────────────────────────────────────────────────────────
 const HINTS = {
-  lobby: 'Everything in the hotel is real: walk up to something glowing and press E. The elevator is right behind the desk.',
+  lobby: 'Everything in the hotel is real: walk up to something glowing and press E. The glass elevator is just past the desk.',
   comms: 'The terminal sends messages straight to the owner. The wall shows every way to reach them.',
   gallery: 'Each frame is a project. Read the plaque, then open the full case study.',
   pavilion: 'Inspect the car in the garage, study the circuits, or sit down and pick something for the big screen.',
@@ -97,7 +97,7 @@ register('guide', (a, g) => {
     return `${head('Nova · hotel guide', 'Welcome to the Cyberverse Hotel.')}
       <p>I’m Nova. This hotel is the personal world of <b>${esc(site.fullName)}</b>, and every floor holds a different part of it.</p>
       <ul class="px-list">
-        <li><kbd>A</kbd><kbd>D</kbd> or <kbd>←</kbd><kbd>→</kbd> walk · <kbd>Shift</kbd> run</li>
+        <li><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> or arrow keys walk (W/S move deeper into the room) · <kbd>Shift</kbd> run</li>
         <li><kbd>E</kbd> interact · <kbd>M</kbd> map · <kbd>Esc</kbd> close</li>
         <li>Or just <b>click</b> anywhere to walk there.</li>
       </ul>

@@ -27,10 +27,14 @@
       </div>
     </div>
     <div class="prompt" data-prompt aria-live="polite"></div>
-    <div class="keys-hint">A/D walk · E interact · M map · click to walk</div>
+    <div class="keys-hint">WASD walk · E interact · M map · click to walk</div>
     <div class="touch" aria-hidden="true">
-      <button type="button" data-hold="a">◀</button>
-      <button type="button" data-hold="d">▶</button>
+      <div class="dpad">
+        <button type="button" data-hold="w" class="up">▲</button>
+        <button type="button" data-hold="a" class="lt">◀</button>
+        <button type="button" data-hold="s" class="dn">▼</button>
+        <button type="button" data-hold="d" class="rt">▶</button>
+      </div>
       <button type="button" data-act="use" class="use">E</button>
     </div>
   </div>
