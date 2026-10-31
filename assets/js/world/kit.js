@@ -1,13 +1,13 @@
 // ─────────────────────────────────────────────────────────────────────────────
 //  ROOM KIT — reusable architecture & props. Floors pass their own theme T,
 //  so shared shapes still wear each room's locked palette.
-//  Back-wall art: f.top … f.yb (= f.y − 8), as in the 2D era.
-//  3D: the floor plane runs from f.yb (z = 0) down to f.front (z = DEPTH);
-//  see layout.js for the projection. 3D helpers are at the bottom.
+//  Back-wall art (shell, signs, windows…) is flat 2D: f.top … f.yb, drawn on
+//  the flat canvas and sheared onto the back wall. Isometric helpers (floors,
+//  side walls, boxes, interior walls) are at the bottom; see layout.js.
 // ─────────────────────────────────────────────────────────────────────────────
 import { R, P, dither, neon, text, textWidth, hexA, mix, cone, glow, canvas } from './gfx.js';
 import { INK } from './themes.js';
-import { DEPTH, KX, KY, IN_L } from './layout.js';
+import { DEPTH, KX, KY, TILT, OX, IN_L, proj, ceilY } from './layout.js';
 
 /** Back wall + wainscot + ceiling + floor band for x0..x1. */
 export function shell(ctx, f, T, x0, x1, { panel = 40, wainscot = 22, floor = 'checker' } = {}) {
@@ -26,9 +26,9 @@ export function shell(ctx, f, T, x0, x1, { panel = 40, wainscot = 22, floor = 'c
     R(ctx, x0, wy + 2, w, 1, T.trimLo);
     for (let x = x0 + 10; x < x1; x += 20) R(ctx, x, wy + 7, 8, wainscot - 11, mix(T.wallLo, T.wall, 0.35));
   }
+  // the floor plane and left wall are isometric: the hotel builder draws them
   f.floorKind = floor;
-  floorPlane(ctx, f, T, x0, x1, floor);
-  if (x0 <= IN_L) leftWall(ctx, f, T, { wainscot });
+  f.wainscot = wainscot;
 }
 
 /** Legacy 2D floor strip (unused by the 3D shell; kept for reference art). */
@@ -50,26 +50,27 @@ export function partition(ctx, f, T, x) {
 
 export const DOOR_H = 42;
 /**
- * A 3D interior wall at world x with a doorway (z GAP0…GAP1), as three
+ * A 3D interior wall at world x with a doorway (z gap0…gap1), as three
  * depth-sortable pieces so people can walk through it. open: 0..1
  */
 export function wallPieces(f, T, x, gap0, gap1, getOpen) {
   const x0 = x - 4;
   const x1 = x + 4;
   const face = mix(T.wall, '#000000', 0.12);
-  const cut = mix(T.wall, '#000000', 0.55);
-  /** One stretch of wall: the face we see (themed like the back wall) + its cut edge. */
+  const cut = mix(T.wall, '#000000', 0.5);
+  const cap = mix(T.wall, '#ffffff', 0.1);
+  const clip = (sx) => ceilY(f, sx);
+  /** One stretch of wall: the face we see (themed like the back wall) + its cut front. */
   const seg = (ctx, z0, z1, hBase = 0) => {
-    vplane(ctx, f, x1, z0, z1, hBase, f.room, face, f.top);
+    sideX(ctx, f, x1, z0, z1, hBase, f.room, face, clip);
     if (!hBase) {
-      vplane(ctx, f, x1, z0, z1, 0, 18, mix(T.wallLo, '#000000', 0.1));
-      vplane(ctx, f, x1, z0, z1, 18, 20, T.trim);
+      sideX(ctx, f, x1, z0, z1, 0, 18, mix(T.wallLo, '#000000', 0.1));
+      sideX(ctx, f, x1, z0, z1, 18, 20, T.trim);
     }
-    vplane(ctx, f, x1, z0, z0 + 2, hBase, f.room, mix(face, '#000000', 0.25), f.top);
+    sideX(ctx, f, x1, z0, z0 + 2, hBase, f.room, mix(face, '#000000', 0.3), clip);
     if (z1 === DEPTH) {
-      const fx = Math.round(x0 - z1 * KX);
-      R(ctx, fx, f.top, x1 - x0, f.front - f.top, cut);
-      R(ctx, fx + x1 - x0 - 1, f.top, 1, f.front - f.top, T.trimLo);
+      faceZ(ctx, f, DEPTH, x0, x1, 0, f.room, cut, clip);
+      faceZ(ctx, f, DEPTH, x1 - 1, x1, 0, f.room, cap, clip);
     }
   };
   return [
@@ -79,13 +80,13 @@ export function wallPieces(f, T, x, gap0, gap1, getOpen) {
       draw: (ctx) => {
         seg(ctx, gap0, gap1, DOOR_H);
         // door frame + a glass panel that slides up into the lintel
-        vplane(ctx, f, x1, gap0, gap1, DOOR_H - 2, DOOR_H, T.trim, f.top);
-        vplane(ctx, f, x1, gap0, gap0 + 2, 0, DOOR_H, T.trim);
-        vplane(ctx, f, x1, gap1 - 2, gap1, 0, DOOR_H, T.trim);
+        sideX(ctx, f, x1, gap0, gap1, DOOR_H - 2, DOOR_H, T.trim);
+        sideX(ctx, f, x1, gap0, gap0 + 2, 0, DOOR_H, T.trim);
+        sideX(ctx, f, x1, gap1 - 2, gap1, 0, DOOR_H, T.trim);
         const vis = Math.round(DOOR_H * (1 - getOpen()));
         if (vis > 1) {
-          vplane(ctx, f, x1, gap0 + 2, gap1 - 2, DOOR_H - vis, DOOR_H - 2, hexA(mix(T.neonA, '#000000', 0.6), 0.75));
-          vplane(ctx, f, x1, gap0 + 2, gap1 - 2, DOOR_H - vis, DOOR_H - vis + 1, T.neonA);
+          sideX(ctx, f, x1, gap0 + 2, gap1 - 2, DOOR_H - vis, DOOR_H - 2, hexA(mix(T.neonA, '#000000', 0.6), 0.75));
+          sideX(ctx, f, x1, gap0 + 2, gap1 - 2, DOOR_H - vis, DOOR_H - vis + 1, T.neonA);
         }
       },
     },
@@ -196,90 +197,157 @@ export function stool(ctx, x, y, seat = '#ff3d9a', leg = '#8a86a6') {
 
 export { glow, neon, text, textWidth, dither, R, P, mix, hexA };
 
-// ── 3D helpers ───────────────────────────────────────────────────────────────
-// Depth steps of 2 = one screen pixel (KX = KY = 0.5), so slants stay crisp.
+// ── isometric helpers ─────────────────────────────────────────────────────────
+// Faces are filled one screen column at a time, so edges stay pixel-crisp.
 
-/** Floor plane x0..x1 (world) between depths z0..z1, tiled in perspective. */
-export function floorPlane(ctx, f, T, x0, x1, kind = 'checker', z0 = 0, z1 = DEPTH) {
-  for (let z = z0; z < z1; z += 2) {
-    const sy = f.yb + z * KY;
-    const shade = 0.32 * (1 - z / DEPTH); // darker toward the back wall
-    const A = mix(T.floorA, '#000000', shade);
-    const B = mix(T.floorB, '#000000', shade);
-    const iz = Math.floor(z / 8);
-    for (let x = x0; x < x1; x += 8) {
-      const ix = Math.floor(x / 8);
-      let a;
-      if (kind === 'checker') a = (ix + iz) & 1;
-      else if (kind === 'planks') a = (z % 8 === 6) || ((x + (iz % 3) * 16) % 48 === 0) ? 0 : 1;
-      else a = (ix + iz) % 4 === 0 ? 0 : 1;
-      R(ctx, x - z * KX, sy, Math.min(8, x1 - x), 1, a ? A : B);
+/** Fill a convex polygon [[sx, sy]…] column by column. clip(sx) → min y. */
+export function quad(ctx, pts, color, clip) {
+  let minx = Infinity;
+  let maxx = -Infinity;
+  for (const [x] of pts) (minx = Math.min(minx, x)), (maxx = Math.max(maxx, x));
+  ctx.fillStyle = color;
+  const n = pts.length;
+  for (let x = Math.round(minx); x < Math.round(maxx); x++) {
+    const cx = x + 0.5;
+    let lo = Infinity;
+    let hi = -Infinity;
+    for (let i = 0; i < n; i++) {
+      const [ax, ay] = pts[i];
+      const [bx, by] = pts[(i + 1) % n];
+      if (ax === bx || cx < Math.min(ax, bx) || cx > Math.max(ax, bx)) continue;
+      const y = ay + ((by - ay) * (cx - ax)) / (bx - ax);
+      lo = Math.min(lo, y);
+      hi = Math.max(hi, y);
     }
+    if (lo > hi) continue;
+    if (clip) lo = Math.max(lo, clip(cx));
+    const y0 = Math.round(lo);
+    const y1 = Math.round(hi);
+    if (y1 > y0) ctx.fillRect(x, y0, 1, y1 - y0);
   }
-  // skirting shadow at the back, polished lip at the front
-  R(ctx, x0, f.yb, x1 - x0, 1, mix(T.floorB, '#000000', 0.5));
-  R(ctx, x0 - (z1 - 2) * KX, f.yb + (z1 - 2) * KY, x1 - x0, 1, T.floorHi);
 }
 
-/** A vertical plane at world x from depth z0..z1, heights h0..h1 (clipped at clipTop). */
-export function vplane(ctx, f, x, z0, z1, h0, h1, color, clipTop = -1e9) {
-  for (let z = z0; z < z1; z += 2) {
-    const base = f.yb + z * KY;
-    const top = Math.max(clipTop, base - h1);
-    const bot = base - h0;
-    if (bot > top) R(ctx, Math.round(x - z * KX), top, 1, bot - top, color);
+/** Vertical face at constant x (a side wall), depths z0..z1, heights h0..h1. */
+export function sideX(ctx, f, x, z0, z1, h0, h1, color, clip) {
+  quad(ctx, [proj(f, x, z0, h0), proj(f, x, z1, h0), proj(f, x, z1, h1), proj(f, x, z0, h1)], color, clip);
+}
+/** Vertical face at constant depth z (a front/back face), x0..x1, heights h0..h1. */
+export function faceZ(ctx, f, z, x0, x1, h0, h1, color, clip) {
+  quad(ctx, [proj(f, x0, z, h0), proj(f, x1, z, h0), proj(f, x1, z, h1), proj(f, x0, z, h1)], color, clip);
+}
+/** Horizontal face at height h. */
+export function top(ctx, f, x0, x1, z0, z1, h, color, clip) {
+  quad(ctx, [proj(f, x0, z0, h), proj(f, x1, z0, h), proj(f, x1, z1, h), proj(f, x0, z1, h)], color, clip);
+}
+/** Old name, kept for callers: a vertical plane at world x. */
+export const vplane = (ctx, f, x, z0, z1, h0, h1, color) => sideX(ctx, f, x, z0, z1, h0, h1, color);
+
+/**
+ * Draw flat pixel art onto a face at constant depth z (the front of a prop,
+ * a sign, a screen). fn(ctx) draws with (0, 0) = the face's top-left at
+ * world (x, z, h); +x runs along the face, +y runs down.
+ */
+const [faceCv, faceCtx] = canvas(320, 160);
+const FM = 40; // margin so art may spill above/left of the face origin
+export function onFace(ctx, f, x, z, h, fn) {
+  // draw flat, then shear with nearest-neighbour sampling (stays crisp)
+  faceCtx.setTransform(1, 0, 0, 1, 0, 0);
+  faceCtx.clearRect(0, 0, faceCv.width, faceCv.height);
+  faceCtx.translate(FM, FM);
+  fn(faceCtx);
+  const [sx, sy] = proj(f, x, z, h);
+  ctx.save();
+  ctx.imageSmoothingEnabled = false;
+  ctx.transform(1, TILT, 0, 1, sx, sy);
+  ctx.drawImage(faceCv, -FM, -FM);
+  ctx.restore();
+}
+
+const rgb = (hex) => {
+  const n = parseInt(hex.slice(1), 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+};
+/** Floor plane x0..x1 between depths z0..z1: isometric tiles, darker toward the back. */
+export function floorPlane(ctx, f, T, x0, x1, kind = 'checker', z0 = 0, z1 = DEPTH) {
+  const c = [proj(f, x0, z0), proj(f, x1, z0), proj(f, x1, z1), proj(f, x0, z1)];
+  const bx0 = Math.floor(Math.min(...c.map((p) => p[0])));
+  const bx1 = Math.ceil(Math.max(...c.map((p) => p[0])));
+  const by0 = Math.floor(Math.min(...c.map((p) => p[1])));
+  const by1 = Math.ceil(Math.max(...c.map((p) => p[1])));
+  const w = bx1 - bx0;
+  const h = by1 - by0;
+  if (w <= 0 || h <= 0) return;
+  const img = ctx.getImageData(bx0, by0, w, h);
+  const d = img.data;
+  const A = rgb(T.floorA);
+  const B = rgb(T.floorB);
+  const Hi = rgb(T.floorHi);
+  for (let py = 0; py < h; py++) {
+    const b = (by0 + py + 0.5 - f.yb) * 2; // x + z
+    for (let px = 0; px < w; px++) {
+      const a = bx0 + px + 0.5 - OX; // x − z
+      const x = (a + b) / 2;
+      const z = (b - a) / 2;
+      if (x < x0 || x >= x1 || z < z0 || z >= z1) continue;
+      const ix = Math.floor(x / 16);
+      const iz = Math.floor(z / 16);
+      let on;
+      if (kind === 'checker') on = (ix + iz) & 1;
+      else if (kind === 'planks') on = z % 8 < 1 || (x + (Math.floor(z / 8) % 3) * 21) % 64 < 1 ? 0 : 1;
+      else on = (ix + iz) % 4 === 0 ? 0 : 1;
+      let col = on ? A : B;
+      if (z1 - z < 1.5 && z1 === DEPTH) col = Hi;
+      const shade = 1 - 0.34 * (1 - z / DEPTH);
+      const k = (py * w + px) * 4;
+      d[k] = col[0] * shade;
+      d[k + 1] = col[1] * shade;
+      d[k + 2] = col[2] * shade;
+      d[k + 3] = 255;
+    }
   }
+  ctx.putImageData(img, bx0, by0);
 }
 
 /** The room's left wall (inner face) — the side you see into. */
 export function leftWall(ctx, f, T, { wainscot = 22 } = {}) {
   const x = f.x0;
-  vplane(ctx, f, x, 0, DEPTH, 0, f.room, mix(T.wallLo, '#000000', 0.15), f.top);
+  const clip = (sx) => ceilY(f, sx);
+  sideX(ctx, f, x, 0, DEPTH, 0, f.room, mix(T.wallLo, '#000000', 0.1), clip);
   if (wainscot) {
-    vplane(ctx, f, x, 0, DEPTH, 0, wainscot, mix(T.wallLo, '#000000', 0.35), f.top);
-    vplane(ctx, f, x, 0, DEPTH, wainscot, wainscot + 2, T.trim, f.top);
+    sideX(ctx, f, x, 0, DEPTH, 0, wainscot, mix(T.wallLo, '#000000', 0.32));
+    sideX(ctx, f, x, 0, DEPTH, wainscot, wainscot + 2, T.trim);
   }
-  for (let z = 14; z < DEPTH; z += 14) vplane(ctx, f, x, z, z + 2, wainscot + 2, f.room, mix(T.wallLo, '#000000', 0.3), f.top);
-  // back corner
-  R(ctx, x, f.top, 1, f.yb - f.top, mix(T.wallLo, '#000000', 0.5));
+  for (let z = 16; z < DEPTH; z += 16) sideX(ctx, f, x, z, z + 2, wainscot + 2, f.room, mix(T.wallLo, '#000000', 0.28), clip);
+  sideX(ctx, f, x, 0, 2, 0, f.room, mix(T.wallLo, '#000000', 0.5), clip); // back corner
 }
 
-/** Cut a doorway into the left wall (shows the street/sky through it). */
+/** Cut a doorway into the left wall (shows the city through it). */
 export function leftOpening(ctx, f, z0, z1, h) {
   ctx.save();
   ctx.globalCompositeOperation = 'destination-out';
-  vplane(ctx, f, f.x0, z0, z1, 0, h, '#000');
+  sideX(ctx, f, f.x0, z0, z1, 0, h, '#000');
   ctx.restore();
 }
 
 /**
- * An extruded box (props, counters, walls). Draws top, front (z = z1) and the
- * right side (x = x1) — the faces this camera sees. hBase lifts the bottom.
- * Returns the front face's top-left corner on screen.
+ * An extruded box (props, counters, walls). Draws the top, the front (z = z1)
+ * and the right side (x = x1): the faces this camera sees. hBase lifts the bottom.
  */
-export function box(ctx, f, x0, x1, z0, z1, h, c, clipTop = -1e9, hBase = 0) {
-  const w = x1 - x0;
-  // top
-  for (let z = z0; z < z1; z += 2) {
-    const sy = f.yb + z * KY - h;
-    if (sy >= clipTop) R(ctx, Math.round(x0 - z * KX), sy, w, 1, c.top);
-  }
-  // right side
-  vplane(ctx, f, x1, z0, z1, hBase, h, c.side, clipTop);
-  // front
-  const fx = Math.round(x0 - z1 * KX);
-  const fb = f.yb + z1 * KY - hBase;
-  const ft = Math.max(clipTop, f.yb + z1 * KY - h);
-  R(ctx, fx, ft, w, fb - ft, c.front);
-  if (c.line) R(ctx, fx, ft, w, 1, c.line);
-  return [fx, f.yb + z1 * KY - h];
+export function box(ctx, f, x0, x1, z0, z1, h, c, clip, hBase = 0) {
+  top(ctx, f, x0, x1, z0, z1, h, c.top, clip);
+  sideX(ctx, f, x1, z0, z1, hBase, h, c.side, clip);
+  faceZ(ctx, f, z1, x0, x1, hBase, h, c.front, clip);
+  if (c.line) faceZ(ctx, f, z1, x0, x1, h - 1, h, c.line, clip);
 }
 
 /** Pre-render a prop to a sprite so it can be depth-sorted cheaply each frame. */
 export function bake(f, x0, x1, z0, z1, h, paint) {
-  const sx0 = Math.floor(x0 - z1 * KX) - 2;
-  const sy0 = Math.floor(f.yb - h) - 40;
-  const [cv, c] = canvas(Math.ceil(x1 - z0 * KX - sx0) + 4, Math.ceil(f.yb + z1 * KY - sy0) + 2);
+  const pts = [proj(f, x0, z1, 0), proj(f, x1, z1, 0), proj(f, x1, z0, h), proj(f, x0, z0, h), proj(f, x0, z1, h), proj(f, x1, z0, 0)];
+  const sx0 = Math.floor(Math.min(...pts.map((p) => p[0]))) - 24;
+  const sy0 = Math.floor(Math.min(...pts.map((p) => p[1]))) - 48;
+  const sx1 = Math.ceil(Math.max(...pts.map((p) => p[0]))) + 24;
+  const sy1 = Math.ceil(Math.max(...pts.map((p) => p[1]))) + 4;
+  const [cv, c] = canvas(sx1 - sx0, sy1 - sy0);
   c.translate(-sx0, -sy0);
   paint(c);
   return (ctx) => ctx.drawImage(cv, sx0, sy0);

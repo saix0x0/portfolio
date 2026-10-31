@@ -230,11 +230,11 @@ register('map', (a, g) => {
   c.drawImage(g.light, 0, 0, cv.width, cv.height);
   c.globalCompositeOperation = 'source-over';
   c.fillStyle = '#3dffb0';
-  c.fillRect(g.player.x * scale - 2, (g.feetY() - 20) * scale, 4, 7);
+  c.fillRect(g.feetX() * scale - 2, (g.feetY() - 20) * scale, 4, 7);
   const list = el.querySelector('.px-map-floors');
   list.innerHTML = [...FLOORS].reverse().map((f) => {
     const ok = g.canStop(f.idx);
-    const top = (f.top * scale / cv.height) * 100;
+    const top = ((f.top + 400) * scale / cv.height) * 100; // the building is diagonal: label near its left third
     const hgt = (f.h * scale / cv.height) * 100;
     return `<button type="button" data-ride="${f.id}" class="${ok ? '' : 'locked'} ${f.idx === g.player.floor ? 'here' : ''}" style="top:${top}%;height:${hgt}%"><b>${esc(f.n)}</b> ${esc(f.id === 'basement' && !ok ? '???' : f.name)}</button>`;
   }).join('');

@@ -9,9 +9,9 @@ import { R, P, text, textWidth, hexA } from './gfx.js';
 import { City, SKYVIEWS } from './city.js';
 import { buildHotel } from './hotel.js';
 import { drawPerson, drawBot, LOOKS } from './actors.js';
-import { W, H, IN_L, IN_R, ELV_X0, ELV_X1, ELV_CX, FLOORS, floorById, KX, KY, DX, DY, Z_MIN, Z_MAX, LANE, SHAFT_Z, GAP0, GAP1, DEPTH, SLAB } from './layout.js';
+import { IW, IH, IN_L, IN_R, ELV_X0, ELV_X1, ELV_CX, FLOORS, floorById, WALL, TILT, OX, FD, Z_MIN, Z_MAX, LANE, SHAFT_Z, GAP0, GAP1, DEPTH, SLAB, proj, unproj, ceilY } from './layout.js';
 import { openPanel, closePanel, panelOpen, registerGame } from './panels.js';
-import { wallPieces, vplane } from './kit.js';
+import { wallPieces, sideX, faceZ, top, onFace } from './kit.js';
 import { THEMES } from './themes.js';
 
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -77,7 +77,7 @@ export class Game {
 
   // ── setup ──────────────────────────────────────────────────────────────────
   resize() {
-    const s = Math.max(2, Math.min(8, Math.floor(Math.min(innerHeight / 250, innerWidth / 300))));
+    const s = Math.max(2, Math.min(8, Math.floor(Math.min(innerHeight / 320, innerWidth / 400))));
     this.scale = s;
     this.vw = Math.ceil(innerWidth / s);
     this.vh = Math.ceil(innerHeight / s);
@@ -116,11 +116,22 @@ export class Game {
       if (panelOpen()) return;
       const sx = this.cam.x + e.clientX / this.scale;
       const sy = this.cam.y + e.clientY / this.scale;
-      const f = FLOORS.find((fl) => sy <= fl.front + 2 && sy >= fl.top - 4);
-      if (!f) return;
-      // project the click onto the floor plane (a click on the back wall → near the wall)
-      const z = sy >= f.yb ? Math.max(Z_MIN, Math.min(Z_MAX, (sy - f.yb) / KY)) : 20;
-      const wx = sx + (sy >= f.yb ? z : 0) * KX;
+      // project the click onto a floor plane; failing that, onto a back wall (→ walk up to it)
+      let f = null;
+      let wx = 0;
+      let z = 20;
+      for (const fl of FLOORS) {
+        const [x, zz] = unproj(fl, sx, sy);
+        if (x >= IN_L - 8 && x <= IN_R + 8 && zz >= -2 && zz <= DEPTH + 2) {
+          (f = fl), (wx = x), (z = Math.max(Z_MIN, Math.min(Z_MAX, zz)));
+          break;
+        }
+      }
+      if (!f) {
+        wx = sx - OX;
+        f = FLOORS.find((fl) => sy >= ceilY(fl, sx) && sy <= fl.yb + wx * TILT);
+        if (!f) return;
+      }
       const hit = this.objects.find((o) => o.floor === f.idx && Math.abs(o.x - wx) < 14 && this.objectVisible(o));
       this.travel(f.idx, hit ? hit.x : wx, hit || null, false, hit ? hit.z : z);
     });
@@ -409,23 +420,26 @@ export class Game {
   }
 
   /** Screen position of the player's feet. */
+  /** The floor-like frame the player stands in (the moving car while riding). */
+  base() {
+    const p = this.player;
+    return p.inCar ? { yb: this.car.y } : FLOORS[p.floor];
+  }
   feetX() {
-    return Math.round(this.player.x - this.player.z * KX);
+    return Math.round(proj(this.base(), this.player.x, this.player.z)[0]);
   }
   feetY() {
-    const p = this.player;
-    return Math.round((p.inCar ? this.car.y : FLOORS[p.floor].yb) + p.z * KY);
+    return Math.round(proj(this.base(), this.player.x, this.player.z)[1]);
   }
   camTarget() {
-    const p = this.player;
-    const y = (p.inCar ? this.car.y : FLOORS[p.floor].yb) + DY + SLAB;
-    // tall (phone) screens: lift the room so the touch pad doesn't cover the floor
-    return { x: this.feetX() - this.vw / 2, y: y - this.vh * (this.vh > 320 ? 0.74 : 0.9) };
+    // the room rises up-right of the player: keep them a little left of and below centre
+    const tall = this.vh > this.vw;
+    return { x: this.feetX() - this.vw * 0.45, y: this.feetY() - this.vh * (tall ? 0.6 : 0.66) };
   }
   clampCam(c) {
-    c.x = Math.max(0, Math.min(W - this.vw, c.x));
-    c.y = Math.max(0, Math.min(H - this.vh, c.y));
-    if (this.vw > W) c.x = (W - this.vw) / 2;
+    c.x = Math.max(0, Math.min(IW - this.vw, c.x));
+    c.y = Math.max(0, Math.min(IH - this.vh, c.y));
+    if (this.vw > IW) c.x = (IW - this.vw) / 2;
     return c;
   }
   followCamera(dt) {
@@ -467,9 +481,17 @@ export class Game {
     ctx.translate(-cx, -cy);
     const G = { flags: this.flags, skyColor: SKYVIEWS[this.city.mode] && this.skyColor() };
     const p = this.player;
-    const visible = FLOORS.filter((f) => f.front + SLAB >= cy - 4 && f.top - DY <= cy + vh + 4);
-    // back-wall animation for visible floors
+    // a floor is a diagonal band: check it against the camera's left and right edges
+    const visible = FLOORS.filter((f) => {
+      const wx0 = cx - OX;
+      const wx1 = cx + vw - OX + DEPTH;
+      return f.yb + FD + SLAB + wx1 * TILT >= cy - 8 && f.top - FD + wx0 * TILT <= cy + vh + 8;
+    });
+    // back-wall animation for visible floors (flat art, sheared onto the wall)
+    ctx.save();
+    ctx.transform(...WALL);
     for (const f of visible) this.modules[f.id]?.dyn?.(ctx, f, this.t, G);
+    ctx.restore();
     // the elevator car, then everything in front of the shaft
     this.drawCar(ctx);
     ctx.drawImage(this.front, cx, cy, vw, vh, cx, cy, vw, vh);
@@ -500,9 +522,13 @@ export class Game {
       this.doorOpen[key] += (target - this.doorOpen[key]) * 0.2;
     }
     const people = [];
-    for (const n of this.npcs) if (n.floorIdx === f.idx) people.push({ x: n.x, z: n.z, draw: () => n.draw(ctx, Math.round(n.x - n.z * KX), Math.round(f.yb + n.z * KY)) });
+    const at = (x, z) => proj(f, x, z).map(Math.round);
+    for (const n of this.npcs) if (n.floorIdx === f.idx) people.push({ x: n.x, z: n.z, draw: () => n.draw(ctx, ...at(n.x, n.z)) });
     const g = this.guide;
-    if (g.floor === f.idx) people.push({ x: g.x, z: g.z, draw: () => drawBot(ctx, Math.round(g.x - g.z * KX), Math.round(f.yb + g.z * KY) - 16 + Math.round(Math.sin(this.t * 2) * 2), this.t, '#3dffb0') });
+    if (g.floor === f.idx) people.push({ x: g.x, z: g.z, draw: () => {
+      const [gx, gy] = at(g.x, g.z);
+      drawBot(ctx, gx, gy - 16 + Math.round(Math.sin(this.t * 2) * 2), this.t, '#3dffb0');
+    } });
     if (p.floor === f.idx && !p.inCar) people.push({ x: p.x, z: p.z, draw: () => drawPerson(ctx, this.feetX(), this.feetY(), LOOKS.player, p.facing, p.phase, p.moving) });
     people.sort((a, b) => a.z - b.z);
     // a person goes after every piece of scenery they stand in front of
@@ -518,7 +544,14 @@ export class Game {
     }
     ctx.save();
     ctx.beginPath();
-    ctx.rect(f.x0 - DX - 20, f.top, f.x1 - f.x0 + DX + 40, f.front + SLAB - f.top + 40);
+    // everything above the room's ceiling edge is hidden by the floor above
+    const L = this.cam.x - 4;
+    const Rr = this.cam.x + this.vw + 4;
+    ctx.moveTo(L, ceilY(f, L));
+    ctx.lineTo(Rr, ceilY(f, Rr));
+    ctx.lineTo(Rr, this.cam.y + this.vh + 4);
+    ctx.lineTo(L, this.cam.y + this.vh + 4);
+    ctx.closePath();
     ctx.clip();
     for (const a of tail) a.draw();
     items.forEach((s, i) => {
@@ -532,48 +565,48 @@ export class Game {
   drawCar(ctx) {
     const c = this.car;
     const p = this.player;
-    const y = Math.round(c.y);
-    const cf = { yb: y };
-    const top = FLOORS[FLOORS.length - 1].top;
+    const cf = { yb: Math.round(c.y) };
+    const topF = FLOORS[FLOORS.length - 1];
     const x0 = ELV_X0 + 4;
     const x1 = ELV_X1 - 4;
     const z0 = 4;
     const z1 = SHAFT_Z - 2;
     const h = 46;
     // cable
-    R(ctx, ELV_CX, top, 1, Math.max(0, y - h - top), '#3a3448');
-    // back wall
-    R(ctx, x0 - z0 * KX, y + z0 * KY - h, x1 - x0, h, '#2a1e3a');
-    R(ctx, x0 - z0 * KX, y + z0 * KY - h, x1 - x0, 3, '#d4a64e');
-    R(ctx, x0 - z0 * KX + 4, y + z0 * KY - h + 4, x1 - x0 - 8, 1, '#ffe6b0');
-    // floor indicator
+    const [kx, ky] = proj(cf, ELV_CX, 16, h);
+    const ktop = ceilY(topF, kx);
+    if (ky > ktop) R(ctx, Math.round(kx), Math.round(ktop), 1, Math.round(ky - ktop), '#3a3448');
+    // back wall with the floor indicator
+    faceZ(ctx, cf, z0, x0, x1, 0, h, '#2a1e3a');
+    faceZ(ctx, cf, z0, x0, x1, h - 3, h, '#d4a64e');
     const f = FLOORS[c.floor];
     const dest = c.called != null ? FLOORS[c.called] : f;
-    const ix = Math.round(ELV_CX - z0 * KX);
-    R(ctx, ix - 5, y + z0 * KY - h + 6, 11, 7, '#05040a');
-    text(ctx, c.state === 'moving' ? dest.n : f.n, ix - (f.n.length > 1 ? 3 : 1), y + z0 * KY - h + 7, '#ffb347');
+    onFace(ctx, cf, ELV_CX - 6, z0, h - 6, (g) => {
+      R(g, 0, 0, 12, 7, '#05040a');
+      text(g, c.state === 'moving' ? dest.n : f.n, f.n.length > 1 ? 2 : 4, 1, '#ffb347');
+    });
     // left wall + floor
-    vplane(ctx, cf, x0, z0, z1, 0, h, '#1a1226');
-    for (let z = z0; z < z1; z += 2) R(ctx, Math.round(x0 - z * KX), y + z * KY, x1 - x0, 1, (z / 2) % 2 ? '#3a2a4a' : '#32243f');
-    R(ctx, Math.round(x0 - z1 * KX), y + z1 * KY, x1 - x0, 2, '#d4a64e');
+    sideX(ctx, cf, x0, z0, z1, 0, h, '#1a1226');
+    top(ctx, cf, x0, x1, z0, z1, 0, '#32243f');
+    for (let z = z0 + 6; z < z1; z += 6) top(ctx, cf, x0, x1, z, z + 1, 0, '#3a2a4a');
+    faceZ(ctx, cf, z1, x0, x1, -2, 0, '#d4a64e');
     // rider
     if (p.inCar) drawPerson(ctx, this.feetX(), this.feetY(), LOOKS.player, p.facing, p.phase, p.moving);
-    // roof of the cabin + glass gates (slide up when open)
-    for (let z = z0; z < z1; z += 2) R(ctx, Math.round(x0 - z * KX), y + z * KY - h, x1 - x0, 1, '#1a1226');
+    // cabin roof + glass gates (slide up when open)
+    faceZ(ctx, cf, z1, x0, x1, h - 2, h, '#d4a64e');
     const gate = Math.round(42 * (1 - c.door));
     if (gate > 0) {
-      ctx.fillStyle = 'rgba(160,220,255,0.35)';
-      ctx.fillRect(Math.round(x0 - z1 * KX), y + z1 * KY - gate, x1 - x0, gate);
-      R(ctx, Math.round(x0 - z1 * KX), y + z1 * KY - gate, x1 - x0, 1, '#bfe8ff');
+      faceZ(ctx, cf, z1, x0, x1, 0, gate, 'rgba(160,220,255,0.35)');
+      faceZ(ctx, cf, z1, x0, x1, gate - 1, gate, '#bfe8ff');
     }
-    vplane(ctx, cf, x1, z0, z1, 0, h, 'rgba(160,220,255,0.12)');
+    sideX(ctx, cf, x1, z0, z1, 0, h, 'rgba(160,220,255,0.12)');
   }
 
   drawPrompt(ctx, o) {
     const p = this.player;
     const label = `[E] ${o.verb} · ${o.label}`.toUpperCase();
     const w = textWidth(label) + 8;
-    const ax = o.x != null ? o.x - (o.z ?? p.z) * KX : this.feetX();
+    const ax = o.x != null ? proj(FLOORS[p.floor], o.x, o.z ?? p.z)[0] : this.feetX();
     const x = Math.round(Math.max(this.cam.x + 2, Math.min(this.cam.x + this.vw - w - 2, ax - w / 2)));
     const y = Math.round(this.feetY() - 54 + Math.sin(this.t * 4) * 1);
     R(ctx, x, y, w, 11, 'rgba(10,6,18,0.86)');

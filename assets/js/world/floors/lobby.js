@@ -2,11 +2,12 @@
 //  FLOOR G — GRAND LOBBY  (theme: lobby — plum, gold, magenta + amber neon)
 //  Entrance · lounge with the Skyview window · reception & guide · directory ·
 //  Portfolio kiosk · vending · mailbox · Neon Bar · staff stairs (locked)
-//  3D: wall art is painted once (paint); furniture is depth-sorted (props).
+//  Isometric: wall art is flat (paint, sheared onto the back wall); the rug and
+//  the entrance in the left wall are paintIso; furniture is depth-sorted (props).
 // ─────────────────────────────────────────────────────────────────────────────
 import { THEMES, INK } from '../themes.js';
-import { shell, windowHole, sign, lamp, lightCone, neonPalm, stool, screen, R, P, text, neon, glow, mix, box, bake, vplane, leftOpening } from '../kit.js';
-import { KX, KY } from '../layout.js';
+import { shell, windowHole, sign, lamp, lightCone, neonPalm, stool, screen, R, P, text, neon, glow, mix, box, bake, sideX, top, onFace, leftOpening } from '../kit.js';
+import { proj } from '../layout.js';
 import { drawAndroid, drawBot, Walker, LOOKS } from '../actors.js';
 import { clockIn } from '../../core/sun.js';
 
@@ -17,14 +18,6 @@ export function paint(ctx, f) {
   shell(ctx, f, T, f.x0, f.x1, { panel: 44, wainscot: 26 });
   const y = f.y - 8; // floor surface
 
-  // ── entrance: revolving glass door in the left wall (the street shows through)
-  const E0 = 22;
-  const E1 = 62;
-  leftOpening(ctx, f, E0, E1, 62);
-  vplane(ctx, f, f.x0, E0 - 2, E1 + 2, 62, 66, T.trim);
-  for (const z of [E0 - 2, E1]) vplane(ctx, f, f.x0, z, z + 2, 0, 62, T.trim);
-  vplane(ctx, f, f.x0, (E0 + E1) / 2 - 1, (E0 + E1) / 2 + 1, 0, 62, T.trimLo);
-  vplane(ctx, f, f.x0, E0, E1, 0, 62, 'rgba(160,200,255,0.10)');
   sign(ctx, 'ENTRANCE', f.x0 + 26, f.top + 40, T.neonC, 1);
 
   // ── lounge + Skyview window
@@ -32,8 +25,6 @@ export function paint(ctx, f) {
   const wh = y - 40 - wy;
   windowHole(ctx, X.window0, wy, X.window1 - X.window0, wh, T.trim, 4);
   sign(ctx, 'SKYVIEW', (X.window0 + X.window1) / 2, f.top + 13, T.neonB, 1, false);
-  // lounge rug
-  for (let z = 6; z < 44; z += 2) R(ctx, 128 - z * KX, f.yb + z * KY, 262, 1, z < 8 || z > 40 ? T.trim : (z / 2) % 4 ? '#3a1440' : '#461a4c');
   R(ctx, X.window0 - 6, y - 38, X.window1 - X.window0 + 12, 4, T.trimLo); // sill
 
   // ── reception wall: wood panel + big neon logo
@@ -93,6 +84,31 @@ export function paint(ctx, f) {
   text(ctx, 'STAFF', X.stairs - 9, y - 54, '#8a6a9a');
 }
 
+/** Drawn isometrically, after the floor and left wall. */
+export function paintIso(ctx, f) {
+  // entrance: revolving glass door in the left wall (the city shows through)
+  const E0 = 30;
+  const E1 = 74;
+  leftOpening(ctx, f, E0, E1, 62);
+  sideX(ctx, f, f.x0, E0 - 2, E1 + 2, 62, 66, T.trim);
+  for (const z of [E0 - 2, E1]) sideX(ctx, f, f.x0, z, z + 2, 0, 62, T.trim);
+  sideX(ctx, f, f.x0, (E0 + E1) / 2 - 1, (E0 + E1) / 2 + 1, 0, 62, T.trimLo);
+  sideX(ctx, f, f.x0, E0, E1, 0, 62, 'rgba(160,200,255,0.10)');
+  // lounge rug with a gold border
+  top(ctx, f, 124, 392, 4, 48, 0, T.trim);
+  top(ctx, f, 126, 390, 6, 46, 0, '#3a1440');
+  for (let z = 10; z < 44; z += 8) top(ctx, f, 130, 386, z, z + 2, 0, '#461a4c');
+}
+
+export function lightsIso(l, f) {
+  const at = (x, z, h) => proj(f, x, z, h);
+  glow(l, ...at(X.vending, 16, 30), 30, T.neonA, 0.25);
+  glow(l, ...at(X.kiosk, 32, 42), 18, T.neonC, 0.3);
+  glow(l, ...at(X.console, 38, 30), 14, T.neonB, 0.3);
+  glow(l, ...at(X.bar0 + 140, 32, 12), 90, T.neonC, 0.08);
+  glow(l, ...at(f.x0, 52, 30), 34, '#7a5aff', 0.14);
+}
+
 export function lights(l, f) {
   const y = f.y - 8;
   for (const cx of [170, 360]) lightCone(l, cx, f.top + 24, f, T.light, 6, 60, 0.08);
@@ -103,14 +119,8 @@ export function lights(l, f) {
   glow(l, 572, f.top + 40, 90, T.neonA, 0.18);
   glow(l, 1196, f.top + 30, 70, T.neonA, 0.16);
   glow(l, (X.window0 + X.window1) / 2, f.top + 80, 160, '#7a5aff', 0.07);
-  const at = (x, z, h) => [x - z * KX, y + z * KY - h];
-  glow(l, ...at(X.vending, 16, 30), 30, T.neonA, 0.25);
-  glow(l, ...at(X.kiosk, 32, 42), 18, T.neonC, 0.3);
-  glow(l, ...at(X.console, 38, 30), 14, T.neonB, 0.3);
-  glow(l, ...at(X.bar0 + 120, 32, 12), 90, T.neonC, 0.08);
   for (let x = 1100; x < 1300; x += 50) lightCone(l, x, f.top + 12, f, '#ff6ab4', 6, 40, 0.07);
   glow(l, f.x0 + 26, f.top + 42, 24, T.neonC, 0.25);
-  glow(l, f.x0 - 14, y + 4, 30, '#7a5aff', 0.12);
 }
 
 export function dyn(ctx, f, t, G) {
@@ -129,130 +139,135 @@ export function dyn(ctx, f, t, G) {
 
 // ── furniture (3D, depth-sorted) ─────────────────────────────────────────────
 const SOFA = { top: '#b02a72', front: '#8a1e5a', side: '#6a1446', line: '#c84a8a' };
+const ARM = { ...SOFA, top: '#c84a8a' };
 const sofa3d = (c, f, x0, x1) => {
-  box(c, f, x0, x1, 4, 9, 26, SOFA); // backrest
-  box(c, f, x0, x1, 9, 18, 11, SOFA); // seat
-  for (const ax of [x0 - 5, x1 - 1]) box(c, f, ax, ax + 6, 4, 18, 16, { ...SOFA, top: '#c84a8a' });
-  R(c, Math.round(x0 - 18 * KX), f.yb + 18 * KY - 2, x1 - x0, 2, INK);
+  box(c, f, x0, x1, 4, 10, 26, SOFA); // backrest
+  box(c, f, x0, x1, 10, 20, 11, SOFA); // seat
+  for (const ax of [x0 - 5, x1 - 1]) box(c, f, ax, ax + 6, 4, 20, 16, ARM);
 };
 
 export function props(f) {
-  const yb = f.yb;
-  const at = (x, z) => [Math.round(x - z * KX), Math.round(yb + z * KY)];
+  const at = (x, z, h = 0) => proj(f, x, z, h).map(Math.round);
   /** A baked box-ish prop: footprint + painter, optional per-frame overlay. */
   const prop = (x0, x1, z0, z1, h, paint, live, solid = true) => {
     const img = bake(f, x0, x1, z0, z1, h, paint);
     return { x0, x1, z0, z1, solid, draw: (ctx, t, G) => (img(ctx), live?.(ctx, t, G)) };
   };
-  const point = (x, z, draw, w = 4) => ({ x0: x - w, x1: x + w, z0: z - 2, z1: z + 2, solid: w > 0, draw });
-  const palm = (x, z, frond) => prop(x - 7, x + 7, z - 3, z + 3, 40, (c) => neonPalm(c, ...at(x, z), frond));
+  const point = (x, z, draw) => ({ x0: x, x1: x, z0: z, z1: z, solid: false, draw });
+  const palm = (x, z, frond) => prop(x - 7, x + 7, z - 3, z + 3, 70, (c) => neonPalm(c, ...at(x, z), frond));
 
   return [
     // lounge
     palm(108, 8),
     palm(424, 8, '#ff6ab4'),
-    prop(135, 216, 4, 18, 26, (c) => sofa3d(c, f, 140, 210)),
-    prop(311, 378, 4, 18, 26, (c) => sofa3d(c, f, 316, 372)),
-    prop(218, 246, 26, 34, 14, (c) => {
-      for (const [lx, lz] of [[220, 32], [243, 32], [220, 28], [243, 28]]) vplane(c, f, lx, lz, lz + 2, 0, 12, T.trim);
-      box(c, f, 218, 246, 26, 34, 14, { top: '#d8c8f0', front: '#a898c8', side: '#8878a8' }, -1e9, 12);
-      R(c, ...at(230, 30).map((v, i) => v - [0, 18][i]), 3, 4, '#29f0ff'); // drink
+    prop(135, 216, 4, 20, 26, (c) => sofa3d(c, f, 140, 210)),
+    prop(311, 378, 4, 20, 26, (c) => sofa3d(c, f, 316, 372)),
+    prop(218, 246, 26, 36, 14, (c) => {
+      for (const [lx, lz] of [[219, 34], [244, 34], [219, 27], [244, 27]]) box(c, f, lx, lx + 1, lz, lz + 1, 12, { top: T.trim, front: T.trim, side: T.trimLo });
+      box(c, f, 218, 246, 26, 36, 14, { top: '#d8c8f0', front: '#a898c8', side: '#8878a8' }, null, 12);
+      box(c, f, 229, 232, 30, 32, 19, { top: '#9ff8ff', front: '#29f0ff', side: '#1ab0c0' }, null, 14); // drink
     }),
     // Skyview console pedestal (screen is live)
-    prop(256, 268, 32, 38, 22, (c) => {
-      const [fx, fy] = box(c, f, 256, 268, 32, 38, 22, { top: T.trim, front: '#1c0c24', side: '#140818', line: T.trim });
-      screen(c, fx - 2, fy - 14, 16, 10, '#2a1a34', false);
-    }, (ctx, t, G) => {
-      const [fx, fy] = at(256, 38);
-      const sx = fx - 2;
-      const sy = fy - 22 - 14;
-      R(ctx, sx, sy, 16, 10, '#1a0c20');
-      const c = G.skyColor || T.neonB;
-      R(ctx, sx + 2, sy + 2 + Math.round(Math.sin(t * 2)), 12, 2, c);
-      R(ctx, sx + 2, sy + 6, Math.round(6 + Math.sin(t * 3) * 5), 2, c);
-    }),
+    prop(256, 268, 32, 38, 36, (c) => {
+      box(c, f, 256, 268, 32, 38, 22, { top: T.trim, front: '#1c0c24', side: '#140818', line: T.trim });
+      onFace(c, f, 254, 38, 36, (g) => screen(g, 0, 0, 16, 10, '#2a1a34', false));
+    }, (ctx, t, G) => onFace(ctx, f, 254, 38, 36, (g) => {
+      R(g, 0, 0, 16, 10, '#1a0c20');
+      const col = G.skyColor || T.neonB;
+      R(g, 2, 2 + Math.round(Math.sin(t * 2)), 12, 2, col);
+      R(g, 2, 6, Math.round(6 + Math.sin(t * 3) * 5), 2, col);
+    })),
     // receptionist android, behind the desk
-    point(X.android, 12, (ctx, t) => drawAndroid(ctx, ...at(X.android, 12).map((v, i) => v - [0, 12][i]), t), 0),
+    point(X.android, 12, (ctx, t) => {
+      const [x, y] = at(X.android, 12);
+      drawAndroid(ctx, x, y - 12, t);
+    }),
     // reception desk
-    prop(X.desk0, X.desk1, 24, 38, 30, (c) => {
-      const [fx, fy] = box(c, f, X.desk0, X.desk1, 24, 38, 30, { top: '#e8d8e8', front: '#2a1018', side: '#1e0a12', line: T.trim });
+    prop(X.desk0, X.desk1, 24, 40, 30, (c) => {
+      box(c, f, X.desk0, X.desk1, 24, 40, 30, { top: '#e8d8e8', front: '#2a1018', side: '#1e0a12', line: T.trim });
       const w = X.desk1 - X.desk0;
-      R(c, fx, fy + 1, w, 1, T.trim);
-      R(c, fx + 4, fy + 8, w - 8, 2, T.neonA);
-      for (let x = fx + 14; x < fx + w - 8; x += 30) R(c, x, fy + 12, 2, 14, T.trimLo);
-      const [bx, by] = at(498, 30);
-      R(c, bx, by - 34, 6, 4, T.trim); // bell
-      P(c, bx + 3, by - 35, T.trim);
+      onFace(c, f, X.desk0, 40, 30, (g) => {
+        R(g, 0, 1, w, 1, T.trim);
+        R(g, 4, 8, w - 8, 2, T.neonA);
+        for (let x = 14; x < w - 8; x += 30) R(g, x, 12, 2, 14, T.trimLo);
+      });
+      box(c, f, 496, 502, 30, 34, 34, { top: '#ffe6b0', front: T.trim, side: T.trimLo }, null, 30); // bell
     }),
     // portfolio kiosk (screen is live)
-    prop(X.kiosk - 4, X.kiosk + 4, 26, 32, 30, (c) => {
-      const [fx, fy] = box(c, f, X.kiosk - 4, X.kiosk + 4, 26, 32, 30, { top: T.trim, front: '#1c0c24', side: '#140818' });
-      R(c, fx - 4, fy + 28, 16, 2, T.trim);
-      screen(c, fx - 7, fy - 20, 22, 18, '#2a1a34', false);
-    }, (ctx, t) => {
-      const [fx, fy] = at(X.kiosk - 4, 32);
-      const sx = fx - 7;
-      const sy = fy - 30 - 20;
-      R(ctx, sx, sy, 22, 18, '#140a30');
-      text(ctx, 'PORT', sx + 3, sy + 3, T.neonC);
-      text(ctx, 'FOLIO', sx + 1, sy + 10, T.neonC);
-      R(ctx, sx, sy + ((t * 20) % 18), 22, 1, 'rgba(41,240,255,0.35)');
-    }),
+    prop(X.kiosk - 4, X.kiosk + 4, 26, 32, 52, (c) => {
+      box(c, f, X.kiosk - 4, X.kiosk + 4, 26, 32, 30, { top: T.trim, front: '#1c0c24', side: '#140818' });
+      top(c, f, X.kiosk - 8, X.kiosk + 8, 24, 34, 0, T.trim);
+      onFace(c, f, X.kiosk - 11, 32, 50, (g) => screen(g, 0, 0, 22, 18, '#2a1a34', false));
+    }, (ctx, t) => onFace(ctx, f, X.kiosk - 11, 32, 50, (g) => {
+      R(g, 0, 0, 22, 18, '#140a30');
+      text(g, 'PORT', 3, 3, T.neonC);
+      text(g, 'FOLIO', 1, 10, T.neonC);
+      R(g, 0, (t * 20) % 18, 22, 1, 'rgba(41,240,255,0.35)');
+    })),
     // vending machine
-    prop(X.vending - 12, X.vending + 12, 2, 16, 58, (c) => {
-      const [fx, fy] = box(c, f, X.vending - 12, X.vending + 12, 2, 16, 58, { top: '#5a1a40', front: '#3a0e2a', side: '#2a0820', line: T.neonA });
-      R(c, fx + 3, fy + 6, 14, 34, '#0a0410');
-      for (let r = 0; r < 4; r++) for (let k = 0; k < 3; k++) R(c, fx + 4 + k * 5, fy + 8 + r * 8, 3, 5, ['#29f0ff', '#ffb347', '#a6ff6b', '#ff3d9a'][(r + k) % 4]);
-      R(c, fx + 19, fy + 14, 3, 8, '#120812');
-      R(c, fx + 3, fy + 44, 14, 5, '#120812');
-      text(c, 'POP', fx + 7, fy - 7, T.neonC);
+    prop(X.vending - 12, X.vending + 12, 2, 16, 70, (c) => {
+      box(c, f, X.vending - 12, X.vending + 12, 2, 16, 58, { top: '#5a1a40', front: '#3a0e2a', side: '#2a0820', line: T.neonA });
+      onFace(c, f, X.vending - 12, 16, 58, (g) => {
+        R(g, 3, 6, 14, 34, '#0a0410');
+        for (let r = 0; r < 4; r++) for (let k = 0; k < 3; k++) R(g, 4 + k * 5, 8 + r * 8, 3, 5, ['#29f0ff', '#ffb347', '#a6ff6b', '#ff3d9a'][(r + k) % 4]);
+        R(g, 19, 14, 3, 8, '#120812');
+        R(g, 3, 44, 14, 5, '#120812');
+        text(g, 'POP', 7, -7, T.neonC);
+      });
     }),
     // mailbox
-    prop(X.mailbox - 6, X.mailbox + 6, 28, 36, 34, (c) => {
-      const [fx, fy] = box(c, f, X.mailbox - 6, X.mailbox + 6, 28, 36, 34, { top: '#d8407e', front: '#b02a72', side: '#8a1e5a', line: '#ff6ab4' });
-      R(c, fx + 2, fy + 8, 8, 2, INK);
-      text(c, 'MAIL', fx - 1, fy - 8, T.neonA);
+    prop(X.mailbox - 6, X.mailbox + 6, 28, 36, 44, (c) => {
+      box(c, f, X.mailbox - 6, X.mailbox + 6, 28, 36, 34, { top: '#d8407e', front: '#b02a72', side: '#8a1e5a', line: '#ff6ab4' });
+      onFace(c, f, X.mailbox - 6, 36, 34, (g) => {
+        R(g, 2, 8, 8, 2, INK);
+        text(g, 'MAIL', -1, -8, T.neonA);
+      });
     }),
     // bartender bot, behind the counter
-    point(X.bartender, 8, (ctx, t) => drawBot(ctx, ...at(X.bartender, 8).map((v, i) => v - [0, 24][i]), t, T.neonA), 0),
+    point(X.bartender, 8, (ctx, t) => {
+      const [x, y] = at(X.bartender, 8);
+      drawBot(ctx, x, y - 24, t, T.neonA);
+    }),
     // bar counter
     prop(X.bar0 + 20, X.bar1, 18, 32, 26, (c) => {
-      const [fx, fy] = box(c, f, X.bar0 + 20, X.bar1, 18, 32, 26, { top: '#4a1a3a', front: '#2a0e24', side: '#1e0a1a', line: '#6a2a5a' });
-      R(c, fx, fy + 14, X.bar1 - X.bar0 - 20, 2, T.neonC);
-      for (let x = fx + 10; x < fx + X.bar1 - X.bar0 - 24; x += 26) R(c, x, fy + 18, 12, 6, '#22081c');
+      box(c, f, X.bar0 + 20, X.bar1, 18, 32, 26, { top: '#4a1a3a', front: '#2a0e24', side: '#1e0a1a', line: '#6a2a5a' });
+      const w = X.bar1 - X.bar0 - 20;
+      onFace(c, f, X.bar0 + 20, 32, 26, (g) => {
+        R(g, 0, 14, w, 2, T.neonC);
+        for (let x = 10; x < w - 4; x += 26) R(g, x, 18, 12, 6, '#22081c');
+      });
     }),
     // stools in front of the bar
     ...[1100, 1140, 1180, 1220, 1260, 1300].map((x) => prop(x - 4, x + 5, 38, 42, 18, (c) => stool(c, ...at(x, 40)))),
     // jukebox (lights are live)
     prop(X.jukebox - 12, X.jukebox + 12, 2, 14, 52, (c) => {
-      const [fx, fy] = box(c, f, X.jukebox - 12, X.jukebox + 12, 2, 14, 46, { top: '#6a2a5a', front: '#4a1a3a', side: '#3a1030' });
-      box(c, f, X.jukebox - 12, X.jukebox + 12, 2, 14, 52, { top: '#8a3a7a', front: '#6a2a5a', side: '#4a1a40' }, -1e9, 46);
-      R(c, fx + 4, fy + 6, 16, 14, '#0a0410');
-    }, (ctx, t, G) => {
-      const [fx, fy] = at(X.jukebox - 12, 14);
+      box(c, f, X.jukebox - 12, X.jukebox + 12, 2, 14, 46, { top: '#6a2a5a', front: '#4a1a3a', side: '#3a1030' });
+      box(c, f, X.jukebox - 12, X.jukebox + 12, 2, 14, 52, { top: '#8a3a7a', front: '#6a2a5a', side: '#4a1a40' }, null, 46);
+      onFace(c, f, X.jukebox - 12, 14, 46, (g) => R(g, 4, 6, 16, 14, '#0a0410'));
+    }, (ctx, t, G) => onFace(ctx, f, X.jukebox - 12, 14, 46, (g) => {
       const disco = G.flags?.disco;
       for (let i = 0; i < 6; i++) {
         const on = Math.sin(t * (disco ? 9 : 3) + i) > 0;
-        R(ctx, fx + 4 + i * 3, fy - 40 + (i % 2) * 6, 2, 8, on ? ['#29f0ff', '#ff3d9a', '#ffb347'][i % 3] : '#2a1030');
+        R(g, 4 + i * 3, 6 + (i % 2) * 6, 2, 8, on ? ['#29f0ff', '#ff3d9a', '#ffb347'][i % 3] : '#2a1030');
       }
-    }),
+    })),
   ];
 }
 
 export function npcs(f) {
   return [
-    new Walker({ id: 'guest-a', name: 'Hotel guest', look: LOOKS.guestA, floor: f.id, x: 300, z: 58, min: 130, max: 420, lines: ['The Skyview window is the best seat in the hotel. Try the console under it.', 'I come here for the sunsets. Even the fake ones.'] }),
-    new Walker({ id: 'guest-c', name: 'Night-shift courier', look: LOOKS.guestC, floor: f.id, x: 900, z: 60, min: 830, max: 1040, lines: ['Messages go up to the Communications Lounge — first floor.', 'Heard there are floors that aren’t on the directory…'] }),
-    new Walker({ id: 'guest-b', name: 'Regular at the bar', look: LOOKS.guestB, floor: f.id, x: 1240, z: 62, min: 1100, max: 1420, lines: ['The bartender says the Gallery has a painting that doesn’t hang straight.', 'Penthouse? Owner only. Keypad by the elevator, they say.'] }),
+    new Walker({ id: 'guest-a', name: 'Hotel guest', look: LOOKS.guestA, floor: f.id, x: 300, z: 68, min: 130, max: 420, lines: ['The Skyview window is the best seat in the hotel. Try the console under it.', 'I come here for the sunsets. Even the fake ones.'] }),
+    new Walker({ id: 'guest-c', name: 'Night-shift courier', look: LOOKS.guestC, floor: f.id, x: 900, z: 70, min: 830, max: 1040, lines: ['Messages go up to the Communications Lounge — first floor.', 'Heard there are floors that aren’t on the directory…'] }),
+    new Walker({ id: 'guest-b', name: 'Regular at the bar', look: LOOKS.guestB, floor: f.id, x: 1240, z: 72, min: 1100, max: 1420, lines: ['The bartender says the Gallery has a painting that doesn’t hang straight.', 'Penthouse? Owner only. Keypad by the elevator, they say.'] }),
   ];
 }
 
 export function objects(f) {
   return [
-    { id: 'entrance', x: X.entrance, z: 42, label: 'Entrance', verb: 'Inspect', panel: 'exit' },
-    { id: 'skyview', x: X.console, z: 46, label: 'Skyview console', verb: 'Use', panel: 'skyview' },
-    { id: 'guide', x: X.guide, z: 54, label: 'Nova, your guide', verb: 'Talk', panel: 'guide' },
-    { id: 'reception', x: X.android, z: 50, label: 'Reception', verb: 'Talk', panel: 'intro' },
+    { id: 'entrance', x: X.entrance, z: 52, label: 'Entrance', verb: 'Inspect', panel: 'exit' },
+    { id: 'skyview', x: X.console, z: 48, label: 'Skyview console', verb: 'Use', panel: 'skyview' },
+    { id: 'guide', x: X.guide, z: 62, label: 'Nova, your guide', verb: 'Talk', panel: 'guide' },
+    { id: 'reception', x: X.android, z: 54, label: 'Reception', verb: 'Talk', panel: 'intro' },
     { id: 'directory', x: X.directory, z: 18, label: 'Hotel directory', verb: 'Read', panel: 'directory' },
     { id: 'kiosk', x: X.kiosk, z: 40, label: 'Portfolio mode', verb: 'Use', panel: 'portfolio' },
     { id: 'vending', x: X.vending, z: 24, label: 'Vending machine', verb: 'Use', panel: 'vending' },

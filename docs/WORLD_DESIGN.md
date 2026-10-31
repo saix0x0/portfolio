@@ -12,22 +12,22 @@ It is **not** a floor plan, a room selector, a dashboard or a website with a gam
 |---|---|
 | Rendering | Canvas 2D at low internal resolution, integer-scaled, `image-rendering: pixelated`. No smoothing, no blur except the neon glow pass |
 | Pixel scale | 1 world unit = 1 art pixel. Characters ≈ 26 px tall. Standard storey = 128 px (lobby 176, library 144) |
-| Perspective | 3D dollhouse cross-section (oblique projection, see **Projection** below). Floor slabs are 10 px. Rooms show back wall, a visible floor plane, the left side wall and 3D furniture; the front wall is cut away |
+| Perspective | Isometric (2:1) cross-section of the whole building, see **Projection** below. Floor slabs are 10 px. Rooms show the back wall, floor, left side wall and 3D furniture; front and right walls are cut away |
 | Outline | 1 px dark outline (`#0d0716`) on characters and key props |
 | Type | In-world signs use the 3×5 pixel font (`pixelfont.js`). UI panels use Silkscreen (headings) and JetBrains Mono (body) |
 | Exterior | Night city, magenta–violet sky, ringed planet, rain, flying cars, visible through windows and around the building |
 | Controls | WASD or arrow keys walk (W/S = depth) · E interact · M map · Esc close · click/tap to walk · 4-way touch pad on phones |
 | Interaction | Approach an object, see the `[E] VERB · NAME` prompt, get a panel with real content. Nothing decorative pretends to be interactive |
 
-### Projection (3D rooms, since 2026-10-31)
-Every floor is a shallow box seen from the front-right and above. World `(x, z, height)` → screen `(x − z·0.5, f.yb + z·0.5 − height)`, where `z` is depth from the back wall (0) to the cut-away front (`DEPTH` = 80). Constants live in `layout.js`.
-- **Back-wall art keeps its 2D coordinates** (`f.top … f.yb`, with `f.y = f.yb + 8` as before). Wall content never moves when a room becomes 3D.
-- **Floor plane** (`kit.floorPlane`) is tiled in perspective and darkens toward the back. The **left wall** (`kit.leftWall`) is the visible side; the right wall's cut edge hides the last 40 px, so `IN_R` sits 40 px past the old edge.
-- **Furniture** is a floor module's `props(f)`: items `{x0, x1, z0, z1, solid?, draw}` built with `kit.box` (top, front, right faces) and pre-rendered with `kit.bake`. The game depth-sorts props and people every frame. A person is drawn after a prop when they are in front of it (`z ≥ z1`) or to its right (`x ≥ x1`).
-- **Interior walls** come from a module's `doors` and are 3D (`kit.wallPieces`): a doorway at z 34–66 with a glass door that slides up as you approach.
-- **Walking** is on the floor plane, between z 8 and 76. `LANE` (z 54) must stay clear of furniture on every floor, because auto-walk detours through it.
-- **Glass elevator**: the shaft is a box against the back wall (z 0–34). You walk *in front of* it and step in through its front. The `front` canvas re-draws floor and slab strips over the car so it passes behind them.
-- Objects take an approach depth `z` (default 20). Interaction range is ±18 in x and ±30 in depth.
+### Projection: isometric camera (since 2026-10-31)
+A true 2:1 isometric camera, like Floor796. The building runs diagonally across the screen and every floor is a 3D box seen from the front-right and above, with its front and right walls cut away. World `(x, z, height)` → screen `(x − z + OX, f.yb + x/2 + z/2 − height)`, where `x` runs along the building and `z` is depth from the back wall (0) to the cut front (`DEPTH` = 96). Constants and `proj`/`unproj`/`ceilY` live in `layout.js`.
+- **Back-wall art is still painted flat** (`paint`, in the old 2D coordinates `f.top … f.yb`) onto a flat canvas. The builder shears it onto the back walls (`WALL` transform), and the game shears `dyn()` the same way each frame. Wall content never moves.
+- **Isometric layers** are drawn by `hotel.js` and `kit.js`: floor planes (`floorPlane`, iso tiles), the left wall (`leftWall`), slabs and outer walls, the glass shaft, and the roof deck. A module may add `paintIso(ctx, f)` / `lightsIso(l, f)` for things on the floor or side wall (e.g. the Lobby rug and entrance).
+- **Furniture** is a module's `props(f)`: items `{x0, x1, z0, z1, solid?, draw}` built from `kit.box` (top, front, right faces), with flat decals on faces via `kit.onFace`, pre-rendered with `kit.bake`. Props and people are depth-sorted each frame: a person is drawn after a prop when they're in front of it (`z ≥ z1`) or to its right (`x ≥ x1`).
+- **Interior walls** come from `doors` and are 3D (`kit.wallPieces`), with a doorway at z 40–80 and a sliding glass door.
+- **Walking** happens on the floor plane, z 8–90. `LANE` (z 64) must stay clear of furniture on every floor, because auto-walk detours through it.
+- **Glass elevator**: the shaft is a box against the back wall (z 0–36), entered from its front. The `front` canvas redraws floor and slab strips over the car.
+- Each floor's plane covers `FD` = 96 px of screen height per column, so storeys stack by `SLAB + FD + h − 8`. Everything above `ceilY(f, sx)` is hidden by the floor above.
 
 ### Floor bible (permanent identities)
 | Floor | ID | Name | Purpose | Palette & light | Signature props | Status |
@@ -52,5 +52,6 @@ Progress is saved in `localStorage` (`hotel:v1`). The guide's hints follow the c
 The lobby console switches the world outside between **Cyberpunk City · Golden Sunset · Polar Aurora · Deep Space** (`city.js → SKYVIEWS`). Every window shows the same sky.
 
 ## Changelog
+- 2026-10-31 (later): **Isometric camera.** The owner said the oblique view still looked like a 2D game. The whole hotel now uses a true isometric projection: the building runs diagonally, floors stack as 3D boxes, and wall art is sheared onto the walls. A street and earth were added outside the entrance. All floors, objects, NPCs and the key chain are unchanged.
 - 2026-10-31: **3D rooms.** The whole hotel switched to the oblique dollhouse projection (floor planes, left walls, 3D partitions, a 3D elevator shaft, a roof deck). The Lobby is fully converted: sofas, table, Skyview console, reception desk (the android stands behind it), kiosk, vending machine, mailbox, bar counter, stools and jukebox are depth-sorted 3D props. A lounge rug was added, and the entrance moved to the left side wall. Back-wall art and every object, NPC and panel are unchanged. Other floors keep their furniture painted against the back wall until converted.
 - 2026-10-30: World created with the floor plan above (Lobby, Comms, Gallery, Pavilion, Study open; Basement + Penthouse locked).
