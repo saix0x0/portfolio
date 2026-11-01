@@ -1,8 +1,9 @@
 // ─────────────────────────────────────────────────────────────────────────────
 //  THE MONITOR — a browser. Its new-tab wallpaper is the Colosseum at sunset
-//  (the real monitor's wallpaper, redrawn in code). Tabs: projects, academy,
-//  about, the live pit wall and a live window into the hotel. Every tab has a
-//  URL: #browser/<tab>, and a project opens at #browser/p:<id>.
+//  (the real monitor's wallpaper, redrawn in code). Tabs: start here, projects,
+//  GitHub (live), academy, about, the live pit wall and a window into the
+//  hotel. Every tab has a URL: #browser/<tab>; a project opens at
+//  #browser/p:<id> and a repo at #browser/r:<name>. Live GitHub tabs: github.js.
 // ─────────────────────────────────────────────────────────────────────────────
 import { $, $$, esc, href, reducedMotion } from '../core/base.js';
 import { skyArt } from '../core/art.js';
@@ -13,19 +14,23 @@ import { projects, coursework, CATEGORIES, STATUS } from '../../../content/proje
 import { extracurriculars } from '../../../content/extracurriculars.js';
 import { skillGroups, learningNow } from '../../../content/skills.js';
 import { books } from '../../../content/books.js';
+import { gh } from '../core/github.js';
+import { githubPage, fillGithub, repoPage, fillRepo, liveRepo, startPage, fillStart } from './github.js';
 
 const RM = reducedMotion();
 const todo = (s = '') => (/^TODO/.test(String(s)) ? `<span class="todo">${esc(s)}</span>` : esc(s));
 const TABS = [
   { id: 'home', label: 'New tab' },
+  { id: 'start', label: 'Start here', kw: 'recruiter overview summary resume cv hire 60 seconds tour' },
   { id: 'projects', label: 'Projects', kw: 'work portfolio built case studies' },
+  { id: 'github', label: 'GitHub · live', kw: 'code repos repositories commits source open source' },
   { id: 'academy', label: 'Academy', kw: 'college iiit courses coursework research hackathons clubs' },
   { id: 'about', label: 'About', kw: 'bio me skills interests now' },
   { id: 'pitwall', label: 'Pit wall · live', kw: 'f1 formula 1 racing standings results race' },
   { id: 'hotel', label: 'The hotel', kw: 'game pixel play world ducks' },
 ];
 const TILES = [
-  ['projects', 'Projects', '◩'], ['academy', 'Academy', '◎'], ['about', 'About', '☺'], ['pitwall', 'Pit wall', 'F1'],
+  ['start', 'Start here', '→'], ['github', 'GitHub', '⌥'], ['projects', 'Projects', '◩'], ['academy', 'Academy', '◎'], ['about', 'About', '☺'], ['pitwall', 'Pit wall', 'F1'],
   ['hotel', 'Hotel', '▦'], ['library/', 'Library', '❦'], ['lab/', 'Lab', '⚗'], ['compass/', 'Compass', '✣'],
 ];
 
@@ -33,13 +38,13 @@ const TILES = [
 const wallpaper = () => `<div class="rome-wall" aria-hidden="true"><i class="sun"></i>${rome()}</div>`;
 
 const searchBox = (big) => `<form class="omni-search${big ? ' big' : ''}" role="search" data-search>
-  <span aria-hidden="true">⌕</span><input data-q type="search" autocomplete="off" placeholder="Search projects, courses, books, pages…" aria-label="Search the site"><kbd>/</kbd></form>`;
+  <span aria-hidden="true">⌕</span><input data-q type="search" autocomplete="off" placeholder="Search projects, repos, courses, books…" aria-label="Search the site"><kbd>/</kbd></form>`;
 
 // mini version painted on the monitor in the photo (not interactive)
 export function miniMonitor(el) {
   el.innerHTML = `<div class="mini-chrome"><i></i><i></i><i></i><span>sai://home</span></div>
     <div class="mini-nt">${wallpaper()}<div class="mini-mid"><b>Siddhanth</b><span class="mini-q">Search projects, courses, books…</span>
-    <div class="mini-tiles">${TILES.slice(0, 5).map(([, l, g]) => `<span><i>${esc(g)}</i>${esc(l)}</span>`).join('')}</div></div></div>`;
+    <div class="mini-tiles">${TILES.slice(0, 6).map(([, l, g]) => `<span><i>${esc(g)}</i>${esc(l)}</span>`).join('')}</div></div></div>`;
 }
 
 // ── search index ────────────────────────────────────────────────────────────
@@ -55,6 +60,11 @@ function index() {
 }
 function search(form, ctx) {
   const idx = index();
+  // public repos join the index once GitHub answers (cached, so usually instant)
+  gh.repos().then((rs) => {
+    for (const r of rs) if (!projects.some((p) => p.repo === r.name)) idx.push({ t: r.name, s: r.desc, k: 'Repo', go: `browser/r:${r.name}`, x: `${r.lang} ${r.topics.join(' ')}` });
+    for (const i of idx) if (i.k !== 'Repo' && i.go?.startsWith('browser/p:')) { const p = projects.find((x) => `browser/p:${x.id}` === i.go); if (p?.repo) i.x += ` ${p.repo}`; }
+  }).catch(() => {});
   const input = $('[data-q]', form);
   const list = document.createElement('ul');
   list.className = 'omni-res';
@@ -119,7 +129,8 @@ function projectPage(id) {
     <div class="pj-cols">${sec('The problem', p.problem)}${sec('What I built', p.solution)}${sec('My part', p.contribution)}</div>
     ${p.highlights?.length ? `<section><h3>Highlights</h3><ul>${p.highlights.map((h) => `<li>${todo(h)}</li>`).join('')}</ul></section>` : ''}
     <p class="pj-t">${(p.tech || []).map((t) => `<i>${esc(t)}</i>`).join('')}</p>
-    <p class="row">${links.map(([k, u]) => `<a class="btn" href="${esc(u)}" target="_blank" rel="noopener">${esc(k)} ↗</a>`).join('')}<a class="btn ghost" href="${esc(href('work/'))}#p/${esc(p.id)}">Case study in the logbook ↗</a></p></article>`;
+    <p class="row">${links.map(([k, u]) => `<a class="btn" href="${esc(u)}" target="_blank" rel="noopener">${esc(k)} ↗</a>`).join('')}<a class="btn ghost" href="${esc(href('work/'))}#p/${esc(p.id)}">Case study in the logbook ↗</a></p>
+    ${p.repo ? `<section class="live" data-live="${esc(p.repo)}"></section>` : ''}</article>`;
 }
 
 function academyPage() {
@@ -230,15 +241,19 @@ export function browserApp(root, ctx) {
   const view = $('[data-view]', root);
   const show = (sub = 'home') => {
     const [id, arg] = sub.split(':');
-    const tab = id === 'p' ? 'projects' : TABS.some((t) => t.id === id) ? id : 'home';
+    const tab = id === 'p' ? 'projects' : id === 'r' ? 'github' : TABS.some((t) => t.id === id) ? id : 'home';
     $$('[data-tab]', root).forEach((a) => a.setAttribute('aria-selected', String(a.dataset.tab === tab)));
-    $('[data-addr]', root).innerHTML = `<i>☀</i>sai://${esc(id === 'p' ? `projects/${arg}` : tab)}`;
-    view.innerHTML = id === 'p' ? projectPage(arg) : { home, projects: projectsPage, academy: academyPage, about: aboutPage, pitwall: pitwallPage, hotel: hotelPage }[tab]();
+    $('[data-addr]', root).innerHTML = `<i>☀</i>sai://${esc(id === 'p' ? `projects/${arg}` : id === 'r' ? `github/${arg}` : tab)}`;
+    view.innerHTML = id === 'p' ? projectPage(arg) : id === 'r' ? repoPage(arg) : { home, start: startPage, projects: projectsPage, github: githubPage, academy: academyPage, about: aboutPage, pitwall: pitwallPage, hotel: hotelPage }[tab]();
     view.scrollTop = 0;
     view.classList.remove('in');
     requestAnimationFrame(() => view.classList.add('in'));
     const form = $('[data-search]', view);
     if (form) search(form, ctx);
+    if (id === 'p') liveRepo(view);
+    if (id === 'r') fillRepo(view);
+    else if (tab === 'github') fillGithub(view);
+    if (tab === 'start') fillStart(view);
     if (tab === 'pitwall') fillPit(view);
     if (tab === 'hotel') fillHotel(view);
   };

@@ -1,10 +1,12 @@
 // ─────────────────────────────────────────────────────────────────────────────
 //  THE LAPTOP — a terminal for the whole site. Real commands over content/*:
-//  help, whoami, ls, cat, open, projects, skills, f1, lamp, rgb … plus a few
+//  help, whoami, ls, cat, open, projects, repos, git log, skills, f1, lamp …
+//  (repos/git read GitHub live via core/github.js), plus a few
 //  that exist only to be found. Tab completes, ↑/↓ walk the history.
 // ─────────────────────────────────────────────────────────────────────────────
 import { $, esc, href } from '../core/base.js';
 import { f1Live, countdown } from '../core/f1live.js';
+import { gh, USER, ago } from '../core/github.js';
 import { site } from '../../../content/site.js';
 import { desk } from '../../../content/desk.js';
 import { projects, CATEGORIES } from '../../../content/projects.js';
@@ -15,7 +17,7 @@ const PROMPT = '<span class="pr"><b>sai</b>@desk <i>~</i> %</span>';
 const todo = (s = '') => (/^TODO/.test(String(s)) ? `<span class="todo">${esc(s)}</span>` : esc(s));
 const link = (label, to) => `<a href="${to.startsWith('#') ? to : esc(href(to))}">${esc(label)}</a>`;
 const PLACES = {
-  projects: '#browser/projects', academy: '#browser/academy', about: '#browser/about', pitwall: '#browser/pitwall', f1: '#browser/pitwall',
+  start: '#browser/start', github: '#browser/github', repos: '#browser/github', projects: '#browser/projects', academy: '#browser/academy', about: '#browser/about', pitwall: '#browser/pitwall', f1: '#browser/pitwall',
   browser: '#browser', contact: '#contact', uses: '#uses', music: '#music', reading: '#reading',
   hotel: 'hotel/', library: 'library/', lab: 'lab/', compass: 'compass/', journey: 'portfolio/', logbook: 'work/', vault: 'vault/',
 };
@@ -32,6 +34,11 @@ export function miniLaptop(el, still) {
     ['echo "click anything"', 'click anything'],
   ];
   if (still) return (pre.textContent = `% ${script[0][0]}\n${script[0][1]}\n% _`);
+  // the real latest commit joins the loop once GitHub answers
+  gh.repos().then(async (rs) => {
+    const c = rs[0] && (await gh.commits(rs[0].name, 1))[0];
+    if (c) script.splice(2, 0, [`git log -1 ${rs[0].name}`, `${c.sha} ${c.msg.slice(0, 26)}\n${ago(c.date)}`]);
+  }).catch(() => {});
   let i = 0;
   let out = '';
   const type = (cmd, res, k = 0) => {
@@ -59,6 +66,8 @@ export function terminalApp(root, ctx) {
   const input = $('[data-in]', root);
   const hist = [];
   let hi = 0;
+  let repoNames = []; // for Tab after `repo`
+  gh.repos().then((rs) => (repoNames = rs.map((r) => r.name))).catch(() => {});
   const print = (html, cls = '') => {
     const p = document.createElement('div');
     p.className = `ln ${cls}`;
@@ -73,6 +82,7 @@ export function terminalApp(root, ctx) {
     help: () => print(table([
       ['whoami', 'who is this'], ['ls [dir]', 'what’s here (try: ls projects, ls books)'], ['cat &lt;file&gt;', 'read a file (about.md, now.md, contact.md)'],
       ['open &lt;place&gt;', 'projects, academy, about, pitwall, hotel, library, lab, …'], ['projects', 'everything I’ve built'], ['skills', 'the toolbox'],
+      ['repos', 'live: my public GitHub repos'], ['repo &lt;name&gt;', 'one repo: stats, languages, commits'], ['git log [repo]', 'latest commits, live'],
       ['f1', 'live: last race, standings, next race'], ['lamp [colour|off|on]', 'sunset, violet, aurora, rose, ocean'], ['rgb [wave|lamp|stock]', 'keyboard lighting'],
       ['music', 'put the AirPods in'], ['neofetch', 'system info, sort of'], ['clear · history · exit', ''],
     ]) + '<p class="dim">There are a few commands that aren’t listed. You’ll find them.</p>'),
@@ -149,7 +159,43 @@ export function terminalApp(root, ctx) {
     rm: () => print('nice try. this desk is load-bearing.', 'err'),
     vim: () => print('you are now in vim. there is no escape. (type <b>:q</b>)'),
     ':q': () => print('you escaped vim. most people never do. 🏆'),
-    git: (a) => print(a.startsWith('status') ? 'On branch life<br>Your branch is ahead of \'origin/plans\' by 3 side projects.<br>nothing to commit, working tree clean (for once)' : a.startsWith('push') ? 'rejected: the owner said no pushes without asking. good owner.' : 'git: try <b>git status</b>'),
+    repos: async () => {
+      const p = print('asking github…', 'dim');
+      try {
+        const rs = await gh.repos();
+        p.className = 'ln';
+        p.innerHTML = table(rs.map((r) => [link(r.name, `#browser/r:${r.name}`), `${esc(r.lang || '—')}${r.stars ? ` · ★${r.stars}` : ''} · <span class="dim">${esc(ago(r.pushed))}</span>`])) + `<p class="dim">${rs.length} public repos · <b>repo &lt;name&gt;</b> for one · ${link('open the GitHub tab →', '#browser/github')}</p>`;
+      } catch (e) { p.className = 'ln err'; p.innerHTML = `github: ${e.rate ? 'hourly limit reached, try later' : 'no answer'}. <a href="https://github.com/${esc(USER)}" target="_blank" rel="noopener">github.com/${esc(USER)}</a>`; }
+    },
+    repo: async (a) => {
+      if (!a) return print('repo: which one? try <b>repos</b>', 'err');
+      const p = print('asking github…', 'dim');
+      try {
+        const r = await gh.repo(a);
+        if (!r) return (p.className = 'ln err'), (p.innerHTML = `repo: no public repo “${esc(a)}”. try <b>repos</b>`);
+        const l = await gh.languages(r.name).catch(() => ({}));
+        const tot = Object.values(l).reduce((s, v) => s + v, 0) || 1;
+        p.className = 'ln';
+        p.innerHTML = `<b>${esc(r.name)}</b>  <span class="dim">${esc(r.desc)}</span><br>`
+          + table([['languages', Object.entries(l).slice(0, 4).map(([k, v]) => `${esc(k)} ${Math.round((v / tot) * 100)}%`).join(', ') || '—'], ...(r.stars ? [['stars', String(r.stars)]] : []), ['last push', esc(ago(r.pushed))], ['code', `<a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.url.replace('https://', ''))}</a>`], ...(r.home ? [['demo', `<a href="${esc(r.home)}" target="_blank" rel="noopener">${esc(r.home.replace('https://', ''))}</a>`]] : [])])
+          + `<p class="dim"><b>git log ${esc(r.name)}</b> for commits · ${link('read the README →', `#browser/r:${r.name}`)}</p>`;
+      } catch (e) { p.className = 'ln err'; p.textContent = `github: ${e.rate ? 'hourly limit reached, try later' : 'no answer'}`; }
+    },
+    git: async (a) => {
+      if (a.startsWith('log')) {
+        const p = print('asking github…', 'dim');
+        try {
+          const name = a.split(/\s+/)[1] || (await gh.repos())[0]?.name;
+          const cs = await gh.commits(name, 8);
+          p.className = 'ln';
+          p.innerHTML = `<span class="dim">${esc(USER)}/${esc(name)}</span><br>` + cs.map((c) => `<a href="${esc(c.url)}" target="_blank" rel="noopener" class="sha">${esc(c.sha)}</a> ${esc(c.msg)} <span class="dim">(${esc(ago(c.date))})</span>`).join('<br>');
+        } catch (e) { p.className = 'ln err'; p.textContent = `git log: ${e.rate ? 'github’s hourly limit reached, try later' : 'no such repo, or github didn’t answer'}`; }
+        return;
+      }
+      if (a.startsWith('remote')) return print(`origin  https://github.com/${esc(USER)} (fetch)`);
+      return C._git(a);
+    },
+    _git: (a) => print(a.startsWith('status') ? 'On branch life<br>Your branch is ahead of \'origin/plans\' by 3 side projects.<br>nothing to commit, working tree clean (for once)' : a.startsWith('push') ? 'rejected: the owner said no pushes without asking. good owner.' : 'git: try <b>git log</b> or <b>git status</b>'),
     hello: () => print('hello there. <span class="dim">(general kenobi)</span>'),
     coffee: () => print('HTTP 418: I’m a teapot.'),
     ping: () => print('pong'),
@@ -190,7 +236,7 @@ export function terminalApp(root, ctx) {
     if (e.key === 'Tab') {
       e.preventDefault();
       const [cmd, ...rest] = input.value.split(' ');
-      const pool = rest.length ? [...Object.keys(PLACES), ...Object.keys(FILES), ...projects.map((p) => p.id)] : Object.keys(C).filter((k) => !/[^a-z]/.test(k));
+      const pool = cmd === 'repo' ? repoNames : rest.length ? [...Object.keys(PLACES), ...Object.keys(FILES), ...projects.map((p) => p.id)] : Object.keys(C).filter((k) => !/[^a-z]/.test(k));
       const word = rest.length ? rest.join(' ') : cmd;
       const m = pool.filter((k) => k.startsWith(word));
       if (m.length === 1) input.value = rest.length ? `${cmd} ${m[0]}` : `${m[0]} `;

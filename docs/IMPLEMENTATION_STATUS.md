@@ -1,6 +1,20 @@
 # Implementation status
 
-_Last updated: 2026-11-01, the desk front page._
+_Last updated: 2026-11-01, live GitHub on the desk._
+
+## Live GitHub + real projects (2026-11-01)
+`content/projects.js` now holds the owner's five public repos (med-assistant, greeniq, chess-learning-bot "Pawn Coach", mapp "GEDI", ISS tic-tac-toe) plus "This website"; each has a `repo` field. Summaries and highlights come from each repo's own description and README. `site.github = 'saix0x0'`; the GitHub social link is set. Data layer `assets/js/core/github.js` (keyless GitHub REST, localStorage cache 1 h for lists and 6 h for languages/READMEs, serves a stale copy when rate-limited, allow-list README sanitizer). The pages are in `assets/js/desk/github.js`.
+| Feature | How it was verified |
+|---|---|
+| `#browser/start`, "Start here": the 60-second version (tagline, contact and GitHub buttons, best work with open-source first, language mix, recent activity, site map) | Screenshot at 800×600 |
+| `#browser/github`: profile, stats, language bar by bytes across repos, filterable repo list (text + language), recent activity (runs of pushes collapsed) | Screenshots at desktop and 375×812, no overflow |
+| `#browser/r:<repo>`: description, topics, code/demo/project-story buttons, stats, languages, latest commits, the README rendered in place with images and links rewritten to the repo | med-assistant: README sanitized (0 class/id/style/script left), relative screenshots load from raw.githubusercontent |
+| Project pages with a `repo` show a "Live from GitHub" panel; the README opens on demand | greeniq |
+| Terminal: `repos`, `repo <name>` (Tab completes repo names), `git log [repo]`, `git remote`, `open github`/`open start` | Ran by keyboard |
+| Search includes repos; the new tab has Start here and GitHub tiles; the laptop in the photo types the latest real commit | Scripted |
+| Rate limit (60 req/h per visitor IP): stale cache is served; without a cache every panel says the limit is used up and links to GitHub, and the GitHub tab lists the repos from `content/projects.js` | Hit the real limit during testing; commits/README panels showed the message |
+| Not yet verified | Commits panel with fresh data (the limit was used up during testing); the fallback repo list path itself |
+
 
 ## Front page `/`: the desk (new, replaces the scrolling front page)
 The owner's real desk photo (`assets/img/desk.jpg`, both screens blurred in the file so nothing private ships) with live overlays and a hotspot per object. Code: `index.html`, `assets/js/pages/desk.js`, `assets/js/desk/{browser,terminal,bits}.js`, `assets/css/desk.css`; words in `content/desk.js`.
@@ -74,5 +88,5 @@ Search the repo for `TODO`. The main ones: `site.bio`, `site.email`, socials, hi
 - `aurora` typed while focus is on a button still counts. That's harmless.
 
 ## Next recommended task
-**Fill in real content**: bio, 3–5 real projects (start with college ones for `/college/`), email, socials and résumé. Then publish the repo and enable GitHub Pages.
+**Fill in real content**: bio, email, LinkedIn, résumé and the `TODO` gear/editor lines (projects now come from GitHub). Optional: project screenshots via each project's `image`. Then publish the repo and enable GitHub Pages.
 After that, see ROADMAP.md (top item: per-project images/screenshots).

@@ -56,9 +56,13 @@ export const site = {
     web3formsKey: '',
   },
 
+  // Your GitHub username: the desk's browser, terminal and project pages read
+  // your public repos, languages, commits and READMEs live from GitHub.
+  github: 'saix0x0',
+
   socials: [
     // Empty url → hidden. TODO
-    { label: 'GitHub', url: '' },
+    { label: 'GitHub', url: 'https://github.com/saix0x0' },
     { label: 'LinkedIn', url: '' },
     { label: 'X', url: '' },
   ],

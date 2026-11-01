@@ -15,7 +15,7 @@ The personal portfolio of **Sai Siddhanth Challa** (IIIT Hyderabad, CS + Computi
 3. Run `npm run dev` and look at the page in a browser before and after your change.
 
 ## Hard rules
-- **Zero dependencies, zero build step.** Plain ES modules and CSS. Don't add npm packages, frameworks or bundlers without the owner's explicit OK (see the decision log in ARCHITECTURE.md). External scripts are not allowed. Google Fonts and the Open Library / DuckDuckGo image APIs are the only network calls besides the optional Web3Forms POST.
+- **Zero dependencies, zero build step.** Plain ES modules and CSS. Don't add npm packages, frameworks or bundlers without the owner's explicit OK (see the decision log in ARCHITECTURE.md). External scripts are not allowed. Google Fonts, the Open Library / DuckDuckGo image APIs, Jolpica F1 and the public GitHub API (`core/github.js`) are the only network calls besides the optional Web3Forms POST.
 - **Never invent facts** about the owner: projects, awards, skills, metrics, jobs. Use `placeholder: true` or `TODO` and let the owner fill them in.
 - **Never read, print, commit or move `private/`.** It holds plaintext and starter passphrases. Only `*/sealed.json` is public. `npm run check` fails if private text leaks into a public file.
 - Don't describe the private rooms as "secure login". They are client-side encryption, and passphrase strength is the security (ARCHITECTURE.md → Private rooms).

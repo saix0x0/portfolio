@@ -17,7 +17,7 @@ college/ projects/ hire/ books/  → tiny redirect pages (short, shareable URLs)
 ## Routes & deep links
 | URL | Result |
 |---|---|
-| `/` | The desk. `#browser[/projects\|academy\|about\|pitwall\|hotel]`, `#browser/p:<id>`, `#terminal`, `#contact`, `#uses`, `#music`, `#reading` |
+| `/` | The desk. `#browser[/start\|projects\|github\|academy\|about\|pitwall\|hotel]`, `#browser/p:<id>`, `#browser/r:<repo>`, `#terminal`, `#contact`, `#uses`, `#music`, `#reading` |
 | `/hotel/`, `/hotel/#<floor>` | The pixel hotel, optionally starting on an open floor |
 | `/portfolio/#paris` … `#arctic` | The older sunset journey |
 | `/#quick` (any page) | Opens the 60-second version |
@@ -75,3 +75,4 @@ One `<canvas>`, a DPR capped at 1.25–1.5, and one rAF loop that pauses when th
 | Live F1 from Jolpica (`core/f1live.js`), client-side | The owner asked for the latest race results. Public, keyless, CORS-open; cached 20 min in `localStorage`; every view falls back gracefully when offline. No backend. |
 | Front page first, hotel at `/hotel/` (2026-10-31) | The owner wants recruiters to land on a fast professional page, with the game one click away. |
 | The front page is a photo of the owner's real desk (2026-11-01) | The owner's request, and the one exception to "procedural art, no photos". Screens in the stored JPEG are blurred so no private on-screen text ships; everything on the screens is live HTML layered on top. Hotspot coordinates in `pages/desk.js` are tied to this photo. |
+| Live GitHub from the public REST API (`core/github.js`), client-side (2026-11-01) | The owner wants visitors to explore their GitHub. Keyless and CORS-open, so no token ships and there's no backend. The 60-requests-an-hour visitor limit is handled with a localStorage cache, stale-on-error, and static fallbacks from `content/projects.js`. README HTML is rendered by GitHub and then allow-list sanitized before insertion. |
