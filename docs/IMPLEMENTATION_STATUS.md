@@ -1,21 +1,21 @@
 # Implementation status
 
-_Last updated: 2026-10-31, front page + hotel upgrade._
+_Last updated: 2026-11-01, the desk front page._
 
-## Front page `/` (new) and hotel at `/hotel/`
-The professional site now opens first (`index.html`, `assets/js/pages/front.js`, `assets/css/front.css`). The hotel moved to `/hotel/`, and the old journey is still at `/portfolio/`.
+## Front page `/`: the desk (new, replaces the scrolling front page)
+The owner's real desk photo (`assets/img/desk.jpg`, both screens blurred in the file so nothing private ships) with live overlays and a hotspot per object. Code: `index.html`, `assets/js/pages/desk.js`, `assets/js/desk/{browser,terminal,bits}.js`, `assets/css/desk.css`; words in `content/desk.js`.
 | Feature | How it was verified |
 |---|---|
-| Opening construction-line intro (once per session, skipped on any input) | Screenshots |
-| Hero: starfield canvas, golden-ratio geometry, split-word name, pixel buddy with speech bubble | Desktop 1440×900 and 375×812 screenshots |
-| About statement with highlight sweep; torn-paper edges between dark and parchment chapters | Screenshots |
-| Work: giant sticky plate word, then a pinned horizontal rail (desktop ≥961 px) or a swipe rail (phone) | Scripted scroll + screenshots at both sizes |
-| Academy ledger with hover art; Off-screen live Pit Wall card (Jolpica); shelf; doors | Screenshots; live data showed the 2026 US GP result and Mexico City countdown |
-| Hotel window: a live, slowly panning render of the real hotel | Screenshots at both sizes |
-| Contact "Say hello." stroke-fill, reach list (shows "not set yet" until `site.email`/socials are filled) | Screenshots |
-| Header flips to ink when over a parchment chapter | Scripted scroll check (`on-paper` class) |
-| Phone 375 px: no horizontal overflow on `/` or `/hotel/` | Emulated 375×812, `scrollWidth === innerWidth` |
-| Not yet verified | Real-time scroll feel and the pixel-dissolve into the hotel in a visible browser (the test pane is hidden, so rAF, scroll events and IntersectionObserver are throttled); reduced motion toggled in an emulator |
+| Stage scales to cover the window; name on the wall above the monitor; pulsing dots until first interaction | Screenshots at 1440×900 and 375×812 |
+| Live screens projected onto the photo (matrix3d): monitor new-tab page with the Colosseum wallpaper, laptop terminal typing | Screenshots |
+| Lamp: click cycles sunset / violet / aurora / rose / blue (recolours the wall glow); switchboard turns the lamp off; saved per browser | Screenshots of aurora and lights-off |
+| Keyboard + mouse RGB wave (wave / match lamp / stock); keys light up on the photo as you type | Scripted keydowns; screenshot |
+| Monitor → camera flies in → browser app: new tab with search, Projects (+ project pages), Academy, About, live Pit wall, live Hotel window | Every tab opened; search for "coll"; pit wall showed the live US GP result |
+| Laptop → terminal: help, whoami, ls, cat, open, projects, skills, f1, lamp, rgb, neofetch, hidden jokes, tab completion, history | Ran 7 commands by script; `lamp violet` recoloured the room |
+| Keyboard → contact sheet; mouse → uses card; AirPods → synth player (AirPods glow while playing); book → reading card; bottle → sips counter | Each opened and screenshotted |
+| URLs: `#browser[/tab]`, `#browser/p:<id>`, `#terminal`, `#contact`, `#uses`, `#music`, `#reading`; Esc returns to the desk; plain list of objects bottom-left | Scripted |
+| Phone 375 px: drag to look around (drag never triggers a click), chip list, bottom sheets, no horizontal overflow | Emulated 375×812 |
+| Not yet verified | Real-time feel of the camera flights in a visible browser; reduced motion in an emulator (CSS + JS paths exist) |
 
 ## Hotel upgrade (same branch)
 | Feature | How it was verified |

@@ -17,7 +17,7 @@ college/ projects/ hire/ books/  → tiny redirect pages (short, shareable URLs)
 ## Routes & deep links
 | URL | Result |
 |---|---|
-| `/` | Professional front page (`#about`, `#work`, `#academy`, `#offscreen`, `#hotel`, `#contact`) |
+| `/` | The desk. `#browser[/projects\|academy\|about\|pitwall\|hotel]`, `#browser/p:<id>`, `#terminal`, `#contact`, `#uses`, `#music`, `#reading` |
 | `/hotel/`, `/hotel/#<floor>` | The pixel hotel, optionally starting on an open floor |
 | `/portfolio/#paris` … `#arctic` | The older sunset journey |
 | `/#quick` (any page) | Opens the 60-second version |
@@ -74,3 +74,4 @@ One `<canvas>`, a DPR capped at 1.25–1.5, and one rAF loop that pauses when th
 | Content as JS modules | Comments inline, and importable by both the browser and Node (`check.mjs`). |
 | Live F1 from Jolpica (`core/f1live.js`), client-side | The owner asked for the latest race results. Public, keyless, CORS-open; cached 20 min in `localStorage`; every view falls back gracefully when offline. No backend. |
 | Front page first, hotel at `/hotel/` (2026-10-31) | The owner wants recruiters to land on a fast professional page, with the game one click away. |
+| The front page is a photo of the owner's real desk (2026-11-01) | The owner's request, and the one exception to "procedural art, no photos". Screens in the stored JPEG are blurred so no private on-screen text ships; everything on the screens is live HTML layered on top. Hotspot coordinates in `pages/desk.js` are tied to this photo. |
