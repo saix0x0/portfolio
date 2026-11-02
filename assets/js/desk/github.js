@@ -1,7 +1,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 //  THE BROWSER'S LIVE TABS — everything here is read from GitHub at view time
 //  (core/github.js caches it), so new repos and commits show up on their own.
-//   #browser/start      the 60-second tour: who, best work, languages, links
+//   #browser/overview   the one-minute version: who, featured work, languages, links
 //   #browser/github     profile, language mix, activity, every public repo
 //   #browser/r:<repo>   one repo: stats, languages, commits, rendered README
 //  Project pages call liveRepo() to add the same live panel under the story.
@@ -40,8 +40,8 @@ const repoRow = (r) => {
 };
 
 // ── the GitHub tab ──────────────────────────────────────────────────────────
-export const githubPage = () => `<div class="pg ghp"><header class="pg-h"><p class="eyebrow">sai://github · live</p><h2>The <em>code.</em></h2>
-  <p class="lede">Every public repository, straight from GitHub. Open one to read its README and latest commits without leaving the desk.</p></header>
+export const githubPage = () => `<div class="pg ghp"><header class="pg-h"><p class="eyebrow">sai://github</p><h2>Code on <em>GitHub.</em></h2>
+  <p class="lede">Every public repository, live from GitHub. Open one to read its README and latest commits here.</p></header>
   <div data-gh><p class="muted">Fetching github.com/${esc(USER)}…</p></div></div>`;
 
 export async function fillGithub(root) {
@@ -156,30 +156,30 @@ export async function liveRepo(root) {
   } catch (e) { if (box.isConnected) box.innerHTML = offline(why(e)); }
 }
 
-// ── start here: the 60-second version ───────────────────────────────────────
-export function startPage() {
+// ── overview: the one-minute version ────────────────────────────────────────
+export function overviewPage() {
   const feat = projects.filter((p) => p.featured && !p.placeholder).sort((a, b) => !!b.repo - !!a.repo).slice(0, 4); // open-source first
-  const links = [['GitHub', ghUrl], ...site.socials.filter((s) => s.url && !/github/i.test(s.label)).map((s) => [s.label, s.url])];
-  return `<div class="pg start"><header class="pg-h"><p class="eyebrow">sai://start · the 60-second version</p>
+  const links = [...(site.email ? [['Email', `mailto:${site.email}`]] : []), ...site.socials.filter((s) => s.url).map((s) => [s.label, s.url])];
+  return `<div class="pg start"><header class="pg-h"><p class="eyebrow">sai://overview</p>
     <h2>Hi, I’m <em>${esc(site.name)}.</em></h2><p class="big">${esc(site.tagline)}</p>
-    <p class="row"><a class="btn" href="#contact">Get in touch</a>${site.hiring.resume ? `<a class="btn ghost" href="${esc(href(site.hiring.resume))}" download>Résumé ⇩</a>` : ''}${links.map(([l, u]) => `<a class="btn ghost" href="${esc(u)}" target="_blank" rel="noopener">${esc(l)} ↗</a>`).join('')}</p></header>
-    <section class="ac-block"><h3>Best work · start with these</h3><ol class="ledger">${feat.map((p, i) => `<li><a href="#browser/p:${esc(p.id)}"><span class="n">${String(i + 1).padStart(2, '0')}</span><b>${esc(p.title)}</b><span>${esc(p.subtitle || CATEGORIES[p.category]?.label || '')}</span><span class="y">${esc(p.year)}</span></a></li>`).join('')}</ol>
-      <p class="muted small"><a href="#browser/projects">All projects →</a> · <a href="#browser/github">Every repo →</a></p></section>
-    <div class="gh-cols"><section class="ac-block"><h3>What I write code in</h3><div data-start-langs><p class="muted small">Asking GitHub…</p></div></section>
-      <section class="ac-block"><h3>Shipping lately</h3><ul class="feed" data-start-feed><li class="muted small">Loading…</li></ul></section></div>
-    <section class="ac-block"><h3>Find your way around</h3><ul class="start-map">
-      <li><a href="#browser/academy"><b>Academy</b><span>Courses, course projects, hackathons, clubs</span></a></li>
-      <li><a href="#browser/about"><b>About</b><span>Bio, interests, toolbox</span></a></li>
-      <li><a href="#terminal"><b>The laptop</b><span>A real terminal: try <code>repos</code> or <code>help</code></span></a></li>
-      <li><a href="${esc(href('library/'))}"><b>Library</b><span>What I’m reading</span></a></li>
-      <li><a href="${esc(href('hotel/'))}"><b>The hotel</b><span>The same portfolio, as a pixel game</span></a></li>
+    <p class="row"><a class="btn" href="#contact">Contact me</a>${site.hiring.resume ? `<a class="btn ghost" href="${esc(href(site.hiring.resume))}" download>Résumé ⇩</a>` : ''}${links.map(([l, u]) => `<a class="btn ghost" href="${esc(u)}"${u.startsWith('http') ? ' target="_blank" rel="noopener"' : ''}>${esc(l)} ↗</a>`).join('')}</p></header>
+    <section class="ac-block"><h3>Featured projects</h3><ol class="ledger">${feat.map((p, i) => `<li><a href="#browser/p:${esc(p.id)}"><span class="n">${String(i + 1).padStart(2, '0')}</span><b>${esc(p.title)}</b><span>${esc(p.subtitle || CATEGORIES[p.category]?.label || '')}</span><span class="y">${esc(p.year)}</span></a></li>`).join('')}</ol>
+      <p class="muted small"><a href="#browser/projects">All projects →</a> · <a href="#browser/github">All repositories →</a></p></section>
+    <div class="gh-cols"><section class="ac-block"><h3>Languages</h3><div data-start-langs><p class="muted small">Loading from GitHub…</p></div></section>
+      <section class="ac-block"><h3>Recent activity</h3><ul class="feed" data-start-feed><li class="muted small">Loading…</li></ul></section></div>
+    <section class="ac-block"><h3>Explore</h3><ul class="start-map">
+      <li><a href="#browser/projects"><b>Projects</b><span>Hackathon builds and personal work, with code and demos</span></a></li>
+      <li><a href="#browser/github"><b>GitHub</b><span>Every repo, README and recent commit</span></a></li>
+      <li><a href="#browser/about"><b>About</b><span>Education, skills and interests</span></a></li>
+      <li><a href="#terminal"><b>Terminal</b><span>The same site by keyboard: try <code>repos</code></span></a></li>
+      <li><a href="#contact"><b>Contact</b><span>Send me a message</span></a></li>
     </ul></section></div>`;
 }
 
-export function fillStart(root) {
+export function fillOverview(root) {
   const L = $('[data-start-langs]', root);
   const F = $('[data-start-feed]', root);
   if (!L) return;
-  gh.languageTotals().then((p) => L.isConnected && (L.innerHTML = langBar(p, 5) || '')).catch(() => (L.innerHTML = `<p class="muted small">GitHub is resting. <a href="#browser/github">Try the GitHub tab</a>.</p>`));
+  gh.languageTotals().then((p) => L.isConnected && (L.innerHTML = langBar(p, 5) || '')).catch(() => (L.innerHTML = `<p class="muted small"><a href="#browser/github">See the GitHub tab</a>.</p>`));
   gh.events().then((ev) => F.isConnected && (F.innerHTML = feed(ev, 5) || '<li class="muted small">Quiet lately.</li>')).catch(() => (F.innerHTML = `<li class="muted small"><a href="${esc(ghUrl)}" target="_blank" rel="noopener">See activity on GitHub ↗</a></li>`));
 }

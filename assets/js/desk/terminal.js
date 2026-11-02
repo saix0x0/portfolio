@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────────────────────
 //  THE LAPTOP — a terminal for the whole site. Real commands over content/*:
-//  help, whoami, ls, cat, open, projects, repos, git log, skills, f1, lamp …
+//  help, whoami, ls, cat, open, projects, repos, git log, skills, lamp …
 //  (repos/git read GitHub live via core/github.js), plus a few
 //  that exist only to be found. Tab completes, ↑/↓ walk the history.
 // ─────────────────────────────────────────────────────────────────────────────
@@ -11,15 +11,13 @@ import { site } from '../../../content/site.js';
 import { desk } from '../../../content/desk.js';
 import { projects, CATEGORIES } from '../../../content/projects.js';
 import { skillGroups } from '../../../content/skills.js';
-import { books } from '../../../content/books.js';
 
 const PROMPT = '<span class="pr"><b>sai</b>@desk <i>~</i> %</span>';
-const todo = (s = '') => (/^TODO/.test(String(s)) ? `<span class="todo">${esc(s)}</span>` : esc(s));
+const real = (s = '') => !/^TODO/.test(String(s)); // unfinished content never reaches visitors
 const link = (label, to) => `<a href="${to.startsWith('#') ? to : esc(href(to))}">${esc(label)}</a>`;
 const PLACES = {
-  start: '#browser/start', github: '#browser/github', repos: '#browser/github', projects: '#browser/projects', academy: '#browser/academy', about: '#browser/about', pitwall: '#browser/pitwall', f1: '#browser/pitwall',
-  browser: '#browser', contact: '#contact', uses: '#uses', music: '#music', reading: '#reading',
-  hotel: 'hotel/', library: 'library/', lab: 'lab/', compass: 'compass/', journey: 'portfolio/', logbook: 'work/', vault: 'vault/',
+  overview: '#browser/overview', github: '#browser/github', repos: '#browser/github', projects: '#browser/projects', about: '#browser/about',
+  browser: '#browser', contact: '#contact', music: '#music', reading: '#reading', hotel: 'hotel/',
 };
 const FILES = { 'about.md': 'about', 'now.md': 'now', 'contact.md': 'contact', '.secrets': 'secrets' };
 const started = Date.now();
@@ -30,8 +28,7 @@ export function miniLaptop(el, still) {
   const pre = $('[data-mt]', el);
   const script = [
     ['whoami', `${site.fullName}\n${site.degree}\n@ ${site.college}`],
-    ['ls ~/desk', 'monitor  macbook  keyboard\nmouse  airpods  book  lamp'],
-    ['echo "click anything"', 'click anything'],
+    ['ls ~/projects', projects.filter((p) => p.repo).slice(0, 4).map((p) => p.repo).join('\n')],
   ];
   if (still) return (pre.textContent = `% ${script[0][0]}\n${script[0][1]}\n% _`);
   // the real latest commit joins the loop once GitHub answers
@@ -80,25 +77,24 @@ export function terminalApp(root, ctx) {
 
   const C = {
     help: () => print(table([
-      ['whoami', 'who is this'], ['ls [dir]', 'what’s here (try: ls projects, ls books)'], ['cat &lt;file&gt;', 'read a file (about.md, now.md, contact.md)'],
-      ['open &lt;place&gt;', 'projects, academy, about, pitwall, hotel, library, lab, …'], ['projects', 'everything I’ve built'], ['skills', 'the toolbox'],
+      ['whoami', 'who is this'], ['ls [dir]', 'what’s here (try: ls projects)'], ['cat &lt;file&gt;', 'read a file (about.md, now.md, contact.md)'],
+      ['open &lt;place&gt;', 'overview, projects, github, about, contact'], ['projects', 'everything I’ve built'], ['skills', 'the toolbox'],
       ['repos', 'live: my public GitHub repos'], ['repo &lt;name&gt;', 'one repo: stats, languages, commits'], ['git log [repo]', 'latest commits, live'],
-      ['f1', 'live: last race, standings, next race'], ['lamp [colour|off|on]', 'sunset, violet, aurora, rose, ocean'], ['rgb [wave|lamp|stock]', 'keyboard lighting'],
-      ['music', 'put the AirPods in'], ['neofetch', 'system info, sort of'], ['clear · history · exit', ''],
+      ['lamp [colour|off|on]', 'sunset, violet, aurora, rose, ocean'], ['rgb [wave|lamp|stock]', 'keyboard lighting'],
+      ['music', 'open the player'], ['neofetch', 'system info'], ['clear · history · exit', ''],
     ]) + '<p class="dim">There are a few commands that aren’t listed. You’ll find them.</p>'),
     whoami: () => print(`<b>${esc(site.fullName)}</b><br>${esc(site.degree)} · ${esc(site.college)}<br><span class="dim">${esc(site.tagline)}</span>`),
     ls: (a) => {
       if (/^proj/.test(a)) return print(projects.map((p) => link(p.id + '/', `#browser/p:${p.id}`)).join('  '));
-      if (/^book/.test(a)) return print(books.slice(0, 12).map((b) => esc(b.title)).join('<br>') + `<br><span class="dim">… ${books.length} in total. </span>${link('open library', 'library/')}`);
       if (a && !a.startsWith('~') && a !== '.') return print(`ls: ${esc(a)}: No such file or directory`, 'err');
-      print(`<span class="dir">projects/</span>  <span class="dir">academy/</span>  <span class="dir">books/</span>  <span class="dir">hotel/</span>  about.md  now.md  contact.md`);
+      print(`<span class="dir">projects/</span>  about.md  now.md  contact.md`);
     },
-    'ls -a': () => print(`.  ..  <span class="dim">.secrets</span>  <span class="dir">projects/</span>  <span class="dir">academy/</span>  <span class="dir">books/</span>  <span class="dir">hotel/</span>  about.md  now.md  contact.md`),
+    'ls -a': () => print(`.  ..  <span class="dim">.secrets</span>  <span class="dir">projects/</span>  about.md  now.md  contact.md`),
     cat: (a) => {
       const f = FILES[a];
       if (!a) return print('cat: which file? try <b>cat about.md</b>', 'err');
-      if (f === 'about') return print(`<b># ${esc(site.fullName)}</b><br>${esc(site.tagline)}<br><br>${site.bio.map(todo).join('<br><br>')}`);
-      if (f === 'now') return print(site.now.map((n) => `<b>${esc(n.label)}</b>  ${todo(n.text)}`).join('<br>'));
+      if (f === 'about') return print(`<b># ${esc(site.fullName)}</b><br>${esc(site.tagline)}<br><br>${site.bio.filter(real).map(esc).join('<br><br>')}`);
+      if (f === 'now') return print(site.now.filter((n) => real(n.text)).map((n) => `<b>${esc(n.label)}</b>  ${esc(n.text)}`).join('<br>'));
       if (f === 'contact') return C.contact();
       if (f === 'secrets') return print('cat: .secrets: Permission denied. The penthouse is upstairs, and it has a keypad.', 'err');
       print(`cat: ${esc(a)}: No such file or directory`, 'err');
@@ -113,10 +109,10 @@ export function terminalApp(root, ctx) {
     cd: (a) => (!a || a === '~' ? print('') : PLACES[a.replace(/\/$/, '')] ? C.open(a.replace(/\/$/, '')) : print(`cd: no such directory: ${esc(a)}`, 'err')),
     pwd: () => print('/home/sai/desk'),
     projects: () => print(table(projects.map((p) => [link(p.title, `#browser/p:${p.id}`), `${esc(CATEGORIES[p.category]?.label || '')} · ${esc(p.year)}${p.placeholder ? ' · <span class="todo">placeholder</span>' : ''}`]))),
-    skills: () => print(table(skillGroups.map((g) => [esc(g.name), g.skills.map(todo).join(', ')]))),
+    skills: () => print(table(skillGroups.filter((g) => g.skills.some(real)).map((g) => [esc(g.name), g.skills.filter(real).map(esc).join(', ')]))),
     contact: () => {
-      const rows = [['email', site.email ? `<a href="mailto:${esc(site.email)}">${esc(site.email)}</a>` : '<span class="todo">not set yet</span>'], ...site.socials.map((s) => [esc(s.label), s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.url.replace(/^https?:\/\//, ''))}</a>` : '<span class="todo">not set yet</span>'])];
-      print(table(rows) + `<p class="dim">or press the ${link('keyboard', '#contact')} and type to me.</p>`);
+      const rows = [['email', site.email ? `<a href="mailto:${esc(site.email)}">${esc(site.email)}</a>` : '<span class="todo">not set yet</span>'], ...site.socials.filter((s) => s.url).map((s) => [esc(s.label), `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.url.replace(/^https?:\/\/(www\.)?/, ''))}</a>`])];
+      print(table(rows) + `<p class="dim">or ${link('send a message', '#contact')}.</p>`);
     },
     f1: async () => {
       const p = print('connecting to timing…', 'dim');
@@ -201,7 +197,6 @@ export function terminalApp(root, ctx) {
     ping: () => print('pong'),
     42: () => print('the answer. still working on the question.'),
     duck: () => print('🦆 seven rubber ducks are hiding in the hotel. one per floor.'),
-    hydrate: () => print(desk.bottle[Math.floor(Math.random() * desk.bottle.length)]),
     matrix: () => print('wake up, sai…  the matrix has you.  follow the white rubber duck. 🦆'),
   };
   C.hi = C.hello;

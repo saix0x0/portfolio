@@ -42,17 +42,19 @@ export const site = {
   facts: [
     ['Studying', 'CS + CHD, IIIT Hyderabad'],
     ['Based in', 'Hyderabad, India'], // TODO: confirm
-    ['Off-screen', 'Chasing sunsets'],
   ],
 
   // Contact. The postcard form on the home page uses this.
-  email: '', // TODO: your email. While empty, the form shows a clear "not configured" message.
+  email: 'siddhanthchalla@gmail.com',
   contact: {
+    // 'formsubmit' → the desk's message box emails you via formsubmit.co. No key or
+    //                account: the very first message sends you an "Activate form" email;
+    //                click it once and every message after lands in your inbox.
     // 'mailto'    → opens the visitor's own mail app, pre-filled. Zero setup, always works.
     // 'web3forms' → real delivery to your inbox. Free tier (250 msgs/month at time of writing).
     //               Get an access key at https://web3forms.com with just your email; paste below.
     //               The key is designed to be public (it can only send to *your* inbox).
-    provider: 'mailto',
+    provider: 'formsubmit',
     web3formsKey: '',
   },
 
@@ -63,7 +65,7 @@ export const site = {
   socials: [
     // Empty url → hidden. TODO
     { label: 'GitHub', url: 'https://github.com/saix0x0' },
-    { label: 'LinkedIn', url: '' },
+    { label: 'LinkedIn', url: 'https://www.linkedin.com/in/sai-siddhanth-challa-1b63a4377/' },
     { label: 'X', url: '' },
   ],
 

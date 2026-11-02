@@ -1,6 +1,17 @@
 # Implementation status
 
-_Last updated: 2026-11-01, live GitHub on the desk._
+_Last updated: 2026-11-02, recruiter-focused desk._
+
+## Recruiter pass (2026-11-02)
+The owner asked for a front page that impresses someone hiring: only relevant content, professional names, easy access to email, LinkedIn and GitHub.
+- Browser tabs are now **Overview** (was "Start here"; `#browser/start` still works), **Projects**, **GitHub** and **About**. Removed from the desk: the Academy, Pit wall and Hotel tabs, the Library/Lab/Compass tiles and their search entries, and the logbook links. Those pages still exist at their URLs.
+- Desk objects: the mouse ("uses") and the bottle are gone. Labels are plain: Monitor (Projects & GitHub), Laptop (Terminal), Keyboard (Contact), AirPods (Music), Book (Currently reading), Lamp, Light switch.
+- Header: Projects, GitHub, LinkedIn and a solid Contact chip. On phones only LinkedIn, Contact and the hotel pill show.
+- Contact sheet: "Reach out to me", then a message box and Email, GitHub and LinkedIn links. The form sends through **formsubmit.co** (`site.contact.provider = 'formsubmit'`, no key). The **first** message triggers an "Activate form" email to siddhanthchalla@gmail.com; until that link is clicked, nothing is delivered. A honeypot field catches bots; on failure the form shows the email address.
+- `site.email` and the LinkedIn URL (taken from the owner's own GitHub social links) are set. The "This website" project is rewritten for the desk.
+- Unfinished content (`TODO…`) is never rendered in the desk browser or the terminal; empty sections hide.
+- Verified: desktop and 375×812 (no overflow); form validation messages; no TODO text on About. **Not verified:** a real form submission (deliberately not sent, since the owner must activate it).
+
 
 ## Live GitHub + real projects (2026-11-01)
 `content/projects.js` now holds the owner's five public repos (med-assistant, greeniq, chess-learning-bot "Pawn Coach", mapp "GEDI", ISS tic-tac-toe) plus "This website"; each has a `repo` field. Summaries and highlights come from each repo's own description and README. `site.github = 'saix0x0'`; the GitHub social link is set. Data layer `assets/js/core/github.js` (keyless GitHub REST, localStorage cache 1 h for lists and 6 h for languages/READMEs, serves a stale copy when rate-limited, allow-list README sanitizer). The pages are in `assets/js/desk/github.js`.
@@ -88,5 +99,5 @@ Search the repo for `TODO`. The main ones: `site.bio`, `site.email`, socials, hi
 - `aurora` typed while focus is on a button still counts. That's harmless.
 
 ## Next recommended task
-**Fill in real content**: bio, email, LinkedIn, résumé and the `TODO` gear/editor lines (projects now come from GitHub). Optional: project screenshots via each project's `image`. Then publish the repo and enable GitHub Pages.
+**Activate the contact form** (send one test message, click the FormSubmit email), then fill in the bio and add a résumé PDF (`site.hiring.resume`). Projects come from GitHub. Optional: project screenshots via each project's `image`. Then publish the repo and enable GitHub Pages.
 After that, see ROADMAP.md (top item: per-project images/screenshots).

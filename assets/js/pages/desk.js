@@ -2,7 +2,7 @@
 //  THE DESK — the front page. A photo of the real desk (1600×1200 "stage"),
 //  scaled to cover the window, with live screens and lights layered on top and
 //  a hotspot per object. Every object has a URL (#browser, #terminal, …) so
-//  each destination is linkable; the lamp, switch and bottle act in place.
+//  each destination is linkable; the lamp and switch act in place.
 //
 //  Coordinates below are photo pixels. If the photo changes, re-measure them.
 // ─────────────────────────────────────────────────────────────────────────────
@@ -10,10 +10,10 @@ import { $, $$, esc, seeded, clamp, reducedMotion, canHover } from '../core/base
 import { clockIn } from '../core/sun.js';
 import { desk } from '../../../content/desk.js';
 import { drawPerson, LOOKS, playerLook } from '../world/actors.js';
-import { isMuted, setMuted, note, hz } from '../world/sound.js';
+import { isMuted, setMuted, note } from '../world/sound.js';
 import { browserApp, miniMonitor } from '../desk/browser.js';
 import { terminalApp, miniLaptop } from '../desk/terminal.js';
-import { contactSheet, usesCard, musicCard, readingCard } from '../desk/bits.js';
+import { contactSheet, musicCard, readingCard } from '../desk/bits.js';
 
 const RM = reducedMotion();
 const W = 1600;
@@ -23,23 +23,19 @@ const H = 1200;
 // poly: the outline in photo px · tag: where the label sits · zoom: the box the
 // camera flies to · route: the URL hash it opens · act: an in-place action
 const OBJ = [
-  { id: 'monitor', label: 'Monitor', what: 'Projects, academics & live F1', route: 'browser', tag: [768, 344], zoom: [438, 350, 1099, 723],
+  { id: 'monitor', label: 'Monitor', what: 'Projects & GitHub', route: 'browser', tag: [768, 344], zoom: [438, 350, 1099, 723],
     polys: [[[438, 350], [1099, 350], [1097, 722], [441, 723]]] },
-  { id: 'laptop', label: 'MacBook', what: 'A terminal for the whole site', route: 'terminal', tag: [190, 404], zoom: [0, 414, 374, 662],
+  { id: 'laptop', label: 'Laptop', what: 'Terminal', route: 'terminal', tag: [190, 404], zoom: [0, 414, 374, 662],
     polys: [[[0, 420], [360, 408], [380, 642], [404, 772], [0, 792]]] },
-  { id: 'keyboard', label: 'Keyboard', what: 'Type to me · contact', route: 'contact', tag: [566, 842], zoom: [250, 820, 890, 1010],
+  { id: 'keyboard', label: 'Keyboard', what: 'Contact', route: 'contact', tag: [566, 842], zoom: [250, 820, 890, 1010],
     polys: [[[338, 850], [812, 846], [858, 997], [282, 999]]] },
-  { id: 'mouse', label: 'Mouse', what: 'Uses · the setup', route: 'uses', tag: [1000, 828],
-    polys: [[[940, 848], [1010, 832], [1072, 898], [1080, 988], [926, 992]]] },
-  { id: 'airpods', label: 'AirPods', what: 'Now playing', route: 'music', tag: [1256, 918],
+  { id: 'airpods', label: 'AirPods', what: 'Music', route: 'music', tag: [1256, 918],
     polys: [[[1205, 932], [1292, 924], [1310, 986], [1214, 1000]]] },
-  { id: 'book', label: 'The book', what: 'What I’m reading', route: 'reading', tag: [1430, 856],
+  { id: 'book', label: 'Book', what: 'Currently reading', route: 'reading', tag: [1430, 856],
     polys: [[[1248, 880], [1436, 860], [1600, 926], [1600, 1082], [1446, 1072]]] },
-  { id: 'bottle', label: 'Bottle', what: 'Hydrate', act: 'bottle', tag: [1484, 512],
-    polys: [[[1428, 526], [1540, 526], [1546, 940], [1420, 940]]] },
-  { id: 'lamp', label: 'Sunset lamp', what: 'Change the light', act: 'lamp', tag: [1396, 462],
+  { id: 'lamp', label: 'Lamp', what: 'Change the colour', act: 'lamp', tag: [1396, 462],
     polys: [[[1352, 476], [1446, 476], [1440, 724], [1362, 724]], [[1230, 0], [1600, 0], [1600, 330], [1420, 470], [1372, 470]]] },
-  { id: 'switch', label: 'Switches', what: 'Lights on / off', act: 'switch', tag: [1206, 388],
+  { id: 'switch', label: 'Light switch', what: 'Lights on or off', act: 'switch', tag: [1206, 388],
     polys: [[[1104, 396], [1310, 392], [1312, 472], [1104, 474]]] },
 ];
 const ROUTES = new Set(OBJ.map((o) => o.route).filter(Boolean));
@@ -210,7 +206,7 @@ export function toast(msg) {
   toast.t = setTimeout(() => t.classList.remove('on'), 2600);
 }
 
-// ── routing: #browser[/tab] · #terminal · #contact · #uses · #music · #reading
+// ── routing: #browser[/tab] · #terminal · #contact · #music · #reading
 const app = $('[data-app]');
 const sheet = $('[data-sheet]');
 const pop = $('[data-pop]');
@@ -264,34 +260,16 @@ function route(hash) {
     apply(deskView());
     pop.hidden = false;
     pop.dataset.at = o.id;
-    cleanup = { uses: usesCard, music: musicCard, reading: readingCard }[name](pop, ctx);
+    cleanup = { music: musicCard, reading: readingCard }[name](pop, ctx);
     requestAnimationFrame(() => pop.classList.add('open'));
   }
 }
 
 // ── in-place acts ───────────────────────────────────────────────────────────
-let sips = 0;
-function act(name, at) {
+function act(name) {
   document.body.classList.add('touched');
   if (name === 'lamp') lights.cycle();
-  if (name === 'switch') lights.power(), toast(light.on ? 'Lights on' : 'Lights off. Screens only.');
-  if (name === 'bottle') {
-    const day = new Date().toDateString();
-    const st = JSON.parse(saved('desk:water', '{}'));
-    sips = st.day === day ? st.n + 1 : 1;
-    save('desk:water', JSON.stringify({ day, n: sips }));
-    toast(`${desk.bottle[(sips - 1) % desk.bottle.length]}  ·  sips today: ${sips}`);
-    ripple(at);
-    note(hz(19), { dur: 0.08, type: 'sine', vol: 0.1, slide: 1.6 });
-  }
-}
-function ripple([x, y]) {
-  const r = document.createElement('i');
-  r.className = 'ripple';
-  r.style.left = x + 'px';
-  r.style.top = y + 'px';
-  stage.append(r);
-  setTimeout(() => r.remove(), 900);
+  if (name === 'switch') lights.power(), toast(light.on ? 'Lights on' : 'Lights off');
 }
 
 // ── phones: drag to look around the desk ────────────────────────────────────
