@@ -3,70 +3,89 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Sai Siddhanth Challa — Portfolio</title>
-  <meta name="description" content="Portfolio of Sai Siddhanth Challa — Computer Science and Computing & Human Sciences at IIIT Hyderabad. Click anything on the desk: projects, academics, a terminal, live F1 and a playable pixel hotel.">
+  <title>Sai Siddhanth Challa</title>
+  <meta name="description" content="Sai Siddhanth Challa: Computer Science and Computing & Human Sciences at IIIT Hyderabad. Projects, live GitHub, and an interactive portfolio built on a photo of my desk.">
   <meta name="theme-color" content="#0b0605">
   <meta property="og:title" content="Sai Siddhanth Challa">
-  <meta property="og:description" content="My actual desk. Everything on it opens something.">
+  <meta property="og:description" content="Projects, live GitHub and an interactive desk. CS + Computing & Human Sciences, IIIT Hyderabad.">
+  <meta property="og:image" content="assets/img/desk.jpg">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="preload" href="assets/img/desk.jpg" as="image">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,300..800&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Silkscreen&display=swap">
-  <link rel="stylesheet" href="assets/css/desk.css">
-  <script>document.documentElement.classList.add('js')</script>
-  <script type="module" src="assets/js/pages/desk.js"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Silkscreen&display=swap">
+  <link rel="stylesheet" href="assets/css/landing.css">
+  <link rel="prefetch" href="desk/">
+  <script type="module" src="assets/js/pages/landing.js"></script>
 </head>
 <body>
-  <a class="skip" href="#objects">Skip to the list of everything on the desk</a>
+  <a class="skip" href="#work">Skip to selected work</a>
 
-  <header class="top">
-    <span class="clock" data-clock></span>
-    <div class="top-r">
-      <button class="chip" type="button" data-mute aria-pressed="false">Sound off</button>
-      <a class="chip" href="#browser/projects">Projects</a>
-      <a class="chip" href="#browser/github">GitHub</a>
-      <a class="chip" href="https://www.linkedin.com/in/sai-siddhanth-challa-1b63a4377/" target="_blank" rel="noopener">LinkedIn</a>
-      <a class="chip solid" href="#contact">Contact</a>
-      <a class="hotel-pill" href="hotel/" data-enter-hotel><span class="px-avatar" aria-hidden="true"></span>Enter the hotel <span aria-hidden="true">▸</span></a>
-    </div>
+  <header class="bar">
+    <a class="mark" href="./" aria-label="Sai Siddhanth Challa, home"><span>SC</span></a>
+    <nav class="bar-r" aria-label="Profiles">
+      <button class="search" type="button" data-palette aria-label="Search the site"><span aria-hidden="true">⌕</span> Search <kbd>⌘K</kbd></button>
+      <a href="https://github.com/saix0x0" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://www.linkedin.com/in/sai-siddhanth-challa-1b63a4377/" target="_blank" rel="noopener">LinkedIn</a>
+      <a class="solid" href="desk/#contact">Contact</a>
+    </nav>
   </header>
 
-  <!-- The room: the photo, its lights, its screens and a hotspot per object -->
-  <main class="room" data-room>
-    <div class="stage" data-stage>
-      <img class="photo" src="assets/img/desk.jpg" width="1600" height="1200" alt="My desk at night: a monitor, a MacBook, a mechanical keyboard with RGB, a vertical mouse, AirPods, a book and a lamp glowing on the wall.">
-      <div class="tint lamp-hue" data-lamp-hue></div>
-      <div class="tint lamp-off" data-lamp-off></div>
-      <div class="rgb kb" data-rgb-kb></div>
-      <div class="rgb ring" data-rgb-ring></div>
-      <div class="keys" data-keys></div>
-      <div class="screen" data-screen="monitor" aria-hidden="true"></div>
-      <div class="screen" data-screen="laptop" aria-hidden="true"></div>
-      <div class="wall" data-wall>
-        <h1><span>Sai Siddhanth</span> <em>Challa</em></h1>
-        <p data-wall-line></p>
+  <main>
+    <section class="hero">
+      <div class="hero-l">
+        <p class="eyebrow">IIIT Hyderabad · Computer Science + Computing &amp; Human Sciences</p>
+        <h1>Sai Siddhanth <em>Challa</em></h1>
+        <p class="lede" data-tagline></p>
+        <p class="live" data-live aria-live="polite"><i class="dot"></i><span data-clock>Hyderabad</span><span data-push hidden></span></p>
+        <div class="cta">
+          <a class="go" href="desk/" data-enter><span>Enter the desk</span><b aria-hidden="true">→</b></a>
+          <a class="game" href="hotel/"><span class="px" aria-hidden="true"></span>Enter game</a>
+        </div>
+        <p class="how">The portfolio is a photo of my actual desk. Every object on it opens something: projects on the monitor, a working terminal on the laptop, a contact form on the keyboard. <span class="kbd-hint">Press <kbd>Enter</kbd> to go in.</span></p>
       </div>
-      <svg class="hots" viewBox="0 0 1600 1200" data-hots></svg>
-      <div class="tags" data-tags aria-hidden="true"></div>
-    </div>
+
+      <a class="frame" href="desk/" data-enter aria-label="Enter the desk">
+        <span class="frame-in" data-tilt>
+          <img src="assets/img/desk.jpg" width="1600" height="1200" alt="My desk at night: a monitor, a laptop, an RGB keyboard and a lamp glowing on the wall." data-photo>
+          <span class="mon" aria-hidden="true"><span class="mon-bar"><i></i><i></i><i></i></span><span class="mon-sun"></span><b>Siddhanth</b><span class="mon-q">Search projects, repos, skills…</span><span class="mon-t"><i></i><i></i><i></i><i></i><i></i><i></i></span></span>
+          <span class="lap" aria-hidden="true"><span>% whoami<br>Sai Siddhanth Challa<br>CS + CHD · IIIT Hyderabad<br>% repos<br>med-assistant  greeniq<br>chess-learning-bot<br>% <i>█</i></span></span>
+          <span class="pin" style="--x:48%;--y:44%"><i></i><em>Projects &amp; GitHub</em></span>
+          <span class="pin" style="--x:12%;--y:44%"><i></i><em>Terminal</em></span>
+          <span class="pin" style="--x:36%;--y:77%"><i></i><em>Contact</em></span>
+          <span class="pin" style="--x:79%;--y:78%"><i></i><em>Music</em></span>
+        </span>
+        <span class="frame-cap">Live screens · lighting you can change · a guided tour<span class="kbd-hint"> · ⌘K to search everything</span></span>
+      </a>
+    </section>
+
+    <section class="work" id="work" aria-labelledby="work-h">
+      <header class="sec-h"><h2 id="work-h">Selected work</h2><a href="desk/#browser/projects">All projects →</a></header>
+      <div class="cards" data-cards></div>
+    </section>
+
+    <section class="code" aria-labelledby="code-h">
+      <header class="sec-h"><h2 id="code-h">On GitHub</h2><a href="https://github.com/saix0x0" target="_blank" rel="noopener">github.com/saix0x0 ↗</a></header>
+      <dl class="gh" data-gh><p class="muted">Loading live data from GitHub…</p></dl>
+    </section>
+
+    <section class="reach" aria-labelledby="reach-h">
+      <h2 id="reach-h">Let’s <em>talk.</em></h2>
+      <p class="muted">Email is the fastest way to reach me, or send a message from the desk.</p>
+      <div class="reach-row">
+        <button class="mail" type="button" data-copy><span data-email></span><small data-copied>Copy</small></button>
+        <a class="go small" href="desk/#contact"><span>Send a message</span><b aria-hidden="true">→</b></a>
+      </div>
+    </section>
   </main>
 
-  <p class="hint" data-hint></p>
+  <footer class="foot">
+    <span>© <span data-year></span> Sai Siddhanth Challa</span>
+    <span>Handwritten HTML, CSS and JavaScript. No frameworks, no build step.</span>
+  </footer>
 
-  <!-- The same things as a plain list (keyboard, screen readers, the impatient) -->
-  <nav class="objects" id="objects" aria-label="Everything on the desk" data-objects></nav>
-
-  <!-- Full-screen apps (the monitor's browser, the laptop's terminal) -->
-  <div class="app" data-app hidden></div>
-  <!-- Bottom sheet (keyboard → contact) and small cards (mouse, AirPods, book) -->
-  <div class="sheet" data-sheet hidden></div>
-  <div class="card-pop" data-pop hidden></div>
   <div class="toast" data-toast role="status" aria-live="polite"></div>
-
-  <div class="boot" data-boot aria-hidden="true"><span>click.</span></div>
-  <div class="pixelate" aria-hidden="true" data-pixelate></div>
-
-  <noscript><div style="position:fixed;inset:auto 0 0;padding:24px;background:#0b0605;color:#f3e6d6;font:16px/1.6 system-ui">This desk is interactive with JavaScript. Everything is still reachable: <a style="color:#ffb26b" href="work/">projects</a>, <a style="color:#ffb26b" href="https://github.com/saix0x0">GitHub</a>, <a style="color:#ffb26b" href="https://www.linkedin.com/in/sai-siddhanth-challa-1b63a4377/">LinkedIn</a>, <a style="color:#ffb26b" href="mailto:siddhanthchalla@gmail.com">siddhanthchalla@gmail.com</a>.</div></noscript>
+  <div class="wipe" data-wipe aria-hidden="true"></div>
+  <noscript><style>.cards:empty,.gh{display:none}</style></noscript>
 </body>
 </html>

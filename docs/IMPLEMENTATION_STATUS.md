@@ -1,6 +1,15 @@
 # Implementation status
 
-_Last updated: 2026-11-02, recruiter-focused desk._
+_Last updated: 2026-11-03, front page + desk at /desk/._
+
+## Front page and a lighter, sharper desk (2026-11-03)
+- **`/` is a new front page** (`index.html`, `assets/css/landing.css`, `assets/js/pages/landing.js`). It shows the name, the tagline, a live line (Hyderabad time and the last GitHub push), **Enter the desk** (the primary action, also the Enter key) and **Enter game** (→ `/hotel/`). The framed desk photo has CSS-only stand-ins for the blurred screens, tilts with the pointer, and shows hover pins. Below the hero: Selected work (featured projects that have a repo), On GitHub (live stats and a language bar) and Let’s talk (copy-email button and a link to the message form). It loads only base/sun/github/palette and content; about 63 KB uncompressed plus the 128 KB photo.
+- **The desk moved to `/desk/`** (`desk/index.html`). "Enter the desk" zooms the framed photo to fill the window, then navigates; it sets `sessionStorage desk:boot` so the desk skips its own intro. The redirect stubs now point at the desk: `/projects/` and `/college/` → `#browser/projects`, `/hire/` → `#contact`. The 404 page is reworded and restyled.
+- **Command palette** (`assets/js/core/palette.js`; ⌘K / Ctrl K, or the Search chip). It covers pages, projects, live repos, copy email, LinkedIn, GitHub, the terminal and Enter game. On the desk it also covers lamp colours, lights, music, the tour and the front page. Its CSS is injected on first open.
+- **Guided tour on the desk** ("Take the 20-second tour", or from the palette). The camera visits the monitor, laptop, keyboard, AirPods and lamp, with captions; it auto-advances, → or Space moves on, and Esc ends it.
+- "Enter the hotel" is renamed **Enter game**. The desk has an SC home mark that returns to `/`. Both pages share one Google Fonts URL (cached between them), and the dead pit-wall, academy and hotel-window CSS is removed.
+- Verified: front page at 800×600 and 375×812 (no overflow); palette search → Enter opened `desk/#browser/p:greeniq`; zoom into the desk; tour steps 1–3 with captions. Not verified: the tour on a phone, and the real-time smoothness of the zoom in a visible browser.
+
 
 ## Recruiter pass (2026-11-02)
 The owner asked for a front page that impresses someone hiring: only relevant content, professional names, easy access to email, LinkedIn and GitHub.

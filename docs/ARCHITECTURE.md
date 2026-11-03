@@ -17,7 +17,8 @@ college/ projects/ hire/ books/  → tiny redirect pages (short, shareable URLs)
 ## Routes & deep links
 | URL | Result |
 |---|---|
-| `/` | The desk. `#browser[/overview\|projects\|github\|about]`, `#browser/p:<id>`, `#browser/r:<repo>`, `#terminal`, `#contact`, `#music`, `#reading` |
+| `/` | Front page: name, Enter the desk, Enter game, selected work, live GitHub, contact |
+| `/desk/` | The desk. `#browser[/overview\|projects\|github\|about]`, `#browser/p:<id>`, `#browser/r:<repo>`, `#terminal`, `#contact`, `#music`, `#reading` |
 | `/hotel/`, `/hotel/#<floor>` | The pixel hotel, optionally starting on an open floor |
 | `/portfolio/#paris` … `#arctic` | The older sunset journey |
 | `/#quick` (any page) | Opens the 60-second version |

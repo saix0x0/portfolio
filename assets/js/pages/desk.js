@@ -14,6 +14,7 @@ import { isMuted, setMuted, note } from '../world/sound.js';
 import { browserApp, miniMonitor } from '../desk/browser.js';
 import { terminalApp, miniLaptop } from '../desk/terminal.js';
 import { contactSheet, musicCard, readingCard } from '../desk/bits.js';
+import { palette } from '../core/palette.js';
 
 const RM = reducedMotion();
 const W = 1600;
@@ -105,7 +106,7 @@ function hotspots() {
     return `<a ${target} data-obj="${o.id}" aria-label="${esc(o.label)}: ${esc(o.what)}">${o.polys.map((p) => `<polygon points="${pts(p)}"/>`).join('')}</a>`;
   }).join('');
   $('[data-tags]').innerHTML = OBJ.map((o, i) => `<span class="dot" style="left:${o.tag[0]}px;top:${o.tag[1] + 26}px;--i:${i}"></span><span class="tag" data-tag="${o.id}" style="left:${o.tag[0]}px;top:${o.tag[1]}px"><b>${esc(o.label)}</b><small>${esc(o.what)}</small></span>`).join('');
-  $('[data-objects]').innerHTML = `<p class="objects-h">On the desk</p><ol>${OBJ.map((o, i) => `<li><a ${o.route ? `href="#${o.route}"` : `href="#" role="button" data-act="${o.act}"`} data-obj="${o.id}"><span class="n">${String(i + 1).padStart(2, '0')}</span><b>${esc(o.label)}</b><span class="w">${esc(o.what)}</span></a></li>`).join('')}</ol>`;
+  $('[data-objects]').innerHTML = `<button class="tour-btn" type="button" data-tour><span aria-hidden="true">▶</span> Take the 20-second tour</button><p class="objects-h">On the desk</p><ol>${OBJ.map((o, i) => `<li><a ${o.route ? `href="#${o.route}"` : `href="#" role="button" data-act="${o.act}"`} data-obj="${o.id}"><span class="n">${String(i + 1).padStart(2, '0')}</span><b>${esc(o.label)}</b><span class="w">${esc(o.what)}</span></a></li>`).join('')}</ol>`;
   const show = (id) => {
     $$('[data-tag]').forEach((t) => t.classList.toggle('on', t.dataset.tag === id));
     $$('[data-hots] [data-obj]').forEach((a) => a.classList.toggle('lit', a.dataset.obj === id));
@@ -272,6 +273,73 @@ function act(name) {
   if (name === 'switch') lights.power(), toast(light.on ? 'Lights on' : 'Lights off');
 }
 
+// ── the guided tour: the camera visits each object with a caption ──────────
+const TOUR = [
+  ['monitor', 'The monitor is a full browser: an overview, every project with its live README, and all my GitHub repositories.'],
+  ['laptop', 'The laptop runs a working terminal for the whole site. Try repos, git log or help.'],
+  ['keyboard', 'The keyboard is the contact form. Every key you type lights up on the photo.'],
+  ['airpods', 'The AirPods play three original loops, synthesised live in your browser.'],
+  ['lamp', 'The lamp changes the colour of the room. So does the switch next to it.'],
+];
+let touring = null;
+function tour() {
+  if (touring) return;
+  if (current) leave();
+  const box = document.createElement('div');
+  box.className = 'tour';
+  box.setAttribute('role', 'status');
+  document.body.append(box);
+  document.body.classList.add('touring', 'touched');
+  let i = -1;
+  let timer = 0;
+  const lit = (id) => $$('[data-hots] [data-obj], [data-tag]').forEach((a) => a.classList.toggle(a.matches('[data-tag]') ? 'on' : 'lit', (a.dataset.obj || a.dataset.tag) === id));
+  const bbox = (o) => {
+    if (o.zoom) return o.zoom;
+    const p = o.polys[0];
+    const xs = p.map((q) => q[0]);
+    const ys = p.map((q) => q[1]);
+    const pad = 120;
+    return [Math.min(...xs) - pad, Math.min(...ys) - pad, Math.max(...xs) + pad, Math.max(...ys) + pad];
+  };
+  const step = () => {
+    clearTimeout(timer);
+    i++;
+    if (i >= TOUR.length) return end(true);
+    const [id, text] = TOUR[i];
+    const o = OBJ.find((x) => x.id === id);
+    apply(zoomView(bbox(o), { top: 0.04, h: 0.7, fill: 0.92 }));
+    lit(id);
+    if (id === 'lamp') setTimeout(() => touring && lights.cycle(), 1200);
+    box.innerHTML = `<span class="tour-n">${i + 1} / ${TOUR.length}</span><p><b>${esc(o.label)}.</b> ${esc(text)}</p>
+      <span class="tour-b"><button type="button" data-tour-end>End tour</button><button type="button" class="next" data-tour-next>${i === TOUR.length - 1 ? 'Finish' : 'Next'} →</button></span>`;
+    box.classList.remove('in');
+    requestAnimationFrame(() => box.classList.add('in'));
+    timer = setTimeout(step, RM ? 6000 : 4600);
+  };
+  const end = (done) => {
+    clearTimeout(timer);
+    touring = null;
+    lit(null);
+    box.remove();
+    document.body.classList.remove('touring');
+    removeEventListener('keydown', key, true);
+    if (!current) apply(deskView());
+    if (done) toast('That’s the desk. Click anything, or press ⌘K to search.');
+  };
+  const key = (e) => {
+    if (e.key === 'Escape') e.stopPropagation(), end();
+    if (e.key === 'ArrowRight' || e.key === ' ') e.preventDefault(), step();
+  };
+  addEventListener('keydown', key, true);
+  box.addEventListener('click', (e) => {
+    if (e.target.closest('[data-tour-next]')) step();
+    if (e.target.closest('[data-tour-end]')) end();
+  });
+  touring = { end };
+  click();
+  step();
+}
+
 // ── phones: drag to look around the desk ────────────────────────────────────
 function lookAround() {
   let down = null;
@@ -368,7 +436,20 @@ lookAround();
 parallax();
 boot();
 chrome();
+palette({
+  desk: true,
+  extra: [
+    { t: 'Lights on or off', k: 'Desk', g: '◐', run: () => act('switch'), x: 'lamp dark' },
+    ...LAMPS.map((l) => ({ t: `Lamp colour: ${l.name}`, k: 'Desk', g: '●', run: () => lights.set(l.id), x: 'light colour color' })),
+    { t: 'Music', k: 'Desk', g: '♪', run: () => go('music'), x: 'airpods play sound' },
+    { t: 'Currently reading', k: 'Desk', g: '❦', run: () => go('reading'), x: 'book' },
+    { t: 'Take the tour', k: 'Desk', g: '▶', run: () => tour(), x: 'guide walkthrough demo' },
+    { t: 'Front page', k: 'Page', g: '⌂', run: () => (location.href = '../'), x: 'home start' },
+  ],
+});
 document.addEventListener('click', (e) => {
+  if (e.target.closest('[data-tour]')) return e.preventDefault(), tour();
+  if (touring && e.target.closest('[data-obj]')) touring.end();
   const a = e.target.closest('[data-act]');
   if (!a) return;
   e.preventDefault();
@@ -378,7 +459,7 @@ document.addEventListener('click', (e) => {
 addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && current) leave();
 });
-addEventListener('hashchange', () => route(location.hash.slice(1)));
+addEventListener('hashchange', () => (touring?.end(), route(location.hash.slice(1))));
 addEventListener('resize', () => {
   if (!current) apply(deskView(), false);
   else if (current === 'contact') apply(zoomView(OBJ[2].zoom, { top: 0.02, h: narrow() ? 0.34 : 0.42, fill: 0.96 }), false);

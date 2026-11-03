@@ -1,7 +1,7 @@
 # CLAUDE.md — instructions for any session continuing this project
 
 ## CRITICAL: PRESERVE THE WORLD
-The front page `/` is the owner's real desk photo with clickable objects (`index.html`, `pages/desk.js`, `assets/js/desk/`, words in `content/desk.js`). The playable isometric pixel-art hotel lives at `/hotel/` (`assets/js/world/`). Before touching it, read `docs/WORLD_DESIGN.md`. Never redesign a floor just to add content, never make floors look alike, and never swap themed rooms for cards or dashboards. Content goes in `content/*.js`, and the rooms render it through their existing slots.
+The front page `/` (`index.html`, `pages/landing.js`) leads into the desk at `/desk/`: the owner's real desk photo with clickable objects (`desk/index.html`, `pages/desk.js`, `assets/js/desk/`, words in `content/desk.js`). The playable isometric pixel-art hotel lives at `/hotel/` (`assets/js/world/`). Before touching it, read `docs/WORLD_DESIGN.md`. Never redesign a floor just to add content, never make floors look alike, and never swap themed rooms for cards or dashboards. Content goes in `content/*.js`, and the rooms render it through their existing slots.
 **Scope for now (owner's call):** local only. No auth, no deployment, no backends or live APIs, no pushes unless asked. Locked floors use simple local unlocks on purpose.
 Portfolio Mode (the older scrolling site) lives at `/portfolio/` plus `/work/`, `/library/` etc.
 
