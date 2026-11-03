@@ -133,6 +133,7 @@ function aboutPage() {
   const groups = skillGroups.map((g) => ({ ...g, skills: g.skills.filter(real) })).filter((g) => g.skills.length);
   const reach = [['Email', site.email && `mailto:${site.email}`], ...site.socials.map((s) => [s.label, s.url])].filter(([, u]) => u);
   return `<div class="pg about"><header class="pg-h"><p class="eyebrow">sai://about</p><h2>${esc(site.fullName.split(' ').slice(0, -1).join(' '))} <em>${esc(site.fullName.split(' ').slice(-1)[0])}</em></h2>
+    ${site.epigraph ? `<p class="epi">“${esc(site.epigraph.text)}” <span>${esc(site.epigraph.gloss)}</span></p>` : ''}
     <p class="big">${esc(site.tagline)}</p>
     <p class="row">${reach.map(([l, u]) => `<a class="btn ghost" href="${esc(u)}"${u.startsWith('http') ? ' target="_blank" rel="noopener"' : ''}>${esc(l)} ↗</a>`).join('')}</p></header>
     <div class="ab-grid"><div>${bio.map((b) => `<p>${esc(b)}</p>`).join('')}

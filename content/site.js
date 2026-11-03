@@ -9,15 +9,17 @@ export const site = {
   fullName: 'Sai Siddhanth Challa',
   role: 'Engineer across disciplines',
   college: 'IIIT Hyderabad',
-  degree: 'Computer Science + Computing and Human Sciences',
+  degree: 'Computer Science and Computing & Human Sciences by Research',
 
   // One sentence. Shown under your name in Paris.
-  tagline: 'I study Computer Science and Computing & Human Sciences at IIIT Hyderabad, and I build software that sits where machines meet people.',
+  tagline: 'Sophomore at IIIT Hyderabad, studying Computer Science and Computing & Human Sciences by Research. Curious about artificial intelligence, algorithms, and understanding why humans do the things they do.',
+
+  // From the LinkedIn About section (shown on the desk's About page)
+  epigraph: { text: 'Cogito, ergo sum.', gloss: 'I think, therefore I am.' },
 
   // Shown in the Paris "About" column. TODO: rewrite in your own voice.
   bio: [
-    'TODO: two or three sentences about who you are and what pulls you toward both engineering and the human sciences.',
-    'TODO: what you do when you are not at a keyboard, and what you hope to build.',
+    'Exploring broadly, building obsessively.',
   ],
 
   interests: [
@@ -39,9 +41,16 @@ export const site = {
     { label: 'Reading', text: 'TODO: see the Library' },
   ],
 
+  // Shown in the front page's Experience section (newest first)
+  experience: [
+    { role: 'Summer Intern', org: 'IBaseIT', kind: 'Internship', period: 'May 2026 to Jul 2026', note: 'Applied AI/ML with hands-on experience across real-world use cases.' },
+  ],
+
   facts: [
-    ['Studying', 'CS + CHD, IIIT Hyderabad'],
-    ['Based in', 'Hyderabad, India'], // TODO: confirm
+    ['Year', 'Sophomore'],
+    ['Studying', 'Computer Science and Computing & Human Sciences by Research'],
+    ['University', 'IIIT Hyderabad'],
+    ['Based in', 'Hyderabad, Telangana, India'],
   ],
 
   // Contact. The postcard form on the home page uses this.

@@ -40,6 +40,14 @@ function words() {
   });
 }
 
+// ── provenance: experience, from content/site.js ───────────────────────────
+function experience() {
+  const list = site.experience || [];
+  if (!list.length) return $('#experience').remove();
+  $('[data-exp]').innerHTML = list.map((x) => `<li class="rv"><span class="when">${esc(x.period)}</span>
+    <div><b>${esc(x.role)}</b><span class="org">${esc(x.org)}${x.kind ? ` · ${esc(x.kind)}` : ''}</span><p>${esc(x.note || '')}</p></div></li>`).join('');
+}
+
 // ── Room I: the catalogue (projects with a repo, featured first) ────────────
 function catalogue() {
   const list = projects.filter((p) => !p.placeholder && p.repo).sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0)).slice(0, 4);
@@ -183,6 +191,7 @@ function motion() {
 }
 
 words();
+experience();
 catalogue();
 motion();
 github();

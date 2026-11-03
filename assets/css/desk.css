@@ -520,3 +520,5 @@ details.readme-wrap summary:hover { color: var(--amber); }
 .narrow .reel-live { left: 50%; transform: translateX(-50%); }
 .narrow .reel-cap { left: 50%; transform: translate(-50%, 14px); align-items: center; text-align: center; white-space: nowrap; }
 .narrow .reel-cap.in { transform: translateX(-50%); }
+.epi { margin: -4px 0 16px; font: italic 400 24px/1.2 var(--serif); color: var(--amber); }
+.epi span { font: 400 12px var(--mono); font-style: normal; letter-spacing: 0.06em; color: var(--faint); margin-left: 8px; }

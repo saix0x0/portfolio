@@ -105,6 +105,16 @@ em { font-family: var(--serif); font-style: italic; font-weight: 400; }
 .guide small { font-size: 13.5px; color: var(--dim); }
 .guide a:hover b { color: var(--gold-hi); }
 
+/* ── provenance: experience ──────────────────────────────────────────────── */
+.prov { display: grid; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1fr); gap: clamp(36px, 7vw, 110px); max-width: 1480px; margin: 0 auto; padding: clamp(40px, 6vw, 80px) var(--gut); scroll-margin-top: 40px; }
+.prov h2 em { color: var(--ink); }
+.prov-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid rgba(201, 164, 90, 0.3); }
+.prov-list li { display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 8px 24px; padding: 26px 0; border-bottom: 1px solid var(--line); }
+.prov-list .when { font: 400 12px/1.8 var(--mono); color: var(--gold); letter-spacing: 0.04em; }
+.prov-list b { display: block; font: 400 clamp(28px, 2.8vw, 38px)/1.05 var(--serif); }
+.prov-list .org { display: block; margin-top: 6px; font: 500 13px var(--sans); color: var(--gold-hi); }
+.prov-list p { margin: 8px 0 0; color: var(--dim); font-size: 15px; max-width: 34em; }
+
 /* ── rooms ───────────────────────────────────────────────────────────────── */
 .room { display: grid; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1fr); gap: clamp(36px, 7vw, 110px); align-items: start; max-width: 1480px; margin: 0 auto; padding: clamp(70px, 11vw, 150px) var(--gut); scroll-margin-top: 40px; }
 .room.flip .room-art { order: 2; }
@@ -154,6 +164,7 @@ h2 em { color: var(--gold-hi); }
 .storm::after { content: ''; position: absolute; inset: 0; background: linear-gradient(var(--bg), transparent 30%, transparent 70%, var(--bg)); }
 .quiet { margin: 0; font: 400 clamp(30px, 4.4vw, 62px)/1.1 var(--serif); letter-spacing: -0.015em; text-shadow: 0 4px 40px rgba(0, 0, 0, 0.6); }
 .quiet em { color: var(--gold-hi); }
+.quiet-sub { margin: 22px 0 0; font: 400 13px var(--mono); letter-spacing: 0.04em; color: rgba(241, 233, 216, 0.6); }
 .label.inline { position: absolute; right: var(--gut); bottom: 30px; margin: 0; text-align: left; }
 
 /* Room III: the desk hangs as the last piece */
@@ -223,7 +234,8 @@ body.leaving main, body.leaving .bar { transition: opacity 0.5s 0.2s; opacity: 0
   .hero { grid-template-columns: 1fr; padding-top: 100px; gap: 64px; }
   .hero-art .label { right: 8px; }
   .scroll { display: none; }
-  .room { grid-template-columns: 1fr; }
+  .room, .prov { grid-template-columns: 1fr; }
+  .prov { gap: 0; }
   .room.flip .room-art { order: 0; }
   .room-art { position: relative; top: 0; max-width: 620px; }
   .interlude { grid-template-rows: 1fr auto; }
@@ -236,7 +248,7 @@ body.leaving main, body.leaving .bar { transition: opacity 0.5s 0.2s; opacity: 0
   .guide a { border-right: 0; margin-right: 0; border-bottom: 1px solid var(--line); }
   .cat a { grid-template-columns: 36px minmax(0, 1fr); }
   .cat .yr { display: none; }
-  .feats li { grid-template-columns: 1fr; gap: 2px; }
+  .feats li, .prov-list li { grid-template-columns: 1fr; gap: 2px; }
   .label { max-width: 250px; }
   .hero-art .label { position: relative; right: auto; bottom: auto; }
   .pin em { display: none; }

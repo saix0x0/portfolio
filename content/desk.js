@@ -9,7 +9,7 @@
 
 export const desk = {
   // Under your name on the wall
-  wallLine: 'Computer Science + Computing & Human Sciences · IIIT Hyderabad',
+  wallLine: 'CS + Computing & Human Sciences · IIIT Hyderabad',
   hint: 'Click anything on the desk.',
   hintTouch: 'Drag to look around. Tap anything.',
 
