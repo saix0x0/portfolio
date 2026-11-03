@@ -12,12 +12,12 @@ export const site = {
   degree: 'Computer Science + Computing and Human Sciences',
 
   // One sentence. Shown under your name in Paris.
-  tagline: 'I study Computer Science and Computing & Human Sciences at IIIT Hyderabad — and I like building things that sit between machines and people.',
+  tagline: 'I study Computer Science and Computing & Human Sciences at IIIT Hyderabad, and I build software that sits where machines meet people.',
 
   // Shown in the Paris "About" column. TODO: rewrite in your own voice.
   bio: [
-    'TODO — two or three sentences about who you are and what pulls you toward both engineering and the human sciences.',
-    'TODO — what you do when you are not at a keyboard, and what you hope to build.',
+    'TODO: two or three sentences about who you are and what pulls you toward both engineering and the human sciences.',
+    'TODO: what you do when you are not at a keyboard, and what you hope to build.',
   ],
 
   interests: [
@@ -35,8 +35,8 @@ export const site = {
   // The "Now" list — what you're exploring at the moment. Update often.
   now: [
     { label: 'Exploring', text: 'AI agents and agentic systems' },
-    { label: 'Studying', text: 'TODO — this semester’s courses' },
-    { label: 'Reading', text: 'TODO — see the Library' },
+    { label: 'Studying', text: 'TODO: this semester’s courses' },
+    { label: 'Reading', text: 'TODO: see the Library' },
   ],
 
   facts: [
@@ -72,8 +72,8 @@ export const site = {
   hiring: {
     open: true,
     headline: 'Open to internships, research and interesting problems', // TODO: confirm
-    lookingFor: ['TODO — e.g. software engineering internships', 'TODO — e.g. AI / agents research', 'TODO — e.g. hackathon teams'],
+    lookingFor: ['TODO: e.g. software engineering internships', 'TODO: e.g. AI / agents research', 'TODO: e.g. hackathon teams'],
     note: '',
-    resume: '', // e.g. 'assets/resume.pdf' — put the file there and set the path. Empty hides the button.
+    resume: '', // e.g. 'assets/resume.pdf'. Put the file there and set the path. Empty hides the button.
   },
 };

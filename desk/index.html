@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>The desk — Sai Siddhanth Challa</title>
-  <meta name="description" content="The interactive portfolio of Sai Siddhanth Challa: a photo of my desk where every object opens something. Projects, live GitHub, a working terminal and a contact form.">
+  <title>The desk · Sai Siddhanth Challa</title>
+  <meta name="description" content="The interactive portfolio of Sai Siddhanth Challa: a photo of my desk where every object opens something. Projects, live GitHub, a working terminal and a typing test.">
   <meta name="theme-color" content="#0b0605">
   <meta property="og:title" content="Sai Siddhanth Challa">
   <meta property="og:description" content="My actual desk. Every object on it opens part of my portfolio.">
@@ -12,7 +12,7 @@
   <link rel="preload" href="../assets/img/desk.jpg" as="image">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Silkscreen&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Silkscreen&display=swap">
   <link rel="stylesheet" href="../assets/css/desk.css">
   <script>document.documentElement.classList.add('js')</script>
   <script type="module" src="../assets/js/pages/desk.js"></script>
@@ -25,7 +25,6 @@
     <div class="top-r">
       <button class="chip" type="button" data-palette aria-label="Search the site (Command K)">⌕ Search</button>
       <button class="chip" type="button" data-mute aria-pressed="false">Sound off</button>
-      <a class="chip" href="#browser/projects">Projects</a>
       <a class="chip" href="#browser/github">GitHub</a>
       <a class="chip" href="https://www.linkedin.com/in/sai-siddhanth-challa-1b63a4377/" target="_blank" rel="noopener">LinkedIn</a>
       <a class="chip solid" href="#contact">Contact</a>
@@ -36,7 +35,7 @@
   <!-- The room: the photo, its lights, its screens and a hotspot per object -->
   <main class="room" data-room>
     <div class="stage" data-stage>
-      <img class="photo" src="../assets/img/desk.jpg" width="1600" height="1200" alt="My desk at night: a monitor, a MacBook, a mechanical keyboard with RGB, a vertical mouse, AirPods, a book and a lamp glowing on the wall.">
+      <img class="photo" src="../assets/img/desk.jpg" width="1600" height="1200" alt="My desk at night: a monitor, a MacBook, a mechanical keyboard with RGB, AirPods and a lamp glowing on the wall.">
       <div class="tint lamp-hue" data-lamp-hue></div>
       <div class="tint lamp-off" data-lamp-off></div>
       <div class="rgb kb" data-rgb-kb></div>
@@ -60,7 +59,7 @@
 
   <!-- Full-screen apps (the monitor's browser, the laptop's terminal) -->
   <div class="app" data-app hidden></div>
-  <!-- Bottom sheet (keyboard → contact) and small cards (mouse, AirPods, book) -->
+  <!-- Bottom sheet (keyboard: typing test, #contact: message form) and the AirPods card -->
   <div class="sheet" data-sheet hidden></div>
   <div class="card-pop" data-pop hidden></div>
   <div class="toast" data-toast role="status" aria-live="polite"></div>

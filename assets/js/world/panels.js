@@ -182,9 +182,9 @@ register('portfolio', () => `${head('Portfolio mode', 'The same work, without th
   <p>A clean, fast version of everything in this hotel: projects, college work, skills and contact.</p>
   <div class="px-row"><a class="px-btn primary" href="${href('')}" autofocus>Open the website ↗</a><a class="px-btn" href="${href('work/')}">All projects ↗</a><a class="px-btn" href="${href('work/')}#college">College work ↗</a></div>`);
 
-const SNACKS = ['NEON COLA. Tastes like static.', 'ORBIT CHIPS. Each one slightly zero-g.', 'A tiny bag of syntax sugar.', 'COFFEE.EXE — warning: may cause commits.', 'Nothing. The machine is out of moonlight.'];
+const SNACKS = ['NEON COLA. Tastes like static.', 'ORBIT CHIPS. Each one slightly zero-g.', 'A tiny bag of syntax sugar.', 'COFFEE.EXE, warning: may cause commits.', 'Nothing. The machine is out of moonlight.'];
 register('vending', () => `${head('Vending machine', 'Clunk.')}<p>You got: <b>${esc(SNACKS[(Math.random() * SNACKS.length) | 0])}</b></p>`);
-register('bartender', (a, g) => `${head('Bartender bot', '“What’ll it be?”')}<p>${esc(!g.flags.secret_alcove ? 'Between you and me — one of the Gallery paintings isn’t hung straight. Always bugged me.' : 'You found the alcove? Then you already know more than most guests.')}</p>`);
+register('bartender', (a, g) => `${head('Bartender bot', '“What’ll it be?”')}<p>${esc(!g.flags.secret_alcove ? 'Between you and me, one of the Gallery paintings isn’t hung straight. Always bugged me.' : 'You found the alcove? Then you already know more than most guests.')}</p>`);
 register('npc', ({ npc }, g) => {
   npc.say = (npc.say ?? -1) + 1;
   npc.talking = true; // stops, turns to face you, mouth moves
@@ -203,7 +203,7 @@ register('contact', () => {
       <label>Your email<input name="email" type="email" required autocomplete="email"></label>
       <label>About<select name="topic"><option>Project inquiry</option><option>Collaboration</option><option>Opportunity</option><option>Just saying hi</option></select></label>
       <label>Message<textarea name="message" rows="5" required></textarea></label>
-      <p class="px-note">${ready ? 'Sending opens your email app with the message ready.' : 'Messaging isn’t connected yet — the owner still needs to add an email in content/site.js.'}</p>
+      <p class="px-note">${ready ? 'Sending opens your email app with the message ready.' : 'Messaging isn’t connected yet, the owner still needs to add an email in content/site.js.'}</p>
       <p class="px-err" role="status" aria-live="polite"></p>
       <button class="px-btn primary" ${ready ? '' : 'disabled'}>Send ✉</button>
     </form>`;
@@ -213,7 +213,7 @@ register('contact', () => {
     const err = !d.name.trim() ? 'Add your name.' : !/^\S+@\S+\.\S{2,}$/.test(d.email) ? 'Check your email address.' : d.message.trim().length < 5 ? 'Write a little more.' : '';
     el.querySelector('.px-err').textContent = err;
     if (err || !ready) return;
-    location.href = `mailto:${site.email}?subject=${encodeURIComponent(`[${d.topic}] from ${d.name}`)}&body=${encodeURIComponent(`${d.message}\n\n— ${d.name} (${d.email})`)}`;
+    location.href = `mailto:${site.email}?subject=${encodeURIComponent(`[${d.topic}] from ${d.name}`)}&body=${encodeURIComponent(`${d.message}\n\n,  ${d.name} (${d.email})`)}`;
   });
   return el;
 });

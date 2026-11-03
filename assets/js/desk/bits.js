@@ -1,18 +1,18 @@
 // ─────────────────────────────────────────────────────────────────────────────
 //  SMALL THINGS ON THE DESK
-//   keyboard → contactSheet  (type, and the keys light up on the photo)
+//   keyboard → typeSheet     (a typing test; every key clicks and lights up)
+//   #contact → contactSheet  (the message form, reached from the header)
 //   AirPods  → musicCard     (three original synth loops)
-//   book     → readingCard   (what I'm reading)
 // ─────────────────────────────────────────────────────────────────────────────
 import { $, esc, href } from '../core/base.js';
 import { site } from '../../../content/site.js';
 import { desk } from '../../../content/desk.js';
-import { RECORDS, loop, isMuted, setMuted } from '../world/sound.js';
+import { RECORDS, loop, isMuted, setMuted, note } from '../world/sound.js';
 
 const close = '<button class="x" type="button" data-close aria-label="Back to the desk">×</button>';
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
-// ── keyboard: reach out (each key you press lights up on the photo) ─────────
+// ── contact: reach out (each key you press lights up on the photo) ─────────
 export function contactSheet(root, ctx) {
   const { provider, web3formsKey } = site.contact;
   const via = provider === 'web3forms' && web3formsKey ? 'web3forms' : provider === 'formsubmit' && site.email ? 'formsubmit' : site.email ? 'mailto' : '';
@@ -92,12 +92,136 @@ export function musicCard(root, ctx) {
   return () => {};
 }
 
-// ── the book: what I'm reading ──────────────────────────────────────────────
-export function readingCard(root, ctx) {
-  const b = desk.onDesk;
-  root.innerHTML = `<div class="pc reading">${close}<p class="eyebrow">Currently reading</p>
-    <div class="ondesk"><span class="cover" aria-hidden="true"><b>${esc(b.title)}</b><i>${esc(b.author)}</i><img src="https://covers.openlibrary.org/b/isbn/${esc(b.isbn)}-M.jpg?default=false" alt="" loading="lazy" onload="this.naturalWidth > 10 && this.classList.add('ok')" onerror="this.remove()"></span>
-      <div><h2>${esc(b.title)}</h2><p>${esc(b.author)}</p></div></div></div>`;
-  $('[data-close]', root).addEventListener('click', ctx.leave);
-  return () => {};
+// ── keyboard: a typing test ─────────────────────────────────────────────────
+// Timed runs of 15, 30 or 60 seconds. The words come from content/desk.js.
+// Every key clicks (pick the switch sound) and lights up on the photo, and
+// the keyboard's RGB can be changed from here.
+const SOUNDS = {
+  clicky: (sp) => (note(sp ? 2100 : 2600 + Math.random() * 500, { dur: 0.018, type: 'square', vol: 0.05 }), note(sp ? 700 : 1300, { dur: 0.03, type: 'square', vol: 0.035, at: 0.012 })),
+  thock: (sp) => note(sp ? 95 : 130 + Math.random() * 40, { dur: 0.06, type: 'triangle', vol: 0.32, slide: 0.6 }),
+  off: () => {},
+};
+const pick = (k, d) => { try { return localStorage.getItem(k) || d; } catch { return d; } };
+const keep = (k, v) => { try { localStorage.setItem(k, v); } catch {} };
+export function typeSheet(root, ctx) {
+  let secs = +pick('type:secs', 30);
+  let sound = pick('type:sound', 'clicky');
+  let words = [];
+  let wi = 0;
+  let typed = '';
+  let done = [];
+  let t0 = 0;
+  let timer = 0;
+  let keys = 0;
+  let good = 0;
+  let over = false;
+  const best = () => +pick(`type:best:${secs}`, 0);
+  const seg = (name, opts, cur) => `<span class="seg" role="group" aria-label="${name}">${opts.map(([v, l]) => `<button type="button" data-${name}="${v}" aria-pressed="${String(v) === String(cur)}">${l}</button>`).join('')}</span>`;
+  root.innerHTML = `<div class="sh tt">${close}
+    <div class="tt-head"><div><p class="eyebrow">Keyboard</p><h2>How fast do you <em>type?</em></h2></div>
+      <div class="tt-opts">${seg('secs', [[15, '15s'], [30, '30s'], [60, '60s']], secs)}${seg('sound', [['clicky', 'Clicky'], ['thock', 'Thock'], ['off', 'Silent']], sound)}${seg('rgb', [['wave', 'Wave'], ['lamp', 'Lamp'], ['stock', 'Stock']], ctx.lights.state.rgb)}</div></div>
+    <div class="tt-stats"><span><b data-wpm>0</b> wpm</span><span><b data-acc>100</b>% accuracy</span><span><b data-left>${secs}</b>s left</span><span class="muted" data-best></span></div>
+    <div class="tt-box" data-box><div class="tt-words" data-words></div><input class="tt-in" data-in autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Type the words shown"><p class="tt-go" data-go>Click here and start typing</p></div>
+    <p class="muted small tt-foot"><kbd>Tab</kbd> restarts · <kbd>Esc</kbd> back to the desk · your keys light up on the photo above</p></div>`;
+  const $$q = (q) => $(q, root);
+  const box = $$q('[data-box]');
+  const input = $$q('[data-in]');
+  const paintBest = () => ($$q('[data-best]').textContent = best() ? `Your best at ${secs}s: ${best()} wpm` : '');
+  const deal = () => {
+    const pool = desk.typing;
+    words = Array.from({ length: 80 }, () => pool[Math.floor(Math.random() * pool.length)]);
+  };
+  const render = () => {
+    const html = words.slice(0, wi + 40).map((w, i) => {
+      if (i < wi) return `<span class="w ${done[i] === w ? 'ok' : 'bad'}">${esc(w)}</span>`;
+      if (i > wi) return `<span class="w">${esc(w)}</span>`;
+      const chars = [...w].map((c, j) => `<i class="${j < typed.length ? (typed[j] === c ? 'ok' : 'bad') : ''}${j === typed.length ? ' caret' : ''}">${esc(c)}</i>`).join('');
+      const extra = typed.length > w.length ? `<i class="bad x">${esc(typed.slice(w.length))}</i>` : '';
+      return `<span class="w cur">${chars}${extra}${typed.length >= w.length ? '<i class="caret end"></i>' : ''}</span>`;
+    }).join(' ');
+    const el = $$q('[data-words]');
+    el.innerHTML = html;
+    const cur = $('.cur', el);
+    if (cur) el.scrollTop = Math.max(0, cur.offsetTop - el.offsetTop - 44);
+  };
+  const correctChars = () => done.reduce((s, w, i) => s + (w === words[i] ? w.length + 1 : 0), 0);
+  const stats = () => {
+    const min = t0 ? Math.max((Math.min(Date.now() - t0, secs * 1000)) / 60000, 1 / 60) : 0;
+    $$q('[data-wpm]').textContent = min ? Math.round(correctChars() / 5 / min) : 0;
+    $$q('[data-acc]').textContent = keys ? Math.round((good / keys) * 100) : 100;
+    $$q('[data-left]').textContent = t0 ? Math.max(0, Math.ceil(secs - (Date.now() - t0) / 1000)) : secs;
+  };
+  const finish = () => {
+    clearInterval(timer);
+    over = true;
+    input.blur();
+    const wpm = Math.round(correctChars() / 5 / (secs / 60));
+    const acc = keys ? Math.round((good / keys) * 100) : 100;
+    const pb = wpm > best();
+    if (pb) keep(`type:best:${secs}`, wpm);
+    box.classList.add('over');
+    $$q('[data-go]').innerHTML = `<b>${wpm} wpm</b><span>${acc}% accuracy${pb ? ' · <span class="pb">new personal best</span>' : ''}</span><button class="btn" type="button" data-again>Go again</button>`;
+    paintBest();
+  };
+  const reset = () => {
+    clearInterval(timer);
+    deal();
+    wi = 0; typed = ''; done = []; t0 = 0; keys = 0; good = 0; over = false;
+    input.value = '';
+    box.classList.remove('over', 'live');
+    $$q('[data-go]').textContent = 'Click here and start typing';
+    render();
+    stats();
+    paintBest();
+  };
+  input.addEventListener('input', () => {
+    if (over) return (input.value = '');
+    const v = input.value;
+    if (!t0 && v.trim()) {
+      t0 = Date.now();
+      box.classList.add('live');
+      timer = setInterval(() => { stats(); if (Date.now() - t0 >= secs * 1000) finish(); }, 200);
+    }
+    // phones and pastes can deliver several characters (and spaces) at once
+    const parts = v.split(' ');
+    const last = parts.pop();
+    for (const part of parts) {
+      SOUNDS[sound](true);
+      if (!part) continue;
+      done[wi] = part;
+      keys++;
+      if (part === words[wi]) good++;
+      wi++;
+    }
+    if (parts.length) typed = '';
+    const w = words[wi];
+    for (let j = typed.length; j < last.length; j++) {
+      keys++;
+      if (last[j] === w[j]) good++;
+    }
+    if (!parts.length) SOUNDS[sound](false);
+    typed = last;
+    if (input.value !== last) input.value = last;
+    render();
+    stats();
+  });
+  input.addEventListener('keydown', (e) => { if (e.key === 'Tab') e.preventDefault(), reset(), input.focus(); });
+  box.addEventListener('click', () => { if (!over) input.focus({ preventScroll: true }); });
+  input.addEventListener('focus', () => box.classList.add('focus'));
+  input.addEventListener('blur', () => box.classList.remove('focus'));
+  root.addEventListener('click', (e) => {
+    if (e.target.closest('[data-close]')) return ctx.leave();
+    if (e.target.closest('[data-again]')) return e.stopPropagation(), reset(), input.focus();
+    const b = e.target.closest('[data-secs], [data-sound], [data-rgb]');
+    if (!b) return;
+    const [k, v] = Object.entries(b.dataset)[0];
+    b.parentElement.querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    if (k === 'secs') (secs = +v), keep('type:secs', v), reset();
+    if (k === 'sound') (sound = v), keep('type:sound', v), v !== 'off' && isMuted() && setMuted(false), SOUNDS[v](false);
+    if (k === 'rgb') ctx.lights.rgb(v);
+    input.focus({ preventScroll: true });
+  });
+  reset();
+  setTimeout(() => input.focus({ preventScroll: true }), 500);
+  return () => clearInterval(timer);
 }

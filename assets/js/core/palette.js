@@ -10,23 +10,23 @@ import { site } from '../../../content/site.js';
 import { projects } from '../../../content/projects.js';
 
 const CSS = `
-.pal{position:fixed;inset:0;z-index:300;display:grid;place-items:start center;padding:12vh 16px 16px;background:rgba(6,3,2,.55);backdrop-filter:blur(6px);opacity:0;transition:opacity .18s}
+.pal{position:fixed;inset:0;z-index:300;display:grid;place-items:start center;padding:12vh 16px 16px;background:rgba(4,5,14,.6);backdrop-filter:blur(6px);opacity:0;transition:opacity .18s}
 .pal.open{opacity:1}
-.pal-box{width:min(620px,100%);border-radius:16px;background:#160e0b;border:1px solid rgba(243,230,214,.14);box-shadow:0 30px 80px rgba(0,0,0,.6);overflow:hidden;transform:translateY(-8px) scale(.985);transition:transform .2s cubic-bezier(.2,.8,.2,1)}
+.pal-box{width:min(620px,100%);border-radius:16px;background:#0e1028;border:1px solid rgba(201,164,90,.28);box-shadow:0 30px 80px rgba(0,0,0,.6);overflow:hidden;transform:translateY(-8px) scale(.985);transition:transform .2s cubic-bezier(.2,.8,.2,1)}
 .pal.open .pal-box{transform:none}
-.pal-in{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid rgba(243,230,214,.1)}
-.pal-in span{color:#a8968a}
-.pal-in input{flex:1;min-width:0;background:none;border:0;outline:0;color:#f3e6d6;font:400 17px 'Inter',system-ui,sans-serif}
-.pal-in kbd,.pal-foot kbd{font:500 11px 'JetBrains Mono',monospace;padding:2px 6px;border:1px solid rgba(243,230,214,.14);border-radius:5px;color:#a8968a}
+.pal-in{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid rgba(241,233,216,.1)}
+.pal-in span{color:#a9a6bb}
+.pal-in input{flex:1;min-width:0;background:none;border:0;outline:0;color:#f1e9d8;font:400 17px "Helvetica Neue",Helvetica,Inter,Arial,sans-serif}
+.pal-in kbd,.pal-foot kbd{font:500 11px 'JetBrains Mono',monospace;padding:2px 6px;border:1px solid rgba(241,233,216,.14);border-radius:5px;color:#a9a6bb}
 .pal-list{list-style:none;margin:0;padding:6px;max-height:min(52vh,420px);overflow-y:auto}
-.pal-list li{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;cursor:pointer;color:#f3e6d6;font:400 15px 'Inter',system-ui,sans-serif}
-.pal-list li[aria-selected=true]{background:rgba(255,178,107,.12)}
-.pal-list li i{flex:none;width:26px;height:26px;border-radius:7px;display:grid;place-items:center;font-style:normal;font-size:13px;background:rgba(243,230,214,.06);color:#ffb26b}
+.pal-list li{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;cursor:pointer;color:#f1e9d8;font:400 15px "Helvetica Neue",Helvetica,Inter,Arial,sans-serif}
+.pal-list li[aria-selected=true]{background:rgba(201,164,90,.15)}
+.pal-list li i{flex:none;width:26px;height:26px;border-radius:7px;display:grid;place-items:center;font-style:normal;font-size:13px;background:rgba(241,233,216,.06);color:#ecd29a}
 .pal-list li b{font-weight:500;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.pal-list li small{font:400 11px 'JetBrains Mono',monospace;color:#6e5f56;text-transform:uppercase;letter-spacing:.08em;flex:none}
-.pal-list .none{color:#a8968a;cursor:default}
-.pal-head{padding:10px 12px 4px;font:500 10px 'JetBrains Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:#6e5f56}
-.pal-foot{display:flex;gap:16px;padding:10px 18px;border-top:1px solid rgba(243,230,214,.08);font:400 12px 'Inter',sans-serif;color:#6e5f56}
+.pal-list li small{font:400 11px 'JetBrains Mono',monospace;color:#6c6a84;text-transform:uppercase;letter-spacing:.08em;flex:none}
+.pal-list .none{color:#a9a6bb;cursor:default}
+.pal-head{padding:10px 12px 4px;font:500 10px 'JetBrains Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:#6c6a84}
+.pal-foot{display:flex;gap:16px;padding:10px 18px;border-top:1px solid rgba(241,233,216,.08);font:400 12px "Helvetica Neue",Helvetica,Inter,Arial,sans-serif;color:#6c6a84}
 @media (prefers-reduced-motion:reduce){.pal,.pal-box{transition:none}}`;
 
 let el = null;
@@ -49,6 +49,7 @@ export function palette({ desk = false, extra = [] } = {}) {
     { t: 'GitHub profile', k: 'Profile', g: '⌥', run: open(`https://github.com/${site.github}`) },
     ...(site.hiring.resume ? [{ t: 'Download résumé', k: 'File', g: '⇩', run: () => (location.href = href(site.hiring.resume)), x: 'cv resume pdf' }] : []),
     { t: 'Terminal', k: 'Desk', g: '>_', run: to('terminal'), x: 'laptop shell command line' },
+    { t: 'Typing test', k: 'Desk', g: '⌨', run: to('type'), x: 'keyboard wpm speed game' },
     ...(desk ? [] : [{ t: 'Enter the desk', k: 'Desk', g: '▣', run: () => (location.href = href('desk/')) }]),
     { t: 'Enter game', k: 'Game', g: '▸', run: () => (location.href = href('hotel/')), x: 'hotel pixel play' },
     ...projects.map((p) => ({ t: p.title, k: 'Project', g: '◆', run: to(`browser/p:${p.id}`), x: `${p.subtitle || ''} ${(p.tech || []).join(' ')} ${p.repo || ''}` })),

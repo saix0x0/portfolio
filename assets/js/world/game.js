@@ -541,7 +541,7 @@ export class Game {
     const n = (this.flags.ducks || []).length;
     const priv = f.id === 'penthouse' ? ' <i class="priv">private</i>' : '';
     if (el) el.innerHTML = `<b>${f.n}</b> ${f.name}${priv}${n ? ` <span class="ducks" title="Rubber ducks found">🦆 ${n}/${DUCKS.length}</span>` : ''}`;
-    if (force) document.title = `${f.name} — Cyberverse Hotel`;
+    if (force) document.title = `${f.name}, Cyberverse Hotel`;
   }
 
   // ── render ────────────────────────────────────────────────────────────────

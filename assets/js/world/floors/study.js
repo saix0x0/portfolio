@@ -147,7 +147,7 @@ export function dyn(ctx, f, t, G) {
 }
 
 export function npcs(f) {
-  return [new Walker({ id: 'reader', name: 'Quiet reader', look: LOOKS.student2, floor: f.id, x: 1200, min: 1120, max: 1290, speed: 8, lines: ['Shh. Every spine here is a real book — open a shelf to see them.', 'The green shelf is all free to read online.'] })];
+  return [new Walker({ id: 'reader', name: 'Quiet reader', look: LOOKS.student2, floor: f.id, x: 1200, min: 1120, max: 1290, speed: 8, lines: ['Shh. Every spine here is a real book, open a shelf to see them.', 'The green shelf is all free to read online.'] })];
 }
 
 export function objects(f) {
@@ -183,13 +183,13 @@ register('cat', (a, g) => {
 register('exploring', () => `<p class="px-kicker">Exploring board</p><h2 id="panel-title">What I’m thinking about</h2>
   <div class="px-tags">${site.interests.map((i) => `<span class="tag">${esc(i)}</span>`).join('')}</div>
   <h3>Learning now</h3><p>${learningNow.map((x) => esc(x)).join(' · ')}</p>
-  <p class="px-note">The Observatory floor will hold maths, economics and philosophy in depth — it’s still being built.</p>`);
+  <p class="px-note">The Observatory floor will hold maths, economics and philosophy in depth, it’s still being built.</p>`);
 register('links', () => `<p class="px-kicker">Card catalogue</p><h2 id="panel-title">Websites I live on</h2>
   ${linkGroups.map((g) => `<h3>${esc(g.name)}</h3><ul class="px-list">${g.links.map((l) => `<li><a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.name)}</a> <span class="px-note">${esc(l.note || '')}</span></li>`).join('')}</ul>`).join('')}`);
 register('keycard', (a, g) => {
   g.setFlag('keycard');
   return `<p class="px-kicker">${esc(SECRET?.title || 'A book')}</p><h2 id="panel-title">A keycard falls out.</h2>
     <p>Tucked between the pages about strange loops: a matte-black card stamped <b>B · STAFF</b>.</p>
-    <p class="px-note">Secret 2 of 3. The elevator’s B button now works — so do the staff stairs in the lobby.</p>
+    <p class="px-note">Secret 2 of 3. The elevator’s B button now works, so do the staff stairs in the lobby.</p>
     <div class="px-row"><button class="px-btn primary" type="button" data-ride="basement">Ride down to B</button></div>`;
 });

@@ -228,15 +228,15 @@ register('journey', () => `<p class="px-kicker">Journey wall</p><h2 id="panel-ti
 
 register('toolkit', () => `<p class="px-kicker">Toolkit</p><h2 id="panel-title">What I work with</h2>
   ${skillGroups.map((g) => `<h3>${esc(g.name)}</h3><div class="px-tags">${g.skills.map((s) => `<span class="tag">${todo(s)}</span>`).join('')}</div>`).join('')}
-  <p class="px-note">No made-up proficiency bars — the exhibits are the proof.</p>`);
+  <p class="px-note">No made-up proficiency bars, the exhibits are the proof.</p>`);
 
 register('strangeloop', (a, g) => {
   if (!g.flags.secret_alcove) {
     g.setFlag('secret_alcove');
     return `<p class="px-kicker">Strange Loop · artist unknown</p><h2 id="panel-title">The painting swings open.</h2>
       <p>Behind it: a small niche, a humming terminal, and a folded note.</p>
-      <blockquote class="px-note">“The key rests between strange loops.<br>— Study, the philosophy shelf.”</blockquote>
+      <blockquote class="px-note">“The key rests between strange loops.<br>Study, the philosophy shelf.”</blockquote>
       <p class="px-note">Secret 1 of 3 found.</p>`;
   }
-  return `<p class="px-kicker">Strange Loop</p><h2 id="panel-title">The niche is still open.</h2><blockquote class="px-note">“The key rests between strange loops. — Study, the philosophy shelf.”</blockquote>`;
+  return `<p class="px-kicker">Strange Loop</p><h2 id="panel-title">The niche is still open.</h2><blockquote class="px-note">“The key rests between strange loops.<br>Study, the philosophy shelf.”</blockquote>`;
 });

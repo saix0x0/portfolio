@@ -8,7 +8,7 @@
 
 export const skillGroups = [
   { name: 'Languages', skills: ['Python', 'C++', 'C', 'JavaScript', 'SQL'] },
-  { name: 'AI & ML', skills: ['TODO — e.g. PyTorch', 'TODO — e.g. LLM APIs & agents'] },
+  { name: 'AI & ML', skills: ['TODO: e.g. PyTorch', 'TODO: e.g. LLM APIs & agents'] },
   { name: 'Web', skills: ['HTML', 'CSS', 'Canvas', 'SVG'] },
   { name: 'Tools', skills: ['Git', 'Linux', 'Web Crypto'] },
   { name: 'Concepts', skills: ['Algorithms', 'Data structures', 'Databases'] },

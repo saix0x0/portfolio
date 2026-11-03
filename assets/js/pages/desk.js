@@ -13,7 +13,7 @@ import { drawPerson, LOOKS, playerLook } from '../world/actors.js';
 import { isMuted, setMuted, note } from '../world/sound.js';
 import { browserApp, miniMonitor } from '../desk/browser.js';
 import { terminalApp, miniLaptop } from '../desk/terminal.js';
-import { contactSheet, musicCard, readingCard } from '../desk/bits.js';
+import { contactSheet, typeSheet, musicCard } from '../desk/bits.js';
 import { palette } from '../core/palette.js';
 
 const RM = reducedMotion();
@@ -28,18 +28,14 @@ const OBJ = [
     polys: [[[438, 350], [1099, 350], [1097, 722], [441, 723]]] },
   { id: 'laptop', label: 'Laptop', what: 'Terminal', route: 'terminal', tag: [190, 404], zoom: [0, 414, 374, 662],
     polys: [[[0, 420], [360, 408], [380, 642], [404, 772], [0, 792]]] },
-  { id: 'keyboard', label: 'Keyboard', what: 'Contact', route: 'contact', tag: [566, 842], zoom: [250, 820, 890, 1010],
+  { id: 'keyboard', label: 'Keyboard', what: 'Typing test', route: 'type', tag: [566, 842], zoom: [250, 820, 890, 1010],
     polys: [[[338, 850], [812, 846], [858, 997], [282, 999]]] },
   { id: 'airpods', label: 'AirPods', what: 'Music', route: 'music', tag: [1256, 918],
     polys: [[[1205, 932], [1292, 924], [1310, 986], [1214, 1000]]] },
-  { id: 'book', label: 'Book', what: 'Currently reading', route: 'reading', tag: [1430, 856],
-    polys: [[[1248, 880], [1436, 860], [1600, 926], [1600, 1082], [1446, 1072]]] },
   { id: 'lamp', label: 'Lamp', what: 'Change the colour', act: 'lamp', tag: [1396, 462],
     polys: [[[1352, 476], [1446, 476], [1440, 724], [1362, 724]], [[1230, 0], [1600, 0], [1600, 330], [1420, 470], [1372, 470]]] },
-  { id: 'switch', label: 'Light switch', what: 'Lights on or off', act: 'switch', tag: [1206, 388],
-    polys: [[[1104, 396], [1310, 392], [1312, 472], [1104, 474]]] },
 ];
-const ROUTES = new Set(OBJ.map((o) => o.route).filter(Boolean));
+const ROUTES = new Set([...OBJ.map((o) => o.route).filter(Boolean), 'contact']);
 
 // screen quads (TL, TR, BR, BL) for the live overlays
 const QUADS = {
@@ -196,6 +192,46 @@ function screens() {
   }
   miniMonitor($('[data-screen="monitor"]'));
   miniLaptop($('[data-screen="laptop"]'), RM);
+  reel($('[data-screen="monitor"]'));
+}
+
+// ── the monitor plays an action reel until you click it ─────────────────────
+// One 28-second, 1.5 MB clip (content/desk.js credits each shot). It loads
+// after the photo, pauses when the tab is hidden, and is gone for the rest
+// of the visit once the monitor has been opened.
+let stopReel = () => {};
+function reel(screen) {
+  let seen = false;
+  try { seen = sessionStorage.getItem('desk:reel') === 'seen'; } catch {}
+  if (seen || RM || navigator.connection?.saveData) return;
+  const wrap = document.createElement('div');
+  wrap.className = 'reel';
+  wrap.innerHTML = `<video muted loop playsinline preload="none" poster="../assets/video/reel.jpg"></video>
+    <span class="reel-live"><i></i>Now showing</span><span class="reel-cap" data-cap></span><span class="reel-open">Click to open the browser</span>`;
+  screen.append(wrap);
+  const v = $('video', wrap);
+  const cap = $('[data-cap]', wrap);
+  let shown = -1;
+  v.addEventListener('timeupdate', () => {
+    const i = desk.reel.findLastIndex((c) => v.currentTime >= c.at);
+    if (i === shown || i < 0) return;
+    shown = i;
+    const c = desk.reel[i];
+    cap.innerHTML = `<b>${esc(c.what)}</b><small>${esc(c.who)} · ${esc(c.lic)}</small>`;
+    cap.classList.remove('in');
+    requestAnimationFrame(() => cap.classList.add('in'));
+  });
+  const start = () => { v.src = '../assets/video/reel.mp4'; v.play().catch(() => {}); };
+  if (document.readyState === 'complete') setTimeout(start, 300);
+  else addEventListener('load', () => setTimeout(start, 300), { once: true });
+  document.addEventListener('visibilitychange', () => (document.hidden ? v.pause() : wrap.isConnected && v.play().catch(() => {})));
+  stopReel = () => {
+    try { sessionStorage.setItem('desk:reel', 'seen'); } catch {}
+    v.pause();
+    wrap.classList.add('off');
+    setTimeout(() => wrap.remove(), 600);
+    stopReel = () => {};
+  };
 }
 
 // ── toast ───────────────────────────────────────────────────────────────────
@@ -207,7 +243,7 @@ export function toast(msg) {
   toast.t = setTimeout(() => t.classList.remove('on'), 2600);
 }
 
-// ── routing: #browser[/tab] · #terminal · #contact · #music · #reading
+// ── routing: #browser[/tab] · #terminal · #type · #contact · #music
 const app = $('[data-app]');
 const sheet = $('[data-sheet]');
 const pop = $('[data-pop]');
@@ -237,12 +273,13 @@ function route(hash) {
   if (name === current && name === 'browser' && cleanup?.tab) return cleanup.tab(sub);
   closeAll();
   current = ROUTES.has(name) ? name : '';
-  const o = OBJ.find((x) => x.route === current);
+  const o = OBJ.find((x) => x.route === current) || (current === 'contact' ? OBJ[2] : null);
   document.documentElement.dataset.route = current;
   if (!o) return apply(deskView());
   document.body.classList.add('touched');
   click();
   const ctx = { leave, go, toast, lights };
+  if (name === 'browser') stopReel();
   if (name === 'browser' || name === 'terminal') {
     apply(zoomView(o.zoom, { top: 0, h: 1, fill: 1.02 }));
     flyTimer = setTimeout(() => {
@@ -251,17 +288,17 @@ function route(hash) {
       cleanup = name === 'browser' ? browserApp(app, { ...ctx, tab: sub }) : terminalApp(app, ctx);
       requestAnimationFrame(() => app.classList.add('open'));
     }, RM ? 0 : 760);
-  } else if (name === 'contact') {
+  } else if (name === 'contact' || name === 'type') {
     apply(zoomView(o.zoom, { top: 0.02, h: narrow() ? 0.34 : 0.42, fill: 0.96 }));
     sheet.hidden = false;
     document.body.classList.add('in-sheet');
-    cleanup = contactSheet(sheet, ctx);
+    cleanup = (name === 'type' ? typeSheet : contactSheet)(sheet, ctx);
     requestAnimationFrame(() => sheet.classList.add('open'));
   } else {
     apply(deskView());
     pop.hidden = false;
     pop.dataset.at = o.id;
-    cleanup = { music: musicCard, reading: readingCard }[name](pop, ctx);
+    cleanup = musicCard(pop, ctx);
     requestAnimationFrame(() => pop.classList.add('open'));
   }
 }
@@ -275,11 +312,11 @@ function act(name) {
 
 // ── the guided tour: the camera visits each object with a caption ──────────
 const TOUR = [
-  ['monitor', 'The monitor is a full browser: an overview, every project with its live README, and all my GitHub repositories.'],
-  ['laptop', 'The laptop runs a working terminal for the whole site. Try repos, git log or help.'],
-  ['keyboard', 'The keyboard is the contact form. Every key you type lights up on the photo.'],
-  ['airpods', 'The AirPods play three original loops, synthesised live in your browser.'],
-  ['lamp', 'The lamp changes the colour of the room. So does the switch next to it.'],
+  ['monitor', 'A working browser. Every project with its live README, and all my GitHub repositories.'],
+  ['laptop', 'A real terminal for the whole site. Try repos, git log or help.'],
+  ['keyboard', 'A typing test. Every key clicks and lights up on the photo. Beat your best.'],
+  ['airpods', 'Three original loops, synthesised live in your browser.'],
+  ['lamp', 'Click the lamp to change the colour of the whole room.'],
 ];
 let touring = null;
 function tour() {
@@ -442,7 +479,6 @@ palette({
     { t: 'Lights on or off', k: 'Desk', g: '◐', run: () => act('switch'), x: 'lamp dark' },
     ...LAMPS.map((l) => ({ t: `Lamp colour: ${l.name}`, k: 'Desk', g: '●', run: () => lights.set(l.id), x: 'light colour color' })),
     { t: 'Music', k: 'Desk', g: '♪', run: () => go('music'), x: 'airpods play sound' },
-    { t: 'Currently reading', k: 'Desk', g: '❦', run: () => go('reading'), x: 'book' },
     { t: 'Take the tour', k: 'Desk', g: '▶', run: () => tour(), x: 'guide walkthrough demo' },
     { t: 'Front page', k: 'Page', g: '⌂', run: () => (location.href = '../'), x: 'home start' },
   ],
@@ -462,7 +498,7 @@ addEventListener('keydown', (e) => {
 addEventListener('hashchange', () => (touring?.end(), route(location.hash.slice(1))));
 addEventListener('resize', () => {
   if (!current) apply(deskView(), false);
-  else if (current === 'contact') apply(zoomView(OBJ[2].zoom, { top: 0.02, h: narrow() ? 0.34 : 0.42, fill: 0.96 }), false);
+  else if (current === 'contact' || current === 'type') apply(zoomView(OBJ[2].zoom, { top: 0.02, h: narrow() ? 0.34 : 0.42, fill: 0.96 }), false);
 });
 document.documentElement.classList.toggle('touch', !canHover());
 apply(deskView(), false);

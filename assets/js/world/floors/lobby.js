@@ -266,8 +266,8 @@ export function props(f) {
 export function npcs(f) {
   return [
     new Walker({ id: 'guest-a', name: 'Traveller in a long scarf', look: LOOKS.guestA, floor: f.id, x: 300, z: 68, min: 130, max: 420, lines: ['It’s bigger on the inside. The hotel, I mean.', 'The Skyview window is the best seat in the place. Try the console under it.', 'Hold Shift if you’re in a hurry. Time is relative, corridors aren’t.'] }),
-    new Walker({ id: 'guest-c', name: 'Night-shift courier', look: LOOKS.guestC, floor: f.id, x: 900, z: 70, min: 830, max: 1040, lines: ['Messages go up to the Communications Lounge — first floor.', 'Heard there are floors that aren’t on the directory…'] }),
-    new Walker({ id: 'guest-b', name: 'Detective at the bar', look: LOOKS.guestB, floor: f.id, x: 1240, z: 72, min: 1100, max: 1420, lines: ['You’ve come from the Gallery, I perceive. No? Then go — one painting there doesn’t hang straight.', 'The Penthouse is the owner’s private floor. Everything else? Open to every guest.', 'When you have eliminated the impossible, check the basement.'] }),
+    new Walker({ id: 'guest-c', name: 'Night-shift courier', look: LOOKS.guestC, floor: f.id, x: 900, z: 70, min: 830, max: 1040, lines: ['Messages go up to the Communications Lounge, first floor.', 'Heard there are floors that aren’t on the directory…'] }),
+    new Walker({ id: 'guest-b', name: 'Detective at the bar', look: LOOKS.guestB, floor: f.id, x: 1240, z: 72, min: 1100, max: 1420, lines: ['You’ve come from the Gallery, I perceive. No? Then go, one painting there doesn’t hang straight.', 'The Penthouse is the owner’s private floor. Everything else? Open to every guest.', 'When you have eliminated the impossible, check the basement.'] }),
   ];
 }
 

@@ -310,7 +310,7 @@ register('notes', (a, g) => {
       const done = lsGet('todo', {});
       html += `<ul class="nb-todo">${tb.todo.map((t, i) => `<li><label><input type="checkbox" data-todo="${i}" ${done[i] ? 'checked' : ''}><span class="hand">${esc(t)}</span></label></li>`).join('')}</ul>`;
     }
-    if (tb.lines) html += `<ul class="nb-lines">${tb.lines.map((l) => `<li><q class="hand">${esc(l.q)}</q><span>— ${esc(l.a)}</span></li>`).join('')}</ul>`;
+    if (tb.lines) html += `<ul class="nb-lines">${tb.lines.map((l) => `<li><q class="hand">${esc(l.q)}</q><span>,  ${esc(l.a)}</span></li>`).join('')}</ul>`;
     if (tb.doodles) html += `<div class="nb-doodles">${tb.doodles.map((d, i) => `<figure class="polaroid" style="--tilt:${[-3, 2, -1, 3][i % 4]}deg">${doodle(d)}<figcaption class="hand">${esc({ hotel: 'the hotel, v0', cat: 'the library cat (asleep)', car: 'car #7', duck: 'debugging partner' }[d] || d)}</figcaption></figure>`).join('')}</div>`;
     if (tb.scratch) html += `<label class="nb-scratch"><span class="px-note">Scratchpad · saved in this browser only, never uploaded.</span><textarea class="hand" rows="10" placeholder="Dear diary, today the elevator…" data-scratch>${esc(lsGet('scratch', ''))}</textarea></label>`;
     page.innerHTML = html;
@@ -350,7 +350,7 @@ register('curios', (a, g) => `<p class="px-kicker">Penthouse · shelf of curios<
     <li><b>A gold ring.</b> Not that one. Probably.</li>
     <li><b>A cube puzzle,</b> permanently two moves from solved.</li>
     <li><b>A tiny papaya helmet.</b></li>
-    <li><b>An empty plinth</b> ${g.flags.goldenDuck ? '— now home to the <b>golden duck</b>. You found every duck in the hotel. Legend.' : `— the label says “for the golden duck”. Ducks found so far: <b>${(g.flags.ducks || []).length}</b>. Rumour says they hide on every floor.`}</li>
+    <li><b>An empty plinth</b> ${g.flags.goldenDuck ? ',  now home to the <b>golden duck</b>. You found every duck in the hotel. Legend.' : `,  the label says “for the golden duck”. Ducks found so far: <b>${(g.flags.ducks || []).length}</b>. Rumour says they hide on every floor.`}</li>
   </ul>`);
 
 register('records', (a, g) => {

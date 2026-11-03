@@ -267,8 +267,8 @@ export function dyn(ctx, f, t, G) {
 
 export function npcs(f) {
   return [
-    new Walker({ id: 'mechanic', name: 'Pit mechanic', look: LOOKS.mechanic, floor: f.id, x: 300, min: 110, max: 380, speed: 14, lines: ['Box, box! …sorry, habit.', 'The Pit Wall is live now — real standings from this season.', 'Fancy your reflexes? The start lights by the garage time you to the millisecond.'] }),
-    new Walker({ id: 'fan', name: 'F1 fan', look: { skin: '#e2b08a', hair: 'long', hairC: '#8a5a2e', top: 'tee', topC: '#e8002d', legs: '#2a3a5a', shoes: '#f0f0f4', sole: '#e8002d', acc: ['cap'], accC: '#e8002d' }, floor: f.id, x: 1000, min: 830, max: 1090, speed: 12, lines: ['Lights out and away we go!', 'Seven titles each. Hamilton and Schumacher. Still can’t pick.', 'Check the Pit Wall — it knows when the next race is.'] }),
+    new Walker({ id: 'mechanic', name: 'Pit mechanic', look: LOOKS.mechanic, floor: f.id, x: 300, min: 110, max: 380, speed: 14, lines: ['Box, box! …sorry, habit.', 'The Pit Wall is live now, real standings from this season.', 'Fancy your reflexes? The start lights by the garage time you to the millisecond.'] }),
+    new Walker({ id: 'fan', name: 'F1 fan', look: { skin: '#e2b08a', hair: 'long', hairC: '#8a5a2e', top: 'tee', topC: '#e8002d', legs: '#2a3a5a', shoes: '#f0f0f4', sole: '#e8002d', acc: ['cap'], accC: '#e8002d' }, floor: f.id, x: 1000, min: 830, max: 1090, speed: 12, lines: ['Lights out and away we go!', 'Seven titles each. Hamilton and Schumacher. Still can’t pick.', 'Check the Pit Wall, it knows when the next race is.'] }),
   ];
 }
 
@@ -287,9 +287,9 @@ export const doors = doorX;
 
 // ── panels ───────────────────────────────────────────────────────────────────
 register('cars', () => `<p class="px-kicker">The Garage · car museum</p><h2 id="panel-title">Iconic cars</h2>
-  ${iconicCars.map((c) => `<h3>${esc(c.year)} · ${esc(c.name)}</h3><p><b>${esc(c.drivers)}</b> — ${esc(c.fact)}</p>`).join('')}`);
+  ${iconicCars.map((c) => `<h3>${esc(c.year)} · ${esc(c.name)}</h3><p><b>${esc(c.drivers)}</b>: ${esc(c.fact)}</p>`).join('')}`);
 register('tyres', () => `<p class="px-kicker">The Garage</p><h2 id="panel-title">Tyre compounds</h2>
-  <ul class="px-list">${tyres.map((t) => `<li><span class="swatch" style="background:${t.color}"></span><b>${esc(t.name)}</b> — ${esc(t.note)}</li>`).join('')}</ul>`);
+  <ul class="px-list">${tyres.map((t) => `<li><span class="swatch" style="background:${t.color}"></span><b>${esc(t.name)}</b>: ${esc(t.note)}</li>`).join('')}</ul>`);
 register('circuits', () => `<p class="px-kicker">Track Room</p><h2 id="panel-title">Circuits</h2>
   <ul class="px-floors">${circuits.map((c) => `<li><button type="button"><b>${esc(String(c.since))}</b><span>${esc(c.name)} · ${esc(c.country)}</span><em>${c.km} km · ${c.laps} laps</em></button></li>`).join('')}</ul>
   <p class="px-note">Year = first Formula One World Championship race held there.</p>`);
@@ -298,7 +298,7 @@ register('pitwall', () => {
   const draw = (d) => {
     if (!d) {
       el.innerHTML = `<p class="px-kicker">Pit Wall</p><h2 id="panel-title">No signal.</h2><p>The live feed didn’t answer (offline, or the API is resting). The screens will retry next visit.</p>
-        <ul class="px-list"><li><b>Qualifying</b> — Q1, Q2, Q3 decide the grid.</li><li><b>Race</b> — points for the top 10: 25, 18, 15, 12, 10, 8, 6, 4, 2, 1.</li></ul>`;
+        <ul class="px-list"><li><b>Qualifying</b>: Q1, Q2, Q3 decide the grid.</li><li><b>Race</b>: points for the top 10: 25, 18, 15, 12, 10, 8, 6, 4, 2, 1.</li></ul>`;
       return;
     }
     const row = (pos, code, name, team, val) => `<li><span class="f1-pos">${pos}</span><span class="f1-bar" style="background:${teamColour(team)}"></span><b>${esc(code)}</b><span>${esc(name)}</span><em>${esc(val)}</em></li>`;
@@ -322,10 +322,10 @@ register('pitwall', () => {
 register('lightsout', (a, g) => {
   const el = document.createElement('div');
   el.innerHTML = `<p class="px-kicker">The Garage · start gantry</p><h2 id="panel-title">Lights out.</h2>
-    <p>Five red lights come on one by one. When they all go out — go. Click, tap or press Space.</p>
+    <p>Five red lights come on one by one. When they all go out, go. Click, tap or press Space.</p>
     <button class="lights" type="button" autofocus aria-label="Start lights. Press to start, then press again when the lights go out.">${'<i></i>'.repeat(5)}</button>
     <p class="lights-msg" aria-live="polite">Press to line up on the grid.</p>
-    <p class="px-note">Your best: <b data-best>${g.flags.reaction ? g.flags.reaction + ' ms' : '—'}</b> · F1 drivers average around 200 ms.</p>`;
+    <p class="px-note">Your best: <b data-best>${g.flags.reaction ? g.flags.reaction + ' ms' : 'n/a'}</b> · F1 drivers average around 200 ms.</p>`;
   const btn = el.querySelector('.lights');
   const lamps = [...btn.querySelectorAll('i')];
   const msg = el.querySelector('.lights-msg');
@@ -357,7 +357,7 @@ register('lightsout', (a, g) => {
       state = 'done';
       const best = !g.flags.reaction || ms < g.flags.reaction;
       if (best) g.setFlag('reaction', ms), (el.querySelector('[data-best]').textContent = ms + ' ms');
-      msg.innerHTML = `<b>${ms} ms</b> — ${esc(verdict(ms))}${best ? ' <span class="tag">new best</span>' : ''} Press to go again.`;
+      msg.innerHTML = `<b>${ms} ms</b>: ${esc(verdict(ms))}${best ? ' <span class="tag">new best</span>' : ''} Press to go again.`;
     }
   };
   btn.addEventListener('pointerdown', (e) => (e.preventDefault(), press()));
@@ -369,7 +369,7 @@ register('champions', () => `<p class="px-kicker">Hall of Champions</p><h2 id="p
   <p class="px-note">Through the 2024 season.</p>`);
 register('cinema', (a, g) => {
   const el = document.createElement('div');
-  el.innerHTML = `<p class="px-kicker">Cinema</p><h2 id="panel-title">Now showing</h2><p>Pick a channel — it plays on the big screen.</p>
+  el.innerHTML = `<p class="px-kicker">Cinema</p><h2 id="panel-title">Now showing</h2><p>Pick a channel, it plays on the big screen.</p>
     <div class="px-row">${Object.entries(CHANNELS).map(([k, v]) => `<button class="px-btn${(g.flags.channel || 'race') === k ? ' primary' : ''}" type="button" data-ch="${k}">${esc(v)}</button>`).join('')}</div>`;
   el.addEventListener('click', (e) => {
     const b = e.target.closest('[data-ch]');

@@ -53,7 +53,7 @@ export async function fillGithub(root) {
   const langs = [...new Set(repos.map((r) => r.lang).filter(Boolean))];
   box.innerHTML = `<div class="gh-top">
       <a class="gh-prof" href="${esc(prof.url)}" target="_blank" rel="noopener"><img src="${esc(prof.avatar)}&s=160" alt="" width="72" height="72"><span><b>${esc(prof.name || prof.login)}</b><small>@${esc(prof.login)}</small>${prof.bio ? `<em>${esc(prof.bio)}</em>` : ''}</span></a>
-      <dl class="gh-stats"><div><dt>Public repos</dt><dd>${prof.repos}</dd></div>${(() => { const st = repos.reduce((s, r) => s + r.stars, 0); return st ? `<div><dt>Stars earned</dt><dd>${st}</dd></div>` : `<div><dt>Languages</dt><dd>${langs.length}</dd></div>`; })()}<div><dt>Last push</dt><dd>${esc(repos[0] ? ago(repos[0].pushed) : '—')}</dd></div><div><dt>On GitHub since</dt><dd>${esc(new Date(prof.since).getFullYear())}</dd></div></dl>
+      <dl class="gh-stats"><div><dt>Public repos</dt><dd>${prof.repos}</dd></div>${(() => { const st = repos.reduce((s, r) => s + r.stars, 0); return st ? `<div><dt>Stars earned</dt><dd>${st}</dd></div>` : `<div><dt>Languages</dt><dd>${langs.length}</dd></div>`; })()}<div><dt>Last push</dt><dd>${esc(repos[0] ? ago(repos[0].pushed) : 'n/a')}</dd></div><div><dt>On GitHub since</dt><dd>${esc(new Date(prof.since).getFullYear())}</dd></div></dl>
     </div>
     <section class="ac-block"><h3>Languages, by bytes of code</h3><div data-langs><p class="muted small">Counting…</p></div></section>
     <div class="gh-cols">
@@ -127,7 +127,7 @@ export async function fillRepo(root) {
 
 // stats + languages + commits + README for a repo (shared with project pages)
 const panel = (r, full) => `<div class="live-repo">
-  <dl class="gh-stats sm">${r.stars ? `<div><dt>Stars</dt><dd>${r.stars}</dd></div>` : ''}${r.forks ? `<div><dt>Forks</dt><dd>${r.forks}</dd></div>` : ''}<div><dt>Main language</dt><dd>${esc(r.lang || '—')}</dd></div><div><dt>Created</dt><dd>${esc(date(r.created))}</dd></div><div><dt>Last push</dt><dd>${esc(ago(r.pushed))}</dd></div></dl>
+  <dl class="gh-stats sm">${r.stars ? `<div><dt>Stars</dt><dd>${r.stars}</dd></div>` : ''}${r.forks ? `<div><dt>Forks</dt><dd>${r.forks}</dd></div>` : ''}<div><dt>Main language</dt><dd>${esc(r.lang || 'n/a')}</dd></div><div><dt>Created</dt><dd>${esc(date(r.created))}</dd></div><div><dt>Last push</dt><dd>${esc(ago(r.pushed))}</dd></div></dl>
   <div class="lr-cols"><section><h3>Languages</h3><div data-lr-langs><p class="muted small">…</p></div></section>
   <section><h3>Latest commits</h3><ol class="commits" data-lr-commits><li class="muted small">…</li></ol></section></div>
   ${full ? '<section class="readme-wrap"><h3>README</h3><div class="readme" data-lr-readme><p class="muted small">Rendering README…</p></div></section>' : `<details class="readme-wrap" data-lr-more><summary>Read the README here</summary><div class="readme" data-lr-readme></div></details>`}

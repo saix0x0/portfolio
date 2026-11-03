@@ -70,11 +70,11 @@ export const basement = {
 };
 
 register('blueprint', () => `<p class="px-kicker">Mystery Basement</p><h2 id="panel-title">The hotel blueprint</h2>
-  <p>The original plans show floors nobody has built yet: a Laboratory, Acad Space, an Observatory, an Arcade, a Sky Lounge on the roof — and doors leading <i>out</i> of the hotel entirely.</p>
+  <p>The original plans show floors nobody has built yet: a Laboratory, Acad Space, an Observatory, an Arcade, a Sky Lounge on the roof, and doors leading <i>out</i> of the hotel entirely.</p>
   <p class="px-note">Every one of them is on the roadmap.</p>`);
 register('artifact', () => `<p class="px-kicker">Floating artifact</p><h2 id="panel-title">It hums in 4/4.</h2><p>Nobody remembers who left it here. It rotates slightly faster when you think about unfinished projects.</p>`);
 register('bterminal', (a, g) => `<p class="px-kicker">Old terminal</p><h2 id="panel-title">1729</h2>
-  <p>The screen shows one number. A sticky note underneath: <i>“the smallest number expressible as the sum of two cubes in two different ways — upstairs it opens the top.”</i></p>
+  <p>The screen shows one number. A sticky note underneath: <i>“the smallest number expressible as the sum of two cubes in two different ways, upstairs it opens the top.”</i></p>
   <p class="px-note">Secret 3 of 3 is upstairs: take the elevator and try the Penthouse keypad.</p>`);
 register('archive', () => `<p class="px-kicker">Archive door</p><h2 id="panel-title">The archive</h2>
   <p>The archive is a separate sealed room on the site.</p>

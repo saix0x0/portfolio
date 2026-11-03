@@ -13,7 +13,7 @@ export const extracurriculars = [
     role: 'Your role',
     kind: 'club',
     year: 2026,
-    period: '2025 — now',
+    period: '2025, now',
     summary: 'What you do there, in one line.',
     link: '',
   },

@@ -17,14 +17,14 @@ const real = (s = '') => !/^TODO/.test(String(s)); // unfinished content never r
 const link = (label, to) => `<a href="${to.startsWith('#') ? to : esc(href(to))}">${esc(label)}</a>`;
 const PLACES = {
   overview: '#browser/overview', github: '#browser/github', repos: '#browser/github', projects: '#browser/projects', about: '#browser/about',
-  browser: '#browser', contact: '#contact', music: '#music', reading: '#reading', hotel: 'hotel/',
+  browser: '#browser', contact: '#contact', music: '#music', type: '#type', hotel: 'hotel/',
 };
 const FILES = { 'about.md': 'about', 'now.md': 'now', 'contact.md': 'contact', '.secrets': 'secrets' };
 const started = Date.now();
 
 // ── the little terminal painted on the laptop in the photo ──────────────────
 export function miniLaptop(el, still) {
-  el.innerHTML = '<div class="mini-term"><p class="mt-bar">sai@desk — zsh</p><pre data-mt></pre></div>';
+  el.innerHTML = '<div class="mini-term"><p class="mt-bar">sai@desk: zsh</p><pre data-mt></pre></div>';
   const pre = $('[data-mt]', el);
   const script = [
     ['whoami', `${site.fullName}\n${site.degree}\n@ ${site.college}`],
@@ -56,7 +56,7 @@ export function miniLaptop(el, still) {
 // ── the app ─────────────────────────────────────────────────────────────────
 export function terminalApp(root, ctx) {
   root.innerHTML = `<div class="win term" data-term>
-    <div class="term-bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span>sai@desk — zsh — the whole site, by keyboard</span><button class="leave" type="button" data-leave>Back to the desk <kbd>esc</kbd></button></div>
+    <div class="term-bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span>sai@desk: zsh · the whole site, by keyboard</span><button class="leave" type="button" data-leave>Back to the desk <kbd>esc</kbd></button></div>
     <div class="term-out" data-out aria-live="polite"></div>
     <form class="term-in" data-form>${PROMPT}<input data-in autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Command"></form></div>`;
   const out = $('[data-out]', root);
@@ -160,7 +160,7 @@ export function terminalApp(root, ctx) {
       try {
         const rs = await gh.repos();
         p.className = 'ln';
-        p.innerHTML = table(rs.map((r) => [link(r.name, `#browser/r:${r.name}`), `${esc(r.lang || '—')}${r.stars ? ` · ★${r.stars}` : ''} · <span class="dim">${esc(ago(r.pushed))}</span>`])) + `<p class="dim">${rs.length} public repos · <b>repo &lt;name&gt;</b> for one · ${link('open the GitHub tab →', '#browser/github')}</p>`;
+        p.innerHTML = table(rs.map((r) => [link(r.name, `#browser/r:${r.name}`), `${esc(r.lang || 'n/a')}${r.stars ? ` · ★${r.stars}` : ''} · <span class="dim">${esc(ago(r.pushed))}</span>`])) + `<p class="dim">${rs.length} public repos · <b>repo &lt;name&gt;</b> for one · ${link('open the GitHub tab →', '#browser/github')}</p>`;
       } catch (e) { p.className = 'ln err'; p.innerHTML = `github: ${e.rate ? 'hourly limit reached, try later' : 'no answer'}. <a href="https://github.com/${esc(USER)}" target="_blank" rel="noopener">github.com/${esc(USER)}</a>`; }
     },
     repo: async (a) => {
@@ -173,7 +173,7 @@ export function terminalApp(root, ctx) {
         const tot = Object.values(l).reduce((s, v) => s + v, 0) || 1;
         p.className = 'ln';
         p.innerHTML = `<b>${esc(r.name)}</b>  <span class="dim">${esc(r.desc)}</span><br>`
-          + table([['languages', Object.entries(l).slice(0, 4).map(([k, v]) => `${esc(k)} ${Math.round((v / tot) * 100)}%`).join(', ') || '—'], ...(r.stars ? [['stars', String(r.stars)]] : []), ['last push', esc(ago(r.pushed))], ['code', `<a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.url.replace('https://', ''))}</a>`], ...(r.home ? [['demo', `<a href="${esc(r.home)}" target="_blank" rel="noopener">${esc(r.home.replace('https://', ''))}</a>`]] : [])])
+          + table([['languages', Object.entries(l).slice(0, 4).map(([k, v]) => `${esc(k)} ${Math.round((v / tot) * 100)}%`).join(', ') || 'n/a'], ...(r.stars ? [['stars', String(r.stars)]] : []), ['last push', esc(ago(r.pushed))], ['code', `<a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.url.replace('https://', ''))}</a>`], ...(r.home ? [['demo', `<a href="${esc(r.home)}" target="_blank" rel="noopener">${esc(r.home.replace('https://', ''))}</a>`]] : [])])
           + `<p class="dim"><b>git log ${esc(r.name)}</b> for commits · ${link('read the README →', `#browser/r:${r.name}`)}</p>`;
       } catch (e) { p.className = 'ln err'; p.textContent = `github: ${e.rate ? 'hourly limit reached, try later' : 'no answer'}`; }
     },

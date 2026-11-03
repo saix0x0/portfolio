@@ -2,6 +2,15 @@
 
 _Last updated: 2026-11-03, front page + desk at /desk/._
 
+## The exhibition front page, monitor reel and typing test (2026-11-03)
+- `/` rebuilt as a dark royal gallery (`index.html`, `landing.css`, `landing.js`): four rooms, each paired with a public-domain painting in a gilt frame with a museum label (`assets/art/*.webp`, ~730 KB total, lazy below the fold). Hero: Van Gogh lit by a cursor "torch". Room I catalogue of projects, Room II live GitHub with a Kandinsky-style circle chart of languages, Room III the desk photo hung as the final piece (reel + terminal over its blurred screens), Room IV contact.
+- Into the desk: the framed photo zooms to fill the window; the buttons open the desk through an iris from the click point.
+- Fonts: Instrument Serif (display, accents) + Helvetica Neue (UI/body, Inter as fallback) on the front page, desk and search palette. Royal navy/gold tokens on the desk chrome.
+- Desk monitor plays `assets/video/reel.mp4` (28 s, 1.5 MB, CC clips from Wikimedia Commons, credits in `assets/video/CREDITS.md` and on screen) until the monitor is opened; skipped with reduced motion or Save-Data.
+- Keyboard is now a typing test (`#type`, `typeSheet` in `desk/bits.js`): 15/30/60 s, WPM, accuracy, personal best, Clicky/Thock/Silent switch sounds, keyboard RGB modes. Contact stays at `#contact` (header button).
+- Removed the book and light switch hotspots and the Projects chip. Em dashes removed from visible text.
+- Tested: desktop 800×600 and 375px (no overflow), typing test end to end, reel stops on opening the monitor, iris transition. Not tested: real phones, Safari.
+
 ## Front page and a lighter, sharper desk (2026-11-03)
 - **`/` is a new front page** (`index.html`, `assets/css/landing.css`, `assets/js/pages/landing.js`). It shows the name, the tagline, a live line (Hyderabad time and the last GitHub push), **Enter the desk** (the primary action, also the Enter key) and **Enter game** (→ `/hotel/`). The framed desk photo has CSS-only stand-ins for the blurred screens, tilts with the pointer, and shows hover pins. Below the hero: Selected work (featured projects that have a repo), On GitHub (live stats and a language bar) and Let’s talk (copy-email button and a link to the message form). It loads only base/sun/github/palette and content; about 63 KB uncompressed plus the 128 KB photo.
 - **The desk moved to `/desk/`** (`desk/index.html`). "Enter the desk" zooms the framed photo to fill the window, then navigates; it sets `sessionStorage desk:boot` so the desk skips its own intro. The redirect stubs now point at the desk: `/projects/` and `/college/` → `#browser/projects`, `/hire/` → `#contact`. The 404 page is reworded and restyled.
