@@ -2,6 +2,13 @@
 
 _Last updated: 2026-11-03, front page + desk at /desk/._
 
+## Front page polish (2026-11-03)
+- Header always visible: SC mark, "Sai Siddhanth Challa, IIITH", section links (Experience, Projects, GitHub, The desk, Contact; a second row on narrow screens) and a gold scroll-progress line.
+- Removed the Room I to IV labels and the exhibition guide; section labels are now Catalogue, Live from GitHub, Featured piece, Correspondence. "Selected work" is "Selected projects".
+- Projects: GEDI renamed Hyderabad Explorer, Pawn Coach renamed Self-Learning Chess Bot (work in progress, learns your behaviour); the rest show as Finished.
+- Small touches: a soft gold glow follows the pointer, a time-of-day greeting (or "Welcome back"), a friendlier copy-email toast, a low-effort note under the desk button, and a "Thank you for walking through" signature at the end.
+- Fixed a 15px horizontal overflow at 375px (the hero spotlight was wider than the painting).
+
 ## The exhibition front page, monitor reel and typing test (2026-11-03)
 - `/` rebuilt as a dark royal gallery (`index.html`, `landing.css`, `landing.js`): four rooms, each paired with a public-domain painting in a gilt frame with a museum label (`assets/art/*.webp`, ~730 KB total, lazy below the fold). Hero: Van Gogh lit by a cursor "torch". Room I catalogue of projects, Room II live GitHub with a Kandinsky-style circle chart of languages, Room III the desk photo hung as the final piece (reel + terminal over its blurred screens), Room IV contact.
 - Into the desk: the framed photo zooms to fill the window; the buttons open the desk through an iris from the click point.

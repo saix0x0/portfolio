@@ -21,7 +21,7 @@ export const CATEGORIES = {
   work: { label: 'Work', blurb: 'Internships & jobs' },
 };
 
-export const STATUS = { shipped: 'Shipped', 'in-progress': 'In progress', archived: 'Archived', idea: 'Idea' };
+export const STATUS = { shipped: 'Finished', 'in-progress': 'Work in progress', archived: 'Archived', idea: 'Idea' };
 
 export const projects = [
   {
@@ -88,15 +88,15 @@ export const projects = [
   {
     id: 'chess-learning-bot',
     repo: 'chess-learning-bot',
-    title: 'Pawn Coach',
-    subtitle: 'A chess learning bot',
+    title: 'Self-Learning Chess Bot',
+    subtitle: 'A chess bot that learns your behaviour',
     category: 'personal',
-    status: 'shipped',
+    status: 'in-progress',
     year: 2026,
     period: 'Sep 2026',
     featured: true,
     tech: ['JavaScript', 'HTML', 'PWA'],
-    summary: 'A pocket chess coach that runs fully offline. Play a bot, get live coaching, solve puzzles built from your own mistakes, study an opening book and read a behaviour report. One HTML file, no API calls.',
+    summary: 'A chess bot that learns how you play. It studies your behaviour, adapts its strength, steers games toward your weak spots and coaches you live, with puzzles built from your own mistakes. Runs fully offline in one HTML file.',
     highlights: [
       'Stops you before a blunder and asks a question instead of giving the move',
       'Adapts its strength and steers toward your own weak spots',
@@ -106,7 +106,7 @@ export const projects = [
   {
     id: 'mapp',
     repo: 'mapp',
-    title: 'GEDI · Hyderabad Explorer',
+    title: 'Hyderabad Explorer',
     subtitle: 'Explore Hyderabad like a video game',
     category: 'personal',
     status: 'shipped',

@@ -10,7 +10,7 @@ import { clockIn } from '../core/sun.js';
 import { gh, ago, langColour } from '../core/github.js';
 import { palette } from '../core/palette.js';
 import { site } from '../../../content/site.js';
-import { projects, CATEGORIES } from '../../../content/projects.js';
+import { projects, CATEGORIES, STATUS } from '../../../content/projects.js';
 
 const RM = reducedMotion();
 const desk = (r = '') => href(`desk/${r ? `#${r}` : ''}`);
@@ -32,10 +32,17 @@ function words() {
   const tick = () => ($('[data-clock]').textContent = `Hyderabad, ${clockIn('Asia/Kolkata')}`);
   tick();
   setInterval(tick, 20000);
+  // a greeting in the visitor's own time of day, and a welcome back on return
+  let back = false;
+  try { back = !!localStorage.getItem('front:seen'); localStorage.setItem('front:seen', String(Date.now())); } catch {}
+  const h = new Date().getHours();
+  const g = $('[data-greet]');
+  g.textContent = back ? 'Welcome back' : h < 5 ? 'Up late? Welcome' : h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+  g.hidden = false;
   $('[data-copy]').addEventListener('click', async () => {
     const ok = await copy(site.email);
     $('[data-copied]').textContent = ok ? 'Copied' : 'Copy';
-    toast(ok ? 'Email copied to your clipboard' : site.email);
+    toast(ok ? 'Copied. Looking forward to your message.' : site.email);
     setTimeout(() => ($('[data-copied]').textContent = 'Copy'), 2000);
   });
 }
@@ -53,6 +60,7 @@ function catalogue() {
   const list = projects.filter((p) => !p.placeholder && p.repo).sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0)).slice(0, 4);
   $('[data-cards]').innerHTML = list.map((p, i) => `<li class="rv"><a href="${esc(desk(`browser/p:${p.id}`))}">
     <span class="no">No. ${String(i + 1).padStart(2, '0')}</span><b>${esc(p.title)}</b><span class="yr">${esc(p.period || p.year || '')}</span>
+    <span class="st${p.status === 'in-progress' ? ' wip' : ''}"><i></i>${esc(STATUS[p.status] || '')}</span>
     <span class="sub">${esc(p.subtitle || CATEGORIES[p.category]?.label || '')}</span>
     <p>${esc(clip(p.summary || '', 180))}</p>
     <span class="t">${(p.tech || []).slice(0, 4).map((t) => `<i>${esc(t)}</i>`).join('')}</span></a></li>`).join('');
@@ -153,10 +161,12 @@ function motion() {
   const storm = $('[data-par]');
   const links = $$('.bar-m a');
   const rooms = links.map((l) => $(l.getAttribute('href')));
+  const prog = $('[data-prog]');
   let ticking = false;
   const onScroll = () => {
     ticking = false;
     bar.classList.toggle('scrolled', scrollY > 40);
+    prog.style.setProperty('--p', (scrollY / Math.max(1, document.documentElement.scrollHeight - innerHeight)).toFixed(4));
     if (storm && !RM) {
       const r = storm.parentElement.getBoundingClientRect();
       if (r.bottom > 0 && r.top < innerHeight) storm.style.transform = `translate3d(0, ${((r.top + r.height / 2 - innerHeight / 2) * -0.12).toFixed(1)}px, 0)`;
@@ -183,7 +193,31 @@ function motion() {
     new IntersectionObserver(([en]) => (en.isIntersecting ? reel.play().catch(() => {}) : reel.pause()), { threshold: 0.2 }).observe(reel);
   }
 
-  const els = $$('.rv, .room-art, .room-txt > *, .guide li');
+  // a soft gold light trails the pointer, a little larger over anything clickable
+  const glow = $('[data-glow]');
+  if (!RM && canHover()) {
+    let x = innerWidth / 2;
+    let y = innerHeight / 3;
+    let tx = x;
+    let ty = y;
+    let raf = 0;
+    const step = () => {
+      x += (tx - x) * 0.14;
+      y += (ty - y) * 0.14;
+      glow.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
+      raf = Math.abs(tx - x) + Math.abs(ty - y) > 0.5 ? requestAnimationFrame(step) : 0;
+    };
+    addEventListener('pointermove', (e) => {
+      tx = e.clientX;
+      ty = e.clientY;
+      glow.classList.add('on');
+      glow.classList.toggle('big', !!e.target.closest?.('a, button'));
+      if (!raf) raf = requestAnimationFrame(step);
+    }, { passive: true });
+    document.documentElement.addEventListener('pointerleave', () => glow.classList.remove('on'));
+  }
+
+  const els = $$('.rv, .room-art, .room-txt > *, .prov-h');
   if (RM || !('IntersectionObserver' in window)) return els.forEach((x) => x.classList.add('in'));
   els.forEach((x) => x.classList.add('rv'));
   const io = new IntersectionObserver((es) => es.forEach((en) => en.isIntersecting && (en.target.classList.add('in'), io.unobserve(en.target))), { rootMargin: '0px 0px -8% 0px' });
