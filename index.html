@@ -7,24 +7,27 @@
   <meta name="description" content="Sai Siddhanth Challa: sophomore at IIIT Hyderabad, Computer Science and Computing &amp; Human Sciences by Research. Curious about AI, algorithms and why humans do the things they do.">
   <meta name="theme-color" content="#070814">
   <meta property="og:title" content="Sai Siddhanth Challa">
-  <meta property="og:description" content="Exploring broadly, building obsessively. Selected work, live GitHub and an interactive desk. IIIT Hyderabad.">
-  <meta property="og:image" content="assets/img/desk.jpg">
+  <meta property="og:description" content="Exploring broadly, building obsessively. Selected projects and live GitHub. IIIT Hyderabad.">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="preload" href="assets/art/rhone.webp" as="image">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Silkscreen&display=swap">
   <link rel="stylesheet" href="assets/css/landing.css">
-  <link rel="prefetch" href="desk/">
+  <!-- the opening curtain plays once per visit -->
+  <script>try{sessionStorage.getItem('front:intro')&&document.documentElement.classList.add('seen');sessionStorage.setItem('front:intro','1')}catch(e){}</script>
   <script type="module" src="assets/js/pages/landing.js"></script>
 </head>
 <body>
   <a class="skip" href="#work">Skip to projects</a>
 
+  <div class="curtain" aria-hidden="true"><i class="c-top"></i><i class="c-bot"></i><div class="c-mid"><span class="c-mark">SC</span><span class="c-line"></span><span class="c-name">Sai Siddhanth Challa</span></div></div>
+  <div class="ambient" aria-hidden="true"></div>
+
   <header class="bar">
-    <a class="brand" href="./" aria-label="Sai Siddhanth Challa, IIIT Hyderabad. Back to the top"><span class="mark" aria-hidden="true">SC</span><span class="who"><b>Sai Siddhanth Challa</b><span>, IIITH</span></span></a>
+    <a class="brand" href="#top" aria-label="Sai Siddhanth Challa, IIIT Hyderabad. Back to the top"><span class="mark" aria-hidden="true">SC</span><span class="who"><b>Sai Siddhanth Challa</b><span>, IIITH</span></span></a>
     <nav class="bar-m" aria-label="Sections">
-      <a href="#experience">Experience</a><a href="#work">Projects</a><a href="#code">GitHub</a><a href="#desk">The desk</a><a href="#talk">Contact</a>
+      <a href="#experience">Experience</a><a href="#work">Projects</a><a href="#code">GitHub</a><a href="#talk">Contact</a>
     </nav>
     <div class="bar-r">
       <button class="search" type="button" data-palette aria-label="Search the site"><span aria-hidden="true">⌕</span><span class="lbl">Search</span><kbd>⌘K</kbd></button>
@@ -35,123 +38,84 @@
   </header>
 
   <main>
-    <!-- ── Entrance ─────────────────────────────────────────────────────── -->
-    <section class="hero" data-hero>
-      <div class="hero-l">
-        <p class="eyebrow" title="I think, therefore I am."><span class="rule"></span>Cogito, ergo sum.</p>
-        <h1 class="name"><span class="ln"><span>Sai Siddhanth</span></span><span class="ln"><em>Challa</em></span></h1>
-        <p class="lede" data-tagline></p>
-        <p class="live" aria-live="polite"><i class="dot"></i><span data-greet hidden></span><span data-clock>Hyderabad</span><span data-push hidden></span></p>
-        <div class="cta">
-          <a class="go" href="desk/" data-enter data-from="button"><span>Enter the desk</span><b aria-hidden="true">→</b></a>
-          <a class="game" href="hotel/"><span class="px" aria-hidden="true"></span>Enter game</a>
+    <!-- ── The entrance: scroll, and you walk into the painting ────────── -->
+    <section class="portal" id="top" data-portal data-tone="#2b348c">
+      <div class="stage">
+        <div class="hero-txt" data-herotxt>
+          <h1 class="name" aria-label="Sai Siddhanth Challa"><span class="ln" aria-hidden="true"><span style="--i:0">S</span><span style="--i:1">a</span><span style="--i:2">i</span> <span style="--i:3">S</span><span style="--i:4">i</span><span style="--i:5">d</span><span style="--i:6">d</span><span style="--i:7">h</span><span style="--i:8">a</span><span style="--i:9">n</span><span style="--i:10">t</span><span style="--i:11">h</span></span><span class="ln gold" aria-hidden="true"><em style="--i:12">C</em><em style="--i:13">h</em><em style="--i:14">a</em><em style="--i:15">l</em><em style="--i:16">l</em><em style="--i:17">a</em></span></h1>
+          <p class="lede" data-tagline></p>
+          <div class="cta">
+            <a class="go" href="#work" data-magnet><span>See my projects</span><b aria-hidden="true">↓</b></a>
+            <a class="game" href="hotel/"><span class="px" aria-hidden="true"></span>Enter game</a>
+          </div>
         </div>
-      </div>
 
-      <figure class="hero-art" data-spot>
-        <div class="gilt"><div class="mat">
-          <img class="dim" src="assets/art/rhone.webp" width="1100" height="853" alt="Starry Night Over the Rhône by Vincent van Gogh: a deep blue night sky full of stars over a river, with gaslights reflected in the water.">
-          <img class="lit" src="assets/art/rhone.webp" width="1100" height="853" alt="" aria-hidden="true">
-        </div></div>
-        <figcaption class="label"><b>Vincent van Gogh</b><span><i>Starry Night Over the Rhône</i>, 1888</span><small>Oil on canvas · Musée d’Orsay, Paris</small></figcaption>
-      </figure>
-      <a class="scroll" href="#experience" aria-label="Scroll down"><span></span></a>
+        <figure class="hero-art" data-art data-spot>
+          <div class="gilt"><div class="mat">
+            <img class="dim" src="assets/art/rhone.webp" width="1100" height="853" alt="Starry Night Over the Rhône by Vincent van Gogh: a deep blue night sky full of stars over a river, with gaslights reflected in the water.">
+            <img class="lit" src="assets/art/rhone.webp" width="1100" height="853" alt="" aria-hidden="true">
+            <i class="veil" data-veil></i>
+          </div></div>
+          <figcaption class="label" data-label><b>Vincent van Gogh</b><span><i>Starry Night Over the Rhône</i>, 1888</span><small>Oil on canvas · Musée d’Orsay, Paris</small></figcaption>
+        </figure>
+
+        <div class="passage" data-passage>
+          <img class="passage-bg" src="assets/art/rhone.webp" width="1100" height="853" alt="" aria-hidden="true" loading="lazy">
+          <p class="quiet" data-words>Exploring broadly, <em>building obsessively.</em></p>
+          <p class="cogito" title="I think, therefore I am."><em>Cogito, ergo sum.</em></p>
+        </div>
+        <span class="hint" data-hint aria-hidden="true">Scroll<i></i></span>
+      </div>
     </section>
 
-
-    <!-- ── Provenance: experience ───────────────────────────────────────── -->
-    <section class="prov" id="experience" aria-labelledby="exp-h">
-      <div class="prov-h"><p class="eyebrow"><span class="rule"></span>Provenance</p><h2 id="exp-h"><em>Experience.</em></h2></div>
+    <!-- ── Experience ──────────────────────────────────────────────────── -->
+    <section class="prov" id="experience" aria-labelledby="exp-h" data-tone="#3b2a78">
+      <h2 id="exp-h" data-split>Experience</h2>
       <ol class="prov-list" data-exp></ol>
     </section>
 
-    <!-- ── Projects ─────────────────────────────────────────────────────── -->
-    <section class="room" id="work" aria-labelledby="work-h">
-      <figure class="room-art rv">
-        <div class="gilt"><div class="mat"><img src="assets/art/composition.webp" width="1100" height="732" loading="lazy" alt="Composition VII by Wassily Kandinsky: an explosion of overlapping colour, line and form with no single subject."></div></div>
-        <figcaption class="label"><b>Wassily Kandinsky</b><span><i>Composition VII</i>, 1913</span><small>Oil on canvas · State Tretyakov Gallery, Moscow</small></figcaption>
-      </figure>
-      <div class="room-txt">
-        <p class="eyebrow"><span class="rule"></span>Catalogue</p>
-        <h2 id="work-h">Selected <em>projects.</em></h2>
-        <p class="intro">Things I designed and built. Open any of them for the live README and commit history.</p>
-        <ol class="cat" data-cards></ol>
-        <a class="more" href="desk/#browser/projects">See every project →</a>
+    <!-- ── Projects: a corridor you walk sideways ──────────────────────── -->
+    <section class="corridor" id="work" aria-labelledby="work-h" data-corridor data-tone="#4a1a3c">
+      <div class="corr-stage">
+        <ol class="track" data-track>
+          <li class="track-intro">
+            <h2 id="work-h" data-split>Selected <em>projects.</em></h2>
+            <p class="intro">Things I designed and built. Each one opens into its own page, with the live README straight from GitHub.</p>
+            <span class="keep" aria-hidden="true">Keep scrolling <i>→</i></span>
+          </li>
+        </ol>
+        <div class="corr-bar" aria-hidden="true"><i data-corrprog></i></div>
       </div>
     </section>
 
-    <!-- ── GitHub ───────────────────────────────────────────────────────── -->
-    <section class="room flip" id="code" aria-labelledby="code-h">
-      <figure class="room-art rv">
-        <div class="gilt"><div class="mat"><img src="assets/art/circles.webp" width="1200" height="1222" loading="lazy" alt="Several Circles by Wassily Kandinsky: coloured, overlapping circles floating on a dark ground around one large black-and-blue circle."></div></div>
+    <!-- ── GitHub ──────────────────────────────────────────────────────── -->
+    <section class="room" id="code" aria-labelledby="code-h" data-tone="#163f66">
+      <figure class="room-art">
+        <div class="unveil"><div class="gilt"><div class="mat"><img src="assets/art/circles.webp" width="1200" height="1222" loading="lazy" alt="Several Circles by Wassily Kandinsky: coloured, overlapping circles floating on a dark ground around one large black-and-blue circle."></div></div></div>
         <figcaption class="label"><b>Wassily Kandinsky</b><span><i>Several Circles</i>, 1926</span><small>Oil on canvas · Solomon R. Guggenheim Museum, New York</small></figcaption>
       </figure>
       <div class="room-txt">
-        <p class="eyebrow"><span class="rule"></span>Live from GitHub</p>
-        <h2 id="code-h">Written in <em>public.</em></h2>
-        <p class="intro">Read live from GitHub each time this page opens. After Kandinsky: every circle is a language, sized by how much of my code is written in it.</p>
-        <dl class="stats" data-gh><p class="muted">Reading GitHub…</p></dl>
+        <h2 id="code-h" data-split>Written in <em>public.</em></h2>
+        <p class="intro rv">Read live from GitHub each time this page opens. After Kandinsky: every circle is a language, sized by how much of my code is written in it.</p>
+        <dl class="stats rv" data-gh><p class="muted">Reading GitHub…</p></dl>
         <div class="circles" data-circles aria-hidden="true"></div>
         <ul class="key" data-key></ul>
         <a class="more" href="https://github.com/saix0x0" target="_blank" rel="noopener">github.com/saix0x0 ↗</a>
       </div>
     </section>
 
-    <!-- ── Interlude ────────────────────────────────────────────────────── -->
-    <section class="interlude" aria-label="Interlude">
-      <div class="storm" data-par><img src="assets/art/storm.webp" width="1100" height="853" loading="lazy" alt="Snow Storm by J. M. W. Turner: a steamboat almost lost in a vortex of snow, smoke and sea."></div>
-      <div><p class="quiet">Exploring broadly,<br><em>building obsessively.</em></p></div>
-      <p class="label inline"><b>J. M. W. Turner</b><span><i>Snow Storm: Steam-Boat off a Harbour’s Mouth</i>, 1842</span><small>Oil on canvas · Tate Britain, London</small></p>
-    </section>
-
-    <!-- ── The desk ──────── ───────────────────────────────────────────── -->
-    <section class="room desk-room" id="desk" aria-labelledby="desk-h">
-      <figure class="room-art desk-art">
-        <a class="gilt" href="desk/" data-enter data-from="frame" aria-label="Enter the desk">
-          <span class="mat"><span class="ph"><img src="assets/img/desk.jpg" width="1600" height="1200" loading="lazy" alt="My desk at night: a monitor, a laptop, a mechanical keyboard and a lamp glowing on the wall." data-photo>
-            <video class="mon-vid" muted loop playsinline preload="none" poster="assets/video/reel.jpg" data-reel aria-hidden="true"><source src="assets/video/reel.mp4" type="video/mp4"></video>
-            <span class="lap" aria-hidden="true"><span>% whoami<br>Sai Siddhanth Challa<br>CS + CHD, IIIT Hyderabad<br>% repos<br>med-assistant greeniq<br>chess-learning-bot mapp<br>% <i>█</i></span></span>
-            <span class="pin" style="--x:48%;--y:44%"><i></i><em>Browser</em></span>
-            <span class="pin" style="--x:12%;--y:44%"><i></i><em>Terminal</em></span>
-            <span class="pin" style="--x:36%;--y:77%"><i></i><em>Typing test</em></span>
-            <span class="pin" style="--x:79%;--y:78%"><i></i><em>Music</em></span>
-          </span>
-            <span class="enter-hint">Step inside →</span>
-          </span>
-        </a>
-        <figcaption class="label"><b>Sai Siddhanth Challa</b><span><i>The Desk</i>, 2026</span><small>Photograph, live HTML and JavaScript · Interactive, please touch</small></figcaption>
-      </figure>
-      <div class="room-txt">
-        <p class="eyebrow"><span class="rule"></span>Featured piece</p>
-        <h2 id="desk-h">The <em>desk.</em></h2>
-        <p class="intro">The rest of this portfolio lives on a photograph of my actual desk, and everything on it works.</p>
-        <ul class="feats">
-          <li><b>Monitor</b><span>A browser with every project, its live README and all my repositories</span></li>
-          <li><b>Laptop</b><span>A real terminal for the whole site. Try <code>repos</code> or <code>git log</code></span></li>
-          <li><b>Keyboard</b><span>A typing test. Every key clicks and lights up on the photo</span></li>
-          <li><b>AirPods</b><span>Three original loops, synthesised live in your browser</span></li>
-        </ul>
-        <div class="cta">
-          <a class="go" href="desk/" data-enter data-from="button"><span>Enter the desk</span><b aria-hidden="true">→</b></a>
-          <a class="game" href="hotel/"><span class="px" aria-hidden="true"></span>Enter game</a>
-        </div>
-        <p class="note">A minute is all it takes. You can also press <kbd>Enter</kbd> from anywhere on this page.</p>
-      </div>
-    </section>
-
-    <!-- ── Contact ──────────────────────────────────────────────────────── -->
-    <section class="room flip talk" id="talk" aria-labelledby="talk-h">
-      <figure class="room-art rv">
-        <div class="gilt"><div class="mat"><img src="assets/art/sunrise.webp" width="1200" height="899" loading="lazy" alt="Impression, Sunrise by Claude Monet: an orange sun over a hazy blue harbour, with small boats in silhouette."></div></div>
+    <!-- ── Contact ─────────────────────────────────────────────────────── -->
+    <section class="room flip talk" id="talk" aria-labelledby="talk-h" data-tone="#7a3416">
+      <figure class="room-art">
+        <div class="unveil"><div class="gilt"><div class="mat"><img src="assets/art/sunrise.webp" width="1200" height="899" loading="lazy" alt="Impression, Sunrise by Claude Monet: an orange sun over a hazy blue harbour, with small boats in silhouette."></div></div></div>
         <figcaption class="label"><b>Claude Monet</b><span><i>Impression, Sunrise</i>, 1872</span><small>Oil on canvas · Musée Marmottan Monet, Paris</small></figcaption>
       </figure>
       <div class="room-txt">
-        <p class="eyebrow"><span class="rule"></span>Correspondence</p>
-        <h2 id="talk-h">Let’s <em>talk.</em></h2>
-        <p class="intro">Reach out to me. Email is the quickest way, or leave a message on the desk and it lands in my inbox.</p>
-        <button class="mail" type="button" data-copy><span data-email></span><small data-copied>Copy</small></button>
-        <div class="cta">
-          <a class="go small" href="desk/#contact"><span>Send a message</span><b aria-hidden="true">→</b></a>
+        <h2 id="talk-h" data-split>Let’s <em>talk.</em></h2>
+        <p class="intro rv">Reach out to me. Email is the quickest way, and I read everything.</p>
+        <button class="mail rv" type="button" data-copy><span data-email></span><small data-copied>Copy</small></button>
+        <div class="cta rv">
+          <a class="go small" href="mailto:" data-mailto data-magnet><span>Write to me</span><b aria-hidden="true">→</b></a>
           <a class="out" href="https://www.linkedin.com/in/sai-siddhanth-challa-1b63a4377/" target="_blank" rel="noopener">LinkedIn ↗</a>
           <a class="out" href="https://github.com/saix0x0" target="_blank" rel="noopener">GitHub ↗</a>
         </div>
@@ -160,15 +124,15 @@
   </main>
 
   <footer class="foot">
-    <p class="sig"><em>Thank you</em> for walking through.</p>
+    <p class="sig" data-split><em>Thank you</em> for walking through.</p>
     <div class="foot-row">
       <span><b>Sai Siddhanth Challa</b> · IIIT Hyderabad · © <span data-year></span></span>
-      <span>Paintings in the public domain, via Wikimedia Commons</span>
+      <span><a href="hotel/">Play the hotel</a> · Paintings in the public domain, via Wikimedia Commons</span>
     </div>
   </footer>
   <div class="glow" data-glow aria-hidden="true"></div>
 
   <div class="toast" data-toast role="status" aria-live="polite"></div>
-  <noscript><style>.cat:empty,.stats,.circles{display:none}.rv{opacity:1!important;transform:none!important}</style></noscript>
+  <noscript><style>.curtain{display:none}.stats,.circles{display:none}.rv,.unveil,[data-split]{opacity:1!important;transform:none!important;clip-path:none!important}</style></noscript>
 </body>
 </html>

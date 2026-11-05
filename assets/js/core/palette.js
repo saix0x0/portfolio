@@ -37,27 +37,41 @@ let shown = [];
 export function palette({ desk = false, extra = [] } = {}) {
   const to = (r) => () => (desk ? (location.hash = r) : (location.href = href(`desk/#${r}`)));
   const open = (u) => () => window.open(u, '_blank', 'noopener');
+  const here = (h) => () => (location.hash = h);
   const li = site.socials.find((s) => /linkedin/i.test(s.label) && s.url)?.url;
-  items = [
+  const contact = [
+    ...(site.email ? [{ t: `Copy email · ${site.email}`, k: 'Contact', g: '⧉', x: 'mail', run: async () => notify((await copy(site.email)) ? 'Email copied' : site.email) }] : []),
+    ...(li ? [{ t: 'LinkedIn', k: 'Profile', g: 'in', run: open(li) }] : []),
+    { t: 'GitHub profile', k: 'Profile', g: '⌥', run: open(`https://github.com/${site.github}`) },
+    ...(site.hiring.resume ? [{ t: 'Download résumé', k: 'File', g: '⇩', run: () => (location.href = href(site.hiring.resume)), x: 'cv resume pdf' }] : []),
+  ];
+  const game = { t: 'Enter game', k: 'Game', g: '▸', run: () => (location.href = href('hotel/')), x: 'hotel pixel play' };
+  items = desk ? [
     { t: 'Overview', k: 'Page', g: '→', run: to('browser/overview'), x: 'start summary recruiter' },
     { t: 'Projects', k: 'Page', g: '◩', run: to('browser/projects') },
     { t: 'GitHub repositories', k: 'Page', g: '⌥', run: to('browser/github'), x: 'code repos' },
     { t: 'About', k: 'Page', g: '☺', run: to('browser/about'), x: 'skills education bio' },
     { t: 'Send a message', k: 'Contact', g: '✉', run: to('contact'), x: 'contact hire email reach' },
-    ...(site.email ? [{ t: `Copy email · ${site.email}`, k: 'Contact', g: '⧉', x: 'mail', run: async () => notify((await copy(site.email)) ? 'Email copied' : site.email) }] : []),
-    ...(li ? [{ t: 'LinkedIn', k: 'Profile', g: 'in', run: open(li) }] : []),
-    { t: 'GitHub profile', k: 'Profile', g: '⌥', run: open(`https://github.com/${site.github}`) },
-    ...(site.hiring.resume ? [{ t: 'Download résumé', k: 'File', g: '⇩', run: () => (location.href = href(site.hiring.resume)), x: 'cv resume pdf' }] : []),
+    ...contact,
     { t: 'Terminal', k: 'Desk', g: '>_', run: to('terminal'), x: 'laptop shell command line' },
     { t: 'Typing test', k: 'Desk', g: '⌨', run: to('type'), x: 'keyboard wpm speed game' },
-    ...(desk ? [] : [{ t: 'Enter the desk', k: 'Desk', g: '▣', run: () => (location.href = href('desk/')) }]),
-    { t: 'Enter game', k: 'Game', g: '▸', run: () => (location.href = href('hotel/')), x: 'hotel pixel play' },
+    game,
     ...projects.map((p) => ({ t: p.title, k: 'Project', g: '◆', run: to(`browser/p:${p.id}`), x: `${p.subtitle || ''} ${(p.tech || []).join(' ')} ${p.repo || ''}` })),
+    ...extra,
+  ] : [
+    // the front page: sections scroll into view, projects open in place (#p/<id>)
+    { t: 'Projects', k: 'Section', g: '◩', run: here('work'), x: 'work portfolio' },
+    { t: 'Experience', k: 'Section', g: '→', run: here('experience'), x: 'internship job' },
+    { t: 'GitHub', k: 'Section', g: '⌥', run: here('code'), x: 'code repos languages' },
+    { t: 'Contact', k: 'Section', g: '✉', run: here('talk'), x: 'hire email reach message' },
+    ...contact,
+    game,
+    ...projects.filter((p) => !p.placeholder).map((p) => ({ t: p.title, k: 'Project', g: '◆', run: here(`p/${p.id}`), x: `${p.subtitle || ''} ${(p.tech || []).join(' ')} ${p.repo || ''}` })),
     ...extra,
   ];
   // repos arrive when GitHub answers (usually from cache)
   gh.repos().then((rs) => {
-    for (const r of rs) if (!projects.some((p) => p.repo === r.name)) items.push({ t: r.name, k: 'Repo', g: '⌥', run: to(`browser/r:${r.name}`), x: `${r.desc} ${r.lang}` });
+    for (const r of rs) if (!projects.some((p) => p.repo === r.name)) items.push({ t: r.name, k: 'Repo', g: '⌥', run: desk ? to(`browser/r:${r.name}`) : open(r.url), x: `${r.desc} ${r.lang}` });
   }).catch(() => {});
   addEventListener('keydown', (e) => {
     if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') e.preventDefault(), el ? close() : show();

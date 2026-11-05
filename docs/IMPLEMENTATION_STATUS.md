@@ -2,6 +2,14 @@
 
 _Last updated: 2026-11-03, front page + desk at /desk/._
 
+## The night gallery front page (2026-11-05)
+- Owner asked for a more aesthetic front page with unusual transitions, no section labels or live status line, and no desk.
+- `/` now: a curtain intro (once per visit); a pinned scroll that zooms the framed Van Gogh until you are inside it, then reads "Exploring broadly, building obsessively." word by word; Experience; a sideways-scrolling corridor of projects drawn as Rothko-style colour fields; GitHub (Kandinsky circles); contact (Monet). The ambient light changes colour per section.
+- Each project opens in place as a full-screen page (`#p/<id>`) that grows out of its card, with highlights, details and the live README. Back/Esc/× close it; "Next project" chains through them.
+- The desk is no longer linked from `/` (nav, buttons, Enter key, prefetch all removed). `/desk/` itself is untouched and still works at its URL. The ⌘K palette on `/` now jumps to sections and opens projects in place.
+- Pinned scenes only run at ≥900px with motion allowed (`html.pin`); phones and reduced motion get a plain column.
+- Tested in the browser pane at 1440×900 and 375×812: zoom, quote, corridor, open/next/close/Back, GitHub, contact, no horizontal overflow. Not tested on real phones or Safari.
+
 ## Front page polish (2026-11-03)
 - Header always visible: SC mark, "Sai Siddhanth Challa, IIITH", section links (Experience, Projects, GitHub, The desk, Contact; a second row on narrow screens) and a gold scroll-progress line.
 - Removed the Room I to IV labels and the exhibition guide; section labels are now Catalogue, Live from GitHub, Featured piece, Correspondence. "Selected work" is "Selected projects".
