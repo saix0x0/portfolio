@@ -2,6 +2,14 @@
 
 _Last updated: 2026-11-03, front page + desk at /desk/._
 
+## The studio: a gallery wall around the desk (2026-11-05, phase 1 of the desk rebuild)
+- Owner wants the desk back as a rich room (inspired by, not copied from, an interactive-room portfolio) and chose "build it in code" over generated images.
+- `/desk/` is now a 2400×1600 studio. The real desk photo sits inside it at (400, 400) in a `.plate` (all old photo-px coordinates unchanged; `P()` in `pages/desk.js` converts boxes), with its edges masked into a code-built wall. The lamp's cone continues up the wall (`.beam`, follows `--lamp`, off with the lights).
+- New `assets/js/desk/wall.js`: frames with brass picture lights. Projects timeline (from `content/projects.js`), Research (placeholder until `desk.research` is filled), About, a portrait (painted silhouette until `desk.portrait.src` points at a photo; the photo then gets an SVG oil-paint filter), Progress (from `site.now` + experience). Each opens `#wall/<id>`: the camera frames it and a plaque slides in (bottom sheet on phones). Frames are also in the plain object list.
+- Posters act in place: two original minimal film posters (`desk.films`, owner to confirm the films), and an F1 start-lights reaction test (best time in localStorage).
+- Tested in the browser pane at 1440×900 and 375×812 (no overflow, plaque geometry checked by script). Not tested in Safari or real phones.
+- Next phases: bookshelf (philosophy + psychology, owner's real reads), LEGO set, console with minigames, F1 model car; the Mac-style desktop on the monitor with résumé; keyboard RGB recolouring the room; easter eggs; a link from `/`.
+
 ## The night gallery front page (2026-11-05)
 - Owner asked for a more aesthetic front page with unusual transitions, no section labels or live status line, and no desk.
 - `/` now: a curtain intro (once per visit); a pinned scroll that zooms the framed Van Gogh until you are inside it, then reads "Exploring broadly, building obsessively." word by word; Experience; a sideways-scrolling corridor of projects drawn as Rothko-style colour fields; GitHub (Kandinsky circles); contact (Monet). The ambient light changes colour per section.

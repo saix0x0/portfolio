@@ -15,10 +15,14 @@ import { browserApp, miniMonitor } from '../desk/browser.js';
 import { terminalApp, miniLaptop } from '../desk/terminal.js';
 import { contactSheet, typeSheet, musicCard } from '../desk/bits.js';
 import { palette } from '../core/palette.js';
+import { gallery, plaque, setCtx, FRAMES } from '../desk/wall.js';
 
 const RM = reducedMotion();
-const W = 1600;
-const H = 1200;
+const W = 2400; // the studio (stage px); the photo sits inside it at (OX, OY)
+const H = 1600;
+const OX = 400;
+const OY = 400;
+const P = ([x0, y0, x1, y1]) => [x0 + OX, y0 + OY, x1 + OX, y1 + OY]; // photo box → stage box
 
 // ── the objects on the desk ─────────────────────────────────────────────────
 // poly: the outline in photo px · tag: where the label sits · zoom: the box the
@@ -35,7 +39,7 @@ const OBJ = [
   { id: 'lamp', label: 'Lamp', what: 'Change the colour', act: 'lamp', tag: [1396, 462],
     polys: [[[1352, 476], [1446, 476], [1440, 724], [1362, 724]], [[1230, 0], [1600, 0], [1600, 330], [1420, 470], [1372, 470]]] },
 ];
-const ROUTES = new Set([...OBJ.map((o) => o.route).filter(Boolean), 'contact']);
+const ROUTES = new Set([...OBJ.map((o) => o.route).filter(Boolean), 'contact', 'wall']);
 
 // screen quads (TL, TR, BR, BL) for the live overlays
 const QUADS = {
@@ -57,16 +61,17 @@ function deskView() {
   const s = narrow() ? vh / H : Math.max(vw / W, vh / H);
   const hw = vw / 2 / s;
   const hh = vh / 2 / s;
-  const cx = clamp(770 + pan, hw, W - hw);
-  const cy = clamp(126 + hh, hh, H - hh); // keep the name on the wall in frame
+  const cx = clamp(W / 2 + pan, hw, W - hw);
+  const cy = clamp(H / 2 + 30, hh, H - hh); // the whole wall, then as much desk as fits
   return { s, x: vw / 2 - cx * s, y: vh / 2 - cy * s };
 }
-// fly the camera so box [x0,y0,x1,y1] fills `area` of the window
+// fly the camera so stage box [x0,y0,x1,y1] fills `area` of the window
 function zoomView([x0, y0, x1, y1], area = { top: 0, h: 1, fill: 1 }) {
-  const vw = innerWidth;
+  const { left = 0, w = 1 } = area;
+  const vw = innerWidth * w;
   const vh = innerHeight * area.h;
   const s = Math.min(vw / (x1 - x0), vh / (y1 - y0)) * area.fill;
-  return { s, x: vw / 2 - ((x0 + x1) / 2) * s, y: innerHeight * area.top + vh / 2 - ((y0 + y1) / 2) * s };
+  return { s, x: innerWidth * left + vw / 2 - ((x0 + x1) / 2) * s, y: innerHeight * area.top + vh / 2 - ((y0 + y1) / 2) * s };
 }
 function apply(v, animate = true) {
   view = v;
@@ -102,7 +107,7 @@ function hotspots() {
     return `<a ${target} data-obj="${o.id}" aria-label="${esc(o.label)}: ${esc(o.what)}">${o.polys.map((p) => `<polygon points="${pts(p)}"/>`).join('')}</a>`;
   }).join('');
   $('[data-tags]').innerHTML = OBJ.map((o, i) => `<span class="dot" style="left:${o.tag[0]}px;top:${o.tag[1] + 26}px;--i:${i}"></span><span class="tag" data-tag="${o.id}" style="left:${o.tag[0]}px;top:${o.tag[1]}px"><b>${esc(o.label)}</b><small>${esc(o.what)}</small></span>`).join('');
-  $('[data-objects]').innerHTML = `<button class="tour-btn" type="button" data-tour><span aria-hidden="true">▶</span> Take the 20-second tour</button><p class="objects-h">On the desk</p><ol>${OBJ.map((o, i) => `<li><a ${o.route ? `href="#${o.route}"` : `href="#" role="button" data-act="${o.act}"`} data-obj="${o.id}"><span class="n">${String(i + 1).padStart(2, '0')}</span><b>${esc(o.label)}</b><span class="w">${esc(o.what)}</span></a></li>`).join('')}</ol>`;
+  $('[data-objects]').innerHTML = `<button class="tour-btn" type="button" data-tour><span aria-hidden="true">▶</span> Take the 20-second tour</button><p class="objects-h">On the desk</p><ol>${OBJ.map((o, i) => `<li><a ${o.route ? `href="#${o.route}"` : `href="#" role="button" data-act="${o.act}"`} data-obj="${o.id}"><span class="n">${String(i + 1).padStart(2, '0')}</span><b>${esc(o.label)}</b><span class="w">${esc(o.what)}</span></a></li>`).join('')}${FRAMES.map((f, i) => `<li><a href="#wall/${f.id}"><span class="n">${String(OBJ.length + i + 1).padStart(2, '0')}</span><b>${esc(f.label)}</b><span class="w">${esc(f.what)}</span></a></li>`).join('')}</ol>`;
   const show = (id) => {
     $$('[data-tag]').forEach((t) => t.classList.toggle('on', t.dataset.tag === id));
     $$('[data-hots] [data-obj]').forEach((a) => a.classList.toggle('lit', a.dataset.obj === id));
@@ -247,6 +252,14 @@ export function toast(msg) {
 const app = $('[data-app]');
 const sheet = $('[data-sheet]');
 const pop = $('[data-pop]');
+const plq = $('[data-plaque]');
+let frame = null;
+// a frame fills the left of the window, its plaque the right (phones: top and bottom)
+function frameView() {
+  const [x, y, w, h] = frame.box;
+  const box = [x - 40, y - 60, x + w + 40, y + h + 70];
+  return narrow() ? zoomView(box, { top: 0.03, h: 0.4, fill: 0.92 }) : zoomView(box, { left: 0.04, w: 0.52, top: 0.08, h: 0.84, fill: 0.86 });
+}
 let current = '';
 let cleanup = null;
 let flyTimer = 0;
@@ -261,18 +274,30 @@ function closeAll() {
   cleanup?.();
   cleanup = null;
   clearTimeout(flyTimer);
-  for (const el of [app, sheet, pop]) {
+  for (const el of [app, sheet, pop, plq]) {
     el.classList.remove('open');
     el.hidden = true;
     el.innerHTML = '';
   }
-  document.body.classList.remove('in-app', 'in-sheet');
+  document.body.classList.remove('in-app', 'in-sheet', 'in-plaque');
+  document.querySelector('.fr.on')?.classList.remove('on');
 }
 function route(hash) {
   const [name, sub] = hash.split('/');
   if (name === current && name === 'browser' && cleanup?.tab) return cleanup.tab(sub);
   closeAll();
   current = ROUTES.has(name) ? name : '';
+  if (current === 'wall') {
+    frame = FRAMES.find((f) => f.id === sub);
+    if (!frame) return (current = ''), apply(deskView());
+    document.documentElement.dataset.route = current;
+    document.body.classList.add('touched', 'in-plaque');
+    click();
+    $(`[data-frame="${frame.id}"]`)?.classList.add('on');
+    apply(frameView());
+    cleanup = plaque(plq, frame.id, { leave, go, toast, lights });
+    return;
+  }
   const o = OBJ.find((x) => x.route === current) || (current === 'contact' ? OBJ[2] : null);
   document.documentElement.dataset.route = current;
   if (!o) return apply(deskView());
@@ -281,7 +306,7 @@ function route(hash) {
   const ctx = { leave, go, toast, lights };
   if (name === 'browser') stopReel();
   if (name === 'browser' || name === 'terminal') {
-    apply(zoomView(o.zoom, { top: 0, h: 1, fill: 1.02 }));
+    apply(zoomView(P(o.zoom), { top: 0, h: 1, fill: 1.02 }));
     flyTimer = setTimeout(() => {
       app.hidden = false;
       document.body.classList.add('in-app');
@@ -289,7 +314,7 @@ function route(hash) {
       requestAnimationFrame(() => app.classList.add('open'));
     }, RM ? 0 : 760);
   } else if (name === 'contact' || name === 'type') {
-    apply(zoomView(o.zoom, { top: 0.02, h: narrow() ? 0.34 : 0.42, fill: 0.96 }));
+    apply(zoomView(P(o.zoom), { top: 0.02, h: narrow() ? 0.34 : 0.42, fill: 0.96 }));
     sheet.hidden = false;
     document.body.classList.add('in-sheet');
     cleanup = (name === 'type' ? typeSheet : contactSheet)(sheet, ctx);
@@ -344,7 +369,7 @@ function tour() {
     if (i >= TOUR.length) return end(true);
     const [id, text] = TOUR[i];
     const o = OBJ.find((x) => x.id === id);
-    apply(zoomView(bbox(o), { top: 0.04, h: 0.7, fill: 0.92 }));
+    apply(zoomView(P(bbox(o)), { top: 0.04, h: 0.7, fill: 0.92 }));
     lit(id);
     if (id === 'lamp') setTimeout(() => touring && lights.cycle(), 1200);
     box.innerHTML = `<span class="tour-n">${i + 1} / ${TOUR.length}</span><p><b>${esc(o.label)}.</b> ${esc(text)}</p>
@@ -391,7 +416,7 @@ function lookAround() {
     const dx = e.clientX - down.x;
     if (Math.abs(dx) > 8) dragged = true;
     if (!dragged) return;
-    pan = clamp(down.pan - dx / view.s, -800, 800);
+    pan = clamp(down.pan - dx / view.s, -W / 2, W / 2);
     apply(deskView(), false);
   });
   addEventListener('pointerup', () => (down = null));
@@ -400,7 +425,7 @@ function lookAround() {
   const settle = () => {
     const s = view.s;
     const hw = innerWidth / 2 / s;
-    pan = clamp(770 + pan, hw, W - hw) - 770;
+    pan = clamp(W / 2 + pan, hw, W - hw) - W / 2;
   };
   addEventListener('pointerup', settle);
 }
@@ -465,6 +490,8 @@ function chrome() {
 }
 
 // ── wire it up ──────────────────────────────────────────────────────────────
+gallery($('[data-gallery]'));
+setCtx({ leave, go, toast, lights });
 hotspots();
 screens();
 paintLight();
@@ -498,7 +525,8 @@ addEventListener('keydown', (e) => {
 addEventListener('hashchange', () => (touring?.end(), route(location.hash.slice(1))));
 addEventListener('resize', () => {
   if (!current) apply(deskView(), false);
-  else if (current === 'contact' || current === 'type') apply(zoomView(OBJ[2].zoom, { top: 0.02, h: narrow() ? 0.34 : 0.42, fill: 0.96 }), false);
+  else if (current === 'contact' || current === 'type') apply(zoomView(P(OBJ[2].zoom), { top: 0.02, h: narrow() ? 0.34 : 0.42, fill: 0.96 }), false);
+  else if (current === 'wall') apply(frameView(), false);
 });
 document.documentElement.classList.toggle('touch', !canHover());
 apply(deskView(), false);

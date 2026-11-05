@@ -13,6 +13,24 @@ export const desk = {
   hint: 'Click anything on the desk.',
   hintTouch: 'Drag to look around. Tap anything.',
 
+  // ── The gallery wall above the desk ───────────────────────────────────────
+  // Your portrait: put a photo at assets/img/portrait.jpg (face centred) and
+  // set src to that path. The wall paints it as an oil portrait. Until then
+  // the frame shows a painted silhouette.
+  portrait: { src: '', title: 'Self-Portrait', year: 2026, medium: 'Oil on code' },
+
+  // The research frame. Empty fields keep the frame as a visible placeholder.
+  // TODO: title, lab / advisor, one line on the question, status.
+  research: { title: '', lab: '', question: '', status: '' },
+
+  // Film posters on the right wall. Original minimalist designs, not the real
+  // posters. `motif` picks the drawing: 'top' (a spinning top), 'lighthouse'.
+  // TODO: swap in your actual favourites.
+  films: [
+    { title: 'Inception', year: 2010, motif: 'top', line: 'Is it still spinning?' },
+    { title: 'Shutter Island', year: 2010, motif: 'lighthouse', line: 'Ashecliffe Hospital, 1954.' },
+  ],
+
   // The laptop terminal's greeting
   motd: [
     'Type `help` to see what this machine can do. Tab completes, ↑ remembers.',

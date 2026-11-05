@@ -35,6 +35,9 @@
   <!-- The room: the photo, its lights, its screens and a hotspot per object -->
   <main class="room" data-room>
     <div class="stage" data-stage>
+      <!-- the studio around the photo: walls, the lamp's beam, the desk's ends -->
+      <div class="walls" aria-hidden="true"><i class="beam"></i><i class="desk-end l"></i><i class="desk-end r"></i></div>
+      <div class="plate">
       <img class="photo" src="../assets/img/desk.jpg" width="1600" height="1200" alt="My desk at night: a monitor, a MacBook, a mechanical keyboard with RGB, AirPods and a lamp glowing on the wall.">
       <div class="tint lamp-hue" data-lamp-hue></div>
       <div class="tint lamp-off" data-lamp-off></div>
@@ -49,6 +52,10 @@
       </div>
       <svg class="hots" viewBox="0 0 1600 1200" data-hots></svg>
       <div class="tags" data-tags aria-hidden="true"></div>
+      </div>
+      <!-- the gallery wall: frames and posters, each one opens (#wall/<id>) -->
+      <div class="gallery" data-gallery></div>
+      <i class="beam over" aria-hidden="true"></i>
     </div>
   </main>
 
@@ -62,6 +69,7 @@
   <!-- Bottom sheet (keyboard: typing test, #contact: message form) and the AirPods card -->
   <div class="sheet" data-sheet hidden></div>
   <div class="card-pop" data-pop hidden></div>
+  <aside class="plaque" data-plaque hidden></aside>
   <div class="toast" data-toast role="status" aria-live="polite"></div>
 
   <div class="boot" data-boot aria-hidden="true"><span>click.</span></div>
