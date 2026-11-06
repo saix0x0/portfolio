@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-//  THE DESK — the front page. A photo of the real desk (1600×1200 "stage"),
+//  THE DESK at /desk/. A rendered study at night (2400×1350 "stage"),
 //  scaled to cover the window, with live screens and lights layered on top and
 //  a hotspot per object. Every object has a URL (#browser, #terminal, …) so
 //  each destination is linkable; the lamp and switch act in place.
@@ -12,41 +12,62 @@ import { desk } from '../../../content/desk.js';
 import { drawPerson, LOOKS, playerLook } from '../world/actors.js';
 import { isMuted, setMuted, note } from '../world/sound.js';
 import { browserApp, miniMonitor } from '../desk/browser.js';
-import { terminalApp, miniLaptop } from '../desk/terminal.js';
+import { terminalApp } from '../desk/terminal.js';
 import { contactSheet, typeSheet, musicCard } from '../desk/bits.js';
 import { palette } from '../core/palette.js';
-import { gallery, plaque, setCtx, FRAMES } from '../desk/wall.js';
+import { notes, plaque, PLAQUES, poster } from '../desk/wall.js';
 
 const RM = reducedMotion();
-const W = 2400; // the studio (stage px); the photo sits inside it at (OX, OY)
-const H = 1600;
-const OX = 400;
-const OY = 400;
-const P = ([x0, y0, x1, y1]) => [x0 + OX, y0 + OY, x1 + OX, y1 + OY]; // photo box → stage box
+const W = 2400;
+const H = 1350;
+const cx0 = () => (narrow() ? 1440 : 1250); // where the camera looks: the desk (phones: the tablet)
+const CY = 620;
 
 // ── the objects on the desk ─────────────────────────────────────────────────
 // poly: the outline in photo px · tag: where the label sits · zoom: the box the
 // camera flies to · route: the URL hash it opens · act: an in-place action
 const OBJ = [
-  { id: 'monitor', label: 'Monitor', what: 'Projects & GitHub', route: 'browser', tag: [768, 344], zoom: [438, 350, 1099, 723],
-    polys: [[[438, 350], [1099, 350], [1097, 722], [441, 723]]] },
-  { id: 'laptop', label: 'Laptop', what: 'Terminal', route: 'terminal', tag: [190, 404], zoom: [0, 414, 374, 662],
-    polys: [[[0, 420], [360, 408], [380, 642], [404, 772], [0, 792]]] },
-  { id: 'keyboard', label: 'Keyboard', what: 'Typing test', route: 'type', tag: [566, 842], zoom: [250, 820, 890, 1010],
-    polys: [[[338, 850], [812, 846], [858, 997], [282, 999]]] },
-  { id: 'airpods', label: 'AirPods', what: 'Music', route: 'music', tag: [1256, 918],
-    polys: [[[1205, 932], [1292, 924], [1310, 986], [1214, 1000]]] },
-  { id: 'lamp', label: 'Lamp', what: 'Change the colour', act: 'lamp', tag: [1396, 462],
-    polys: [[[1352, 476], [1446, 476], [1440, 724], [1362, 724]], [[1230, 0], [1600, 0], [1600, 330], [1420, 470], [1372, 470]]] },
+  { id: 'frame', label: 'Photograph', what: 'About me', route: 'wall/about', tag: [306, 330],
+    polys: [[[48, 0], [564, 0], [564, 672], [48, 722]]] },
+  { id: 'books', label: 'Bookshelf', what: 'Philosophy & psychology', route: 'wall/books', tag: [1530, 150],
+    polys: [[[1200, 0], [1872, 0], [1872, 132], [1200, 132]]] },
+  { id: 'poster', label: 'Poster', what: desk.films[0].title, act: 'poster', tag: [1166, 330],
+    polys: [[[1010, 352], [1318, 352], [1318, 610], [1212, 610], [1212, 478], [1010, 478]]] },
+  { id: 'notes', label: 'Pinned note', what: 'Progress', route: 'wall/progress', tag: [1510, 330],
+    polys: [[[1383, 355], [1637, 355], [1637, 582], [1383, 582]]] },
+  { id: 'paper', label: 'Paper', what: 'Research', route: 'wall/research', tag: [1835, 325],
+    polys: [[[1695, 348], [1970, 352], [1975, 600], [1700, 600]]] },
+  { id: 'card', label: 'Card', what: 'Say hello', route: 'contact', tag: [2130, 390],
+    polys: [[[2016, 412], [2242, 412], [2242, 564], [2016, 564]]] },
+  { id: 'calendar', label: 'Calendar', what: 'Projects timeline', route: 'wall/timeline', tag: [766, 510],
+    polys: [[[694, 534], [838, 534], [838, 714], [694, 714]]] },
+  { id: 'lamp', label: 'Lamp', what: 'Change the light', act: 'lamp', tag: [1090, 420],
+    polys: [[[968, 598], [1000, 500], [1035, 440], [1085, 430], [1150, 500], [1210, 598]]] },
+  { id: 'folders', label: 'Folders', what: 'Résumé & overview', route: 'browser/overview', tag: [1294, 590],
+    polys: [[[1212, 615], [1385, 610], [1385, 760], [1212, 760]]] },
+  { id: 'tablet', label: 'Tablet', what: 'Projects & GitHub', route: 'browser', tag: [1670, 520], zoom: [1420, 520, 1900, 830],
+    polys: [[[1523, 545], [1865, 555], [1852, 800], [1473, 788]]] },
+  { id: 'radio', label: 'Radio', what: 'Music', route: 'music', tag: [800, 715],
+    polys: [[[600, 738], [1002, 738], [1002, 996], [600, 996]]] },
+  { id: 'mug', label: 'Coffee', what: 'Refill', act: 'coffee', tag: [1094, 940],
+    polys: [[[1044, 960], [1142, 960], [1142, 1064], [1044, 1064]]] },
+  { id: 'keyboard', label: 'Keyboard', what: 'Typing test', route: 'type', tag: [1455, 1000], zoom: [1180, 960, 1740, 1120],
+    polys: [[[1258, 1030], [1646, 1039], [1663, 1078], [1252, 1064]]] },
+  { id: 'bust', label: 'Bust', what: 'Take the tour', act: 'tour', tag: [1910, 790],
+    polys: [[[1882, 808], [1938, 808], [1938, 892], [1882, 892]]] },
+  { id: 'stand', label: 'Laptop stand', what: 'The terminal', route: 'terminal', tag: [2220, 820], zoom: [1880, 760, 2400, 1180],
+    polys: [[[2064, 828], [2382, 860], [2382, 1170], [2064, 1170]]] },
+  { id: 'chair', label: 'Chair', what: 'Sit down: play the game', act: 'hotel', tag: [850, 1180],
+    polys: [[[640, 1170], [1010, 1170], [1200, 1350], [640, 1350]]] },
 ];
+const byId = (id) => OBJ.find((o) => o.id === id);
 const ROUTES = new Set([...OBJ.map((o) => o.route).filter(Boolean), 'contact', 'wall']);
 
 // screen quads (TL, TR, BR, BL) for the live overlays
 const QUADS = {
-  monitor: { w: 1320, h: 744, q: [[438, 350], [1099, 350], [1097, 722], [441, 723]] },
-  laptop: { w: 720, h: 470, q: [[-6, 424], [356, 414], [373, 636], [-6, 662]] },
+  monitor: { w: 1280, h: 920, q: [[1523, 545], [1865, 555], [1852, 800], [1473, 788]] },
 };
-const KB = [[338, 852], [812, 848], [856, 995], [282, 998]]; // keyboard top face
+const KB = [[1258, 1030], [1646, 1039], [1663, 1078], [1252, 1064]]; // keyboard top face
 
 // ── stage transform ─────────────────────────────────────────────────────────
 const room = $('[data-room]');
@@ -61,8 +82,8 @@ function deskView() {
   const s = narrow() ? vh / H : Math.max(vw / W, vh / H);
   const hw = vw / 2 / s;
   const hh = vh / 2 / s;
-  const cx = clamp(W / 2 + pan, hw, W - hw);
-  const cy = clamp(H / 2 + 30, hh, H - hh); // the whole wall, then as much desk as fits
+  const cx = clamp(cx0() + pan, hw, W - hw);
+  const cy = clamp(CY, hh, H - hh);
   return { s, x: vw / 2 - cx * s, y: vh / 2 - cy * s };
 }
 // fly the camera so stage box [x0,y0,x1,y1] fills `area` of the window
@@ -107,7 +128,7 @@ function hotspots() {
     return `<a ${target} data-obj="${o.id}" aria-label="${esc(o.label)}: ${esc(o.what)}">${o.polys.map((p) => `<polygon points="${pts(p)}"/>`).join('')}</a>`;
   }).join('');
   $('[data-tags]').innerHTML = OBJ.map((o, i) => `<span class="dot" style="left:${o.tag[0]}px;top:${o.tag[1] + 26}px;--i:${i}"></span><span class="tag" data-tag="${o.id}" style="left:${o.tag[0]}px;top:${o.tag[1]}px"><b>${esc(o.label)}</b><small>${esc(o.what)}</small></span>`).join('');
-  $('[data-objects]').innerHTML = `<button class="tour-btn" type="button" data-tour><span aria-hidden="true">▶</span> Take the 20-second tour</button><p class="objects-h">On the desk</p><ol>${OBJ.map((o, i) => `<li><a ${o.route ? `href="#${o.route}"` : `href="#" role="button" data-act="${o.act}"`} data-obj="${o.id}"><span class="n">${String(i + 1).padStart(2, '0')}</span><b>${esc(o.label)}</b><span class="w">${esc(o.what)}</span></a></li>`).join('')}${FRAMES.map((f, i) => `<li><a href="#wall/${f.id}"><span class="n">${String(OBJ.length + i + 1).padStart(2, '0')}</span><b>${esc(f.label)}</b><span class="w">${esc(f.what)}</span></a></li>`).join('')}</ol>`;
+  $('[data-objects]').innerHTML = `<button class="tour-btn" type="button" data-tour><span aria-hidden="true">▶</span> Take the 20-second tour</button><details${innerWidth > 1100 && innerHeight > 1000 ? ' open' : ''}><summary class="objects-h">Everything in the room (${OBJ.length})</summary><ol>${OBJ.map((o, i) => `<li><a ${o.route ? `href="#${o.route}"` : `href="#" role="button" data-act="${o.act}"`} data-obj="${o.id}"><span class="n">${String(i + 1).padStart(2, '0')}</span><b>${esc(o.label)}</b><span class="w">${esc(o.what)}</span></a></li>`).join('')}</ol></details>`;
   const show = (id) => {
     $$('[data-tag]').forEach((t) => t.classList.toggle('on', t.dataset.tag === id));
     $$('[data-hots] [data-obj]').forEach((a) => a.classList.toggle('lit', a.dataset.obj === id));
@@ -196,7 +217,6 @@ function screens() {
     el.style.transform = quadMatrix(w, h, q);
   }
   miniMonitor($('[data-screen="monitor"]'));
-  miniLaptop($('[data-screen="laptop"]'), RM);
   reel($('[data-screen="monitor"]'));
 }
 
@@ -256,8 +276,8 @@ const plq = $('[data-plaque]');
 let frame = null;
 // a frame fills the left of the window, its plaque the right (phones: top and bottom)
 function frameView() {
-  const [x, y, w, h] = frame.box;
-  const box = [x - 40, y - 60, x + w + 40, y + h + 70];
+  const [x0, y0, x1, y1] = bbox(frame, 0);
+  const box = [x0 - 40, y0 - 60, x1 + 40, y1 + 60];
   return narrow() ? zoomView(box, { top: 0.03, h: 0.4, fill: 0.92 }) : zoomView(box, { left: 0.04, w: 0.52, top: 0.08, h: 0.84, fill: 0.86 });
 }
 let current = '';
@@ -280,7 +300,6 @@ function closeAll() {
     el.innerHTML = '';
   }
   document.body.classList.remove('in-app', 'in-sheet', 'in-plaque');
-  document.querySelector('.fr.on')?.classList.remove('on');
 }
 function route(hash) {
   const [name, sub] = hash.split('/');
@@ -288,17 +307,16 @@ function route(hash) {
   closeAll();
   current = ROUTES.has(name) ? name : '';
   if (current === 'wall') {
-    frame = FRAMES.find((f) => f.id === sub);
+    frame = PLAQUES.includes(sub) && OBJ.find((o) => o.route === `wall/${sub}`);
     if (!frame) return (current = ''), apply(deskView());
     document.documentElement.dataset.route = current;
     document.body.classList.add('touched', 'in-plaque');
     click();
-    $(`[data-frame="${frame.id}"]`)?.classList.add('on');
     apply(frameView());
-    cleanup = plaque(plq, frame.id, { leave, go, toast, lights });
+    cleanup = plaque(plq, sub, { leave, go, toast, lights });
     return;
   }
-  const o = OBJ.find((x) => x.route === current) || (current === 'contact' ? OBJ[2] : null);
+  const o = current === 'contact' ? byId('keyboard') : OBJ.find((x) => x.route === current);
   document.documentElement.dataset.route = current;
   if (!o) return apply(deskView());
   document.body.classList.add('touched');
@@ -306,7 +324,7 @@ function route(hash) {
   const ctx = { leave, go, toast, lights };
   if (name === 'browser') stopReel();
   if (name === 'browser' || name === 'terminal') {
-    apply(zoomView(P(o.zoom), { top: 0, h: 1, fill: 1.02 }));
+    apply(zoomView(o.zoom, { top: 0, h: 1, fill: 1.02 }));
     flyTimer = setTimeout(() => {
       app.hidden = false;
       document.body.classList.add('in-app');
@@ -314,7 +332,7 @@ function route(hash) {
       requestAnimationFrame(() => app.classList.add('open'));
     }, RM ? 0 : 760);
   } else if (name === 'contact' || name === 'type') {
-    apply(zoomView(P(o.zoom), { top: 0.02, h: narrow() ? 0.34 : 0.42, fill: 0.96 }));
+    apply(zoomView(o.zoom, { top: 0.02, h: narrow() ? 0.34 : 0.42, fill: 0.96 }));
     sheet.hidden = false;
     document.body.classList.add('in-sheet');
     cleanup = (name === 'type' ? typeSheet : contactSheet)(sheet, ctx);
@@ -329,20 +347,36 @@ function route(hash) {
 }
 
 // ── in-place acts ───────────────────────────────────────────────────────────
+let cups = 0;
 function act(name) {
   document.body.classList.add('touched');
   if (name === 'lamp') lights.cycle();
   if (name === 'switch') lights.power(), toast(light.on ? 'Lights on' : 'Lights off');
+  if (name === 'poster') click(), toast(poster());
+  if (name === 'coffee') click(), toast(++cups === 1 ? 'Refilled. That’s one.' : cups < 4 ? `That’s ${cups} cups.` : `${cups} cups. Maybe some water?`);
+  if (name === 'tour') tour();
+  if (name === 'hotel') location.href = '../hotel/';
+}
+
+// the box around an object (its zoom box, or its outline plus a margin)
+function bbox(o, pad = 120) {
+  if (o.zoom && pad) return o.zoom;
+  const p = o.polys[0];
+  const xs = p.map((q) => q[0]);
+  const ys = p.map((q) => q[1]);
+  return [Math.min(...xs) - pad, Math.min(...ys) - pad, Math.max(...xs) + pad, Math.max(...ys) + pad];
 }
 
 // ── the guided tour: the camera visits each object with a caption ──────────
 const TOUR = [
-  ['monitor', 'A working browser. Every project with its live README, and all my GitHub repositories.'],
-  ['laptop', 'A real terminal for the whole site. Try repos, git log or help.'],
-  ['keyboard', 'A typing test. Every key clicks and lights up on the photo. Beat your best.'],
-  ['airpods', 'Three original loops, synthesised live in your browser.'],
+  ['tablet', 'A working browser. Every project with its live README, and all my GitHub repositories.'],
+  ['calendar', 'Every project I’ve built, by month.'],
+  ['notes', 'What I’m doing lately. The paper beside it is for my research.'],
+  ['books', 'The shelf: philosophy and psychology.'],
+  ['keyboard', 'A typing test. Every key clicks and lights up. Beat your best.'],
+  ['radio', 'Three original loops, synthesised live in your browser.'],
   ['lamp', 'Click the lamp to change the colour of the whole room.'],
-];
+]
 let touring = null;
 function tour() {
   if (touring) return;
@@ -355,21 +389,13 @@ function tour() {
   let i = -1;
   let timer = 0;
   const lit = (id) => $$('[data-hots] [data-obj], [data-tag]').forEach((a) => a.classList.toggle(a.matches('[data-tag]') ? 'on' : 'lit', (a.dataset.obj || a.dataset.tag) === id));
-  const bbox = (o) => {
-    if (o.zoom) return o.zoom;
-    const p = o.polys[0];
-    const xs = p.map((q) => q[0]);
-    const ys = p.map((q) => q[1]);
-    const pad = 120;
-    return [Math.min(...xs) - pad, Math.min(...ys) - pad, Math.max(...xs) + pad, Math.max(...ys) + pad];
-  };
   const step = () => {
     clearTimeout(timer);
     i++;
     if (i >= TOUR.length) return end(true);
     const [id, text] = TOUR[i];
-    const o = OBJ.find((x) => x.id === id);
-    apply(zoomView(P(bbox(o)), { top: 0.04, h: 0.7, fill: 0.92 }));
+    const o = byId(id);
+    apply(zoomView(bbox(o), { top: 0.04, h: 0.7, fill: 0.92 }));
     lit(id);
     if (id === 'lamp') setTimeout(() => touring && lights.cycle(), 1200);
     box.innerHTML = `<span class="tour-n">${i + 1} / ${TOUR.length}</span><p><b>${esc(o.label)}.</b> ${esc(text)}</p>
@@ -425,7 +451,7 @@ function lookAround() {
   const settle = () => {
     const s = view.s;
     const hw = innerWidth / 2 / s;
-    pan = clamp(W / 2 + pan, hw, W - hw) - W / 2;
+    pan = clamp(cx0() + pan, hw, W - hw) - cx0();
   };
   addEventListener('pointerup', settle);
 }
@@ -490,8 +516,7 @@ function chrome() {
 }
 
 // ── wire it up ──────────────────────────────────────────────────────────────
-gallery($('[data-gallery]'));
-setCtx({ leave, go, toast, lights });
+notes($('[data-notes]'));
 hotspots();
 screens();
 paintLight();
@@ -505,7 +530,7 @@ palette({
   extra: [
     { t: 'Lights on or off', k: 'Desk', g: '◐', run: () => act('switch'), x: 'lamp dark' },
     ...LAMPS.map((l) => ({ t: `Lamp colour: ${l.name}`, k: 'Desk', g: '●', run: () => lights.set(l.id), x: 'light colour color' })),
-    { t: 'Music', k: 'Desk', g: '♪', run: () => go('music'), x: 'airpods play sound' },
+    { t: 'Music', k: 'Desk', g: '♪', run: () => go('music'), x: 'radio play sound' },
     { t: 'Take the tour', k: 'Desk', g: '▶', run: () => tour(), x: 'guide walkthrough demo' },
     { t: 'Front page', k: 'Page', g: '⌂', run: () => (location.href = '../'), x: 'home start' },
   ],
@@ -516,8 +541,7 @@ document.addEventListener('click', (e) => {
   const a = e.target.closest('[data-act]');
   if (!a) return;
   e.preventDefault();
-  const o = OBJ.find((x) => x.act === a.dataset.act);
-  act(a.dataset.act, o.tag);
+  act(a.dataset.act);
 });
 addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && current) leave();
@@ -525,7 +549,7 @@ addEventListener('keydown', (e) => {
 addEventListener('hashchange', () => (touring?.end(), route(location.hash.slice(1))));
 addEventListener('resize', () => {
   if (!current) apply(deskView(), false);
-  else if (current === 'contact' || current === 'type') apply(zoomView(P(OBJ[2].zoom), { top: 0.02, h: narrow() ? 0.34 : 0.42, fill: 0.96 }), false);
+  else if (current === 'contact' || current === 'type') apply(zoomView(byId('keyboard').zoom, { top: 0.02, h: narrow() ? 0.34 : 0.42, fill: 0.96 }), false);
   else if (current === 'wall') apply(frameView(), false);
 });
 document.documentElement.classList.toggle('touch', !canHover());

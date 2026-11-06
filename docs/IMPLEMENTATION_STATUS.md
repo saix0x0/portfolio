@@ -2,7 +2,16 @@
 
 _Last updated: 2026-11-03, front page + desk at /desk/._
 
-## The studio: a gallery wall around the desk (2026-11-05, phase 1 of the desk rebuild)
+## The desk is now a rendered study (2026-11-06)
+- Owner rejected the code-built gallery wall ("not aesthetic enough") and asked for a good desk-setup image like the reference site, not their own desk.
+- `/desk/` now uses `assets/img/study.jpg`: a 3D render of a dark, warm study by Taitopia Render, free under the Unsplash License (credit in `assets/img/CREDITS.md`). Stage is 2400×1350; no more wall extension or gallery.
+- 16 hotspots on the render (`OBJ` in `pages/desk.js`): tablet (live reel, opens the browser), keyboard (typing test), radio (music), lamp (colour), photograph (#wall/about), calendar (#wall/timeline), pinned note (#wall/progress), paper (#wall/research), bookshelf (#wall/books, philosophy + human-sciences shelf, shown as "Want to read"), folders (#browser/overview), card (#contact), laptop stand (#terminal), bust (tour), coffee and poster (in place), chair (the hotel).
+- `assets/js/desk/wall.js` writes onto the photo: the poster's title is now the first film in `desk.films` (Inception), and handwritten notes (Caveat) on the pinned papers and wall card. It also holds the plaques.
+- The object list is collapsed behind "Everything in the room (16)". Phones open centred on the tablet.
+- Tested in the browser pane at 1440×900 and 375×812: all routes open, no horizontal overflow, no failed requests. Not tested in Safari or real phones.
+- Not in this render: an F1 car, a LEGO set, a console, the owner's portrait. Those need either another image or overlays.
+
+## (superseded) The studio: a gallery wall around the desk (2026-11-05)
 - Owner wants the desk back as a rich room (inspired by, not copied from, an interactive-room portfolio) and chose "build it in code" over generated images.
 - `/desk/` is now a 2400×1600 studio. The real desk photo sits inside it at (400, 400) in a `.plate` (all old photo-px coordinates unchanged; `P()` in `pages/desk.js` converts boxes), with its edges masked into a code-built wall. The lamp's cone continues up the wall (`.beam`, follows `--lamp`, off with the lights).
 - New `assets/js/desk/wall.js`: frames with brass picture lights. Projects timeline (from `content/projects.js`), Research (placeholder until `desk.research` is filled), About, a portrait (painted silhouette until `desk.portrait.src` points at a photo; the photo then gets an SVG oil-paint filter), Progress (from `site.now` + experience). Each opens `#wall/<id>`: the camera frames it and a plaque slides in (bottom sheet on phones). Frames are also in the plain object list.
