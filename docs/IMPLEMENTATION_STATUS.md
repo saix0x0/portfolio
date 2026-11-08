@@ -1,6 +1,16 @@
 # Implementation status
 
-_Last updated: 2026-11-08, desk rebuilt on a front-facing desk photo._
+_Last updated: 2026-11-08, front page About/Skills sections and real project screenshots._
+
+## Front page: About, Off the clock, Skills, real project screenshots (2026-11-08)
+- Owner: the front page felt too small and the project images too generic; wanted a part about their college, reading philosophy, building things, art, swimming and sport, plus more for people hiring.
+- New `#about` section: the owner's own words (`site.about`), an IIIT Hyderabad card (`site.school`), four numbers at a glance computed from content (projects shipped, hackathon builds, internships) plus live public repos, and "Off the clock": four interests (`site.life`), each hung beside a public-domain painting with a museum label (Friedrich, Kandinsky, Vermeer, Eakins).
+- New `#skills` "toolkit": every `tech` across projects, linked to the projects that use it; real `skillGroups` items not already shown are listed below. TODO items are skipped.
+- Project cards and case pages now show real screenshots (`shot` in `content/projects.js`, files in `assets/img/work/`) on their colour fields. Cards are wider.
+- Nav: About · Experience · Projects · Skills · GitHub · Contact. Contact gets a résumé button once `site.resume` is set (empty now).
+- "This website" project text no longer says the desk is the owner's own desk.
+- Found: the Hyderabad Explorer live demo (saix0x0.github.io/mapp/) is blank because `vite.config` still has `base: '/gedi/'` after the repo rename. Not fixed here (other repo).
+- Tested in the browser pane at 1440×900 and 375×812: sections render, case pages show screenshots, no horizontal overflow, no failed requests.
 
 ## The desk is now a front-facing desk setup (2026-11-08)
 - Owner wanted a front-facing desk like the reference site. Studied the reference: it is an empty wall plate with every object layered on as a cut-out. Shortlisted 10 straight-on Unsplash photos; the owner picked "a desk with a laptop and a monitor on it" by João Inácio (`assets/img/setup.jpg`, 2400×1800, Unsplash License, credit in `assets/img/CREDITS.md`). `study.jpg` removed.

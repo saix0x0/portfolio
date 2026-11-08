@@ -6,14 +6,18 @@
 //    vertical scroll walks you past them sideways
 //  · a case: a project's colour field grows out of its card into a full page
 //    with the live README (#p/<id> is its URL; Back closes it)
+//  · about: who and where, the numbers at a glance, and four things off the
+//    clock, each hung beside a painting
+//  · the toolkit: every tool, linked to the projects that use it
 //  · the room's light takes its colour from the painting on screen
 //  `html.pin` (wide screen, motion allowed) turns the pinned scenes on.
 // ─────────────────────────────────────────────────────────────────────────────
-import { $, $$, esc, reducedMotion, canHover, copy, clamp } from '../core/base.js';
+import { $, $$, esc, href, reducedMotion, canHover, copy, clamp } from '../core/base.js';
 import { gh, ago, langColour, cleanReadme } from '../core/github.js';
 import { palette } from '../core/palette.js';
 import { site } from '../../../content/site.js';
 import { projects, CATEGORIES, STATUS } from '../../../content/projects.js';
+import { skillGroups } from '../../../content/skills.js';
 
 const RM = reducedMotion();
 const ROOT = document.documentElement;
@@ -24,7 +28,8 @@ const clip = (s, n) => (s.length > n ? `${s.slice(0, s.lastIndexOf(' ', n))}…`
 const ALL = projects.filter((p) => !p.placeholder).sort((a, b) => (b.repo ? 2 : 0) + (b.featured ? 1 : 0) - ((a.repo ? 2 : 0) + (a.featured ? 1 : 0)));
 const HUNG = ALL.filter((p) => p.repo).slice(0, 4);
 
-// each project's colour field: a ground and two soft rectangles
+// each project's colour field: a ground and two soft rectangles, and its
+// screenshot hung on that ground when it has one
 const FIELDS = {
   'med-assistant': ['#2a0b10', '#a3341f', '#e0803e'],
   greeniq: ['#0b1d16', '#245f45', '#b9a25a'],
@@ -36,7 +41,9 @@ const SPARE = [['#141418', '#4a4f6a', '#9aa3c4'], ['#1c0f1f', '#6b2d5c', '#d08c7
 const fieldOf = (p, i) => FIELDS[p.id] || SPARE[i % SPARE.length];
 const field = (p, i, cls = '') => {
   const [base, a, b] = fieldOf(p, i);
-  return `<span class="field ${cls}" style="--base:${base};--a:${a};--b:${b}" aria-hidden="true"><i></i><i></i></span>`;
+  const s = p.shot;
+  const img = s ? `<img src="${esc(href(s.src))}" width="${s.w}" height="${s.h}" alt="" loading="lazy" decoding="async">` : '';
+  return `<span class="field ${cls}${s ? ' shot' : ''}" style="--base:${base};--a:${a};--b:${b}" aria-hidden="true"><i></i><i></i>${img}</span>`;
 };
 const status = (p) => `<span class="st${p.status === 'in-progress' ? ' wip' : ''}"><i></i>${esc(STATUS[p.status] || '')}</span>`;
 const no = (i) => `No. ${String(i + 1).padStart(2, '0')}`;
@@ -55,12 +62,46 @@ function words() {
   $('[data-email]').textContent = site.email;
   $('[data-mailto]').href = `mailto:${site.email}`;
   $('[data-year]').textContent = new Date().getFullYear();
+  if (site.resume) Object.assign($('[data-resume]'), { href: href(site.resume), hidden: false });
   $('[data-copy]').addEventListener('click', async () => {
     const ok = await copy(site.email);
     $('[data-copied]').textContent = ok ? 'Copied' : 'Copy';
     toast(ok ? 'Copied. Looking forward to your message.' : site.email);
     setTimeout(() => ($('[data-copied]').textContent = 'Copy'), 2000);
   });
+}
+
+// ── about: who and where, at a glance, off the clock ────────────────────────
+function about() {
+  $('[data-about]').textContent = site.about;
+  const sc = site.school;
+  const a = $('[data-school]');
+  a.href = sc.url;
+  a.innerHTML = `<span class="kicker">Studying at</span><b>${esc(sc.name)}</b><span class="sc-full">${esc(sc.full)}</span>
+    <span class="sc-d">${esc(site.degree)}<br>${esc(sc.year)} · ${esc(sc.place)}</span><i aria-hidden="true">↗</i>`;
+  const real = projects.filter((p) => !p.placeholder);
+  const interns = (site.experience || []).filter((x) => /intern/i.test(`${x.kind} ${x.role}`)).length;
+  const glance = [
+    [real.filter((p) => p.status === 'shipped').length, 'Projects shipped'],
+    [real.filter((p) => p.category === 'hackathon').length, 'Hackathon builds'],
+    [interns, interns === 1 ? 'Internship' : 'Internships'],
+    ['…', 'Public repos on GitHub', 'repos'],
+  ];
+  $('[data-glance]').innerHTML = glance.map(([v, l, id]) => `<div><dt>${esc(l)}</dt><dd${id ? ` data-g="${id}"` : ''}>${esc(String(v))}</dd></div>`).join('');
+  $('[data-life]').innerHTML = site.life.map((x, i) => `<li class="piece" style="--k:${i}">
+    <figure class="room-art"><div class="unveil"><div class="gilt"><div class="mat"><img src="${esc(href(x.art.src))}" width="${x.art.w}" height="${x.art.h}" loading="lazy" decoding="async" alt="${esc(`${x.art.name} by ${x.art.by}. ${x.art.alt}`)}"></div></div></div>
+      <figcaption class="label"><b>${esc(x.art.by)}</b><span><i>${esc(x.art.name)}</i>, ${esc(x.art.year)}</span><small>${esc(x.art.where)}</small></figcaption></figure>
+    <div class="rv"><p class="kicker">${esc(x.k)}</p><h3>${esc(x.title)}</h3><p>${esc(x.line)}</p>${x.link ? `<a class="more" href="${esc(x.link[0].startsWith('#') ? x.link[0] : href(x.link[0]))}">${esc(x.link[1])} →</a>` : ''}</div></li>`).join('');
+}
+
+// ── the toolkit: every tool in a project, linked to it; then the rest ───────
+function kit() {
+  const uses = new Map();
+  for (const p of ALL) for (const t of p.tech || []) uses.set(t, [...(uses.get(t) || []), p]);
+  const rows = [...uses].sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]));
+  $('[data-used]').innerHTML = rows.map(([t, ps]) => `<li><b>${esc(t)}</b><span>${ps.map((p) => `<a href="#p/${esc(p.id)}" data-open="${esc(p.id)}">${esc(p.title)}</a>`).join('')}</span></li>`).join('');
+  const groups = skillGroups.map((g) => [g.name, g.skills.filter((x) => !/^TODO/.test(x) && !uses.has(x))]).filter(([, l]) => l.length);
+  $('[data-also]').innerHTML = groups.length ? `<p class="kicker">Also in the toolkit</p>${groups.map(([n, l]) => `<div><span>${esc(n)}</span><ul class="chips">${l.map((x) => `<li>${esc(x)}</li>`).join('')}</ul></div>`).join('')}` : '';
 }
 
 function experience() {
@@ -107,6 +148,7 @@ function caseHTML(p) {
   <div class="case-body">
     <div class="case-main">
       <p class="case-sum fx" style="--k:${k++}">${esc(p.summary || '')}</p>
+      ${p.shot ? `<figure class="case-shot fx" style="--k:${k++}"><img src="${esc(href(p.shot.src))}" width="${p.shot.w}" height="${p.shot.h}" alt="${esc(p.shot.alt)}"></figure>` : ''}
       ${p.highlights?.length ? `<div ${fx()}><h3>Highlights</h3><ul class="case-hl">${p.highlights.map((h) => `<li>${esc(h)}</li>`).join('')}</ul></div>` : ''}
       ${p.problem ? `<div ${fx()}><h3>The problem</h3><p>${esc(p.problem)}</p></div>` : ''}
       ${p.solution ? `<div ${fx()}><h3>The approach</h3><p>${esc(p.solution)}</p></div>` : ''}
@@ -237,6 +279,7 @@ async function github() {
   try {
     const [prof, repos] = await Promise.all([gh.profile(), gh.repos()]);
     const langs = new Set(repos.map((r) => r.lang).filter(Boolean)).size;
+    $('[data-g="repos"]').textContent = prof.repos;
     box.innerHTML = `<div><dt>Public repos</dt><dd>${prof.repos}</dd></div>
       <div><dt>Languages</dt><dd data-nlang>${langs}</dd></div>
       <div><dt>Since</dt><dd>${esc(new Date(prof.since).getFullYear())}</dd></div>`;
@@ -246,6 +289,7 @@ async function github() {
       circles(pairs.slice(0, 8));
     }).catch(() => {});
   } catch {
+    $('[data-g="repos"]').closest('div').remove();
     box.innerHTML = `<p class="muted">GitHub is busy right now. Everything is at <a href="https://github.com/${esc(site.github)}" target="_blank" rel="noopener">github.com/${esc(site.github)}</a>.</p>`;
   }
 }
@@ -450,6 +494,8 @@ function motion() {
 }
 
 words();
+about();
+kit();
 experience();
 corridor();
 motion();

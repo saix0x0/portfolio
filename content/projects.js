@@ -8,6 +8,9 @@
 //    /work/?q=python           search
 //    /college/                 shortcut → /work/#college
 //
+//  `shot` is a real screenshot of the project (from its repo or live demo),
+//  shown on the front page. Without one, the card is a colour field.
+//
 //  `placeholder: true` shows a visible "Placeholder" badge on the site so a
 //  draft is never mistaken for a real claim. Delete the flag once it's real.
 // ─────────────────────────────────────────────────────────────────────────────
@@ -27,7 +30,7 @@ export const projects = [
   {
     id: 'this-website',
     title: 'This website',
-    subtitle: 'An interactive portfolio built on a photo of my desk',
+    subtitle: 'A night gallery, a working desk and a pixel-art hotel',
     category: 'personal',
     status: 'in-progress',
     year: 2026,
@@ -35,9 +38,9 @@ export const projects = [
     featured: true,
     role: 'Design & engineering',
     tech: ['JavaScript', 'CSS', 'Canvas', 'GitHub API', 'Web Crypto'],
-    summary: 'A zero-dependency portfolio where every object on a photo of my real desk works: a browser on the monitor, a terminal on the laptop, a typing test on the keyboard. Projects and repositories update live from GitHub.',
+    summary: 'A zero-dependency portfolio: a scroll-through night gallery, a desk where every object works (a browser on the monitor, a terminal on the laptop, a typing test on the keyboard) and a playable pixel-art hotel. Projects and repositories update live from GitHub.',
     problem: 'Portfolios all look the same, and most of them go stale a month after launch.',
-    solution: 'Plain ES modules and CSS with no build step. Live HTML screens are projected onto the photo’s monitor and laptop with a homography (CSS matrix3d), and projects, repos, commits and READMEs are read live from the GitHub API, so the site updates itself.',
+    solution: 'Plain ES modules and CSS with no build step. Live HTML screens are projected onto a desk photo’s monitor, laptop and LED board with a homography (CSS matrix3d), and projects, repos, commits and READMEs are read live from the GitHub API, so the site updates itself.',
     contribution: 'Everything: design, the projection and lighting overlays, the GitHub data layer and the content system.',
     highlights: [
       'Live screens mapped onto the photo with a 4-point homography',
@@ -52,6 +55,7 @@ export const projects = [
   {
     id: 'med-assistant',
     repo: 'med-assistant',
+    shot: { src: 'assets/img/work/med-assistant.webp', w: 1400, h: 858, alt: 'Med Assistant in patient mode, set to Telugu: a prescription has been read and the four medicines and their schedule are spelled out in Telugu.' },
     title: 'Med Assistant',
     subtitle: 'Sarvam Campus ’26 × IIIT Hyderabad build-along',
     category: 'hackathon',
@@ -70,6 +74,7 @@ export const projects = [
   {
     id: 'greeniq',
     repo: 'greeniq',
+    shot: { src: 'assets/img/work/greeniq.webp', w: 800, h: 500, alt: 'The GreenIQ overview for one home: a Green Home Score of 35, energy and carbon figures, and the recommended next step, loft insulation.' },
     title: 'GreenIQ',
     subtitle: 'Lloyds Megathon X · Problem Statement 2',
     category: 'hackathon',
@@ -88,6 +93,7 @@ export const projects = [
   {
     id: 'chess-learning-bot',
     repo: 'chess-learning-bot',
+    shot: { src: 'assets/img/work/chess-learning-bot.webp', w: 1400, h: 875, alt: 'Pawn Coach: a chessboard beside the coaching panel, which names the opening and suggests the next idea.' },
     title: 'Self-Learning Chess Bot',
     subtitle: 'A chess bot that learns your behaviour',
     category: 'personal',
@@ -106,6 +112,7 @@ export const projects = [
   {
     id: 'mapp',
     repo: 'mapp',
+    shot: { src: 'assets/img/work/mapp.webp', w: 1400, h: 719, alt: 'Hyderabad Explorer: neon quest markers spread across a dark map of Hyderabad, from Kondapur to the Old City.' },
     title: 'Hyderabad Explorer',
     subtitle: 'Explore Hyderabad like a video game',
     category: 'personal',
