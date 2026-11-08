@@ -4,12 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>The desk · Sai Siddhanth Challa</title>
-  <meta name="description" content="The interactive portfolio of Sai Siddhanth Challa: a study at night where every object opens something. Projects, live GitHub, a working terminal and a typing test.">
+  <meta name="description" content="The interactive portfolio of Sai Siddhanth Challa: a desk setup at night where every object opens something. Projects, live GitHub, a working terminal and a typing test.">
   <meta name="theme-color" content="#0b0605">
   <meta property="og:title" content="Sai Siddhanth Challa">
-  <meta property="og:description" content="A study at night. Every object on the desk opens part of my portfolio.">
+  <meta property="og:description" content="A desk at night. Every object on it opens part of my portfolio.">
   <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
-  <link rel="preload" href="../assets/img/study.jpg" as="image">
+  <link rel="preload" href="../assets/img/setup.jpg" as="image">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Silkscreen&display=swap">
@@ -35,14 +35,16 @@
   <!-- The room: the photo, its lights, its screens and a hotspot per object -->
   <main class="room" data-room>
     <div class="stage" data-stage>
-      <img class="photo" src="../assets/img/study.jpg" width="2400" height="1350" alt="A dark, warm study at night: a bookshelf above a desk with a lamp, a tablet, a keyboard, a radio, a poster and pinned papers on the wall.">
-      <!-- the room's own things, printed onto the photo (assets/js/desk/wall.js) -->
-      <div class="notes" data-notes aria-hidden="true"></div>
+      <img class="photo" src="../assets/img/setup.jpg" width="2400" height="1800" alt="A desk setup at night, lit orange by an LED strip: a monitor on an arm with a light bar, a laptop on a stand, a mechanical keyboard, a mug, a microphone, a framed print and an LED board on the wall.">
       <div class="tint lamp-hue" data-lamp-hue></div>
       <div class="tint lamp-off" data-lamp-off></div>
       <div class="keys" data-keys></div>
       <div class="screen" data-screen="monitor" aria-hidden="true"></div>
-      <svg class="hots" viewBox="0 0 2400 1350" data-hots></svg>
+      <div class="screen" data-screen="laptop" aria-hidden="true"></div>
+      <div class="screen" data-screen="board" aria-hidden="true"></div>
+      <!-- paper stuck onto the photo: an index card and sticky notes (assets/js/desk/wall.js) -->
+      <div class="notes" data-notes aria-hidden="true"></div>
+      <svg class="hots" viewBox="0 0 2400 1800" data-hots></svg>
       <div class="tags" data-tags aria-hidden="true"></div>
     </div>
     <div class="wall" data-wall>

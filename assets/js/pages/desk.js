@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-//  THE DESK at /desk/. A rendered study at night (2400×1350 "stage"),
+//  THE DESK at /desk/. A desk setup at night, shot straight on (2400×1800 "stage"),
 //  scaled to cover the window, with live screens and lights layered on top and
 //  a hotspot per object. Every object has a URL (#browser, #terminal, …) so
 //  each destination is linkable; the lamp and switch act in place.
@@ -12,62 +12,66 @@ import { desk } from '../../../content/desk.js';
 import { drawPerson, LOOKS, playerLook } from '../world/actors.js';
 import { isMuted, setMuted, note } from '../world/sound.js';
 import { browserApp, miniMonitor } from '../desk/browser.js';
-import { terminalApp } from '../desk/terminal.js';
+import { terminalApp, miniLaptop } from '../desk/terminal.js';
 import { contactSheet, typeSheet, musicCard } from '../desk/bits.js';
 import { palette } from '../core/palette.js';
-import { notes, plaque, PLAQUES, poster } from '../desk/wall.js';
+import { notes, ledBoard, plaque, PLAQUES } from '../desk/wall.js';
 
 const RM = reducedMotion();
 const W = 2400;
-const H = 1350;
-const cx0 = () => (narrow() ? 1440 : 1250); // where the camera looks: the desk (phones: the tablet)
-const CY = 620;
+const H = 1800;
+const cx0 = () => (narrow() ? 1640 : 1250); // where the camera looks: the desk (phones: the monitor)
+const CY = 820;
 
 // ── the objects on the desk ─────────────────────────────────────────────────
 // poly: the outline in photo px · tag: where the label sits · zoom: the box the
 // camera flies to · route: the URL hash it opens · act: an in-place action
 const OBJ = [
-  { id: 'frame', label: 'Photograph', what: 'About me', route: 'wall/about', tag: [306, 330],
-    polys: [[[48, 0], [564, 0], [564, 672], [48, 722]]] },
-  { id: 'books', label: 'Bookshelf', what: 'Philosophy & psychology', route: 'wall/books', tag: [1530, 150],
-    polys: [[[1200, 0], [1872, 0], [1872, 132], [1200, 132]]] },
-  { id: 'poster', label: 'Poster', what: desk.films[0].title, act: 'poster', tag: [1166, 330],
-    polys: [[[1010, 352], [1318, 352], [1318, 610], [1212, 610], [1212, 478], [1010, 478]]] },
-  { id: 'notes', label: 'Pinned note', what: 'Progress', route: 'wall/progress', tag: [1510, 330],
-    polys: [[[1383, 355], [1637, 355], [1637, 582], [1383, 582]]] },
-  { id: 'paper', label: 'Paper', what: 'Research', route: 'wall/research', tag: [1835, 325],
-    polys: [[[1695, 348], [1970, 352], [1975, 600], [1700, 600]]] },
-  { id: 'card', label: 'Card', what: 'Say hello', route: 'contact', tag: [2130, 390],
-    polys: [[[2016, 412], [2242, 412], [2242, 564], [2016, 564]]] },
-  { id: 'calendar', label: 'Calendar', what: 'Projects timeline', route: 'wall/timeline', tag: [766, 510],
-    polys: [[[694, 534], [838, 534], [838, 714], [694, 714]]] },
-  { id: 'lamp', label: 'Lamp', what: 'Change the light', act: 'lamp', tag: [1090, 420],
-    polys: [[[968, 598], [1000, 500], [1035, 440], [1085, 430], [1150, 500], [1210, 598]]] },
-  { id: 'folders', label: 'Folders', what: 'Résumé & overview', route: 'browser/overview', tag: [1294, 590],
-    polys: [[[1212, 615], [1385, 610], [1385, 760], [1212, 760]]] },
-  { id: 'tablet', label: 'Tablet', what: 'Projects & GitHub', route: 'browser', tag: [1670, 520], zoom: [1420, 520, 1900, 830],
-    polys: [[[1523, 545], [1865, 555], [1852, 800], [1473, 788]]] },
-  { id: 'radio', label: 'Radio', what: 'Music', route: 'music', tag: [800, 715],
-    polys: [[[600, 738], [1002, 738], [1002, 996], [600, 996]]] },
-  { id: 'mug', label: 'Coffee', what: 'Refill', act: 'coffee', tag: [1094, 940],
-    polys: [[[1044, 960], [1142, 960], [1142, 1064], [1044, 1064]]] },
-  { id: 'keyboard', label: 'Keyboard', what: 'Typing test', route: 'type', tag: [1455, 1000], zoom: [1180, 960, 1740, 1120],
-    polys: [[[1258, 1030], [1646, 1039], [1663, 1078], [1252, 1064]]] },
-  { id: 'bust', label: 'Bust', what: 'Take the tour', act: 'tour', tag: [1910, 790],
-    polys: [[[1882, 808], [1938, 808], [1938, 892], [1882, 892]]] },
-  { id: 'stand', label: 'Laptop stand', what: 'The terminal', route: 'terminal', tag: [2220, 820], zoom: [1880, 760, 2400, 1180],
-    polys: [[[2064, 828], [2382, 860], [2382, 1170], [2064, 1170]]] },
-  { id: 'chair', label: 'Chair', what: 'Sit down: play the game', act: 'hotel', tag: [850, 1180],
-    polys: [[[640, 1170], [1010, 1170], [1200, 1350], [640, 1350]]] },
+  { id: 'monitor', label: 'Monitor', what: 'Projects & GitHub', route: 'browser', tag: [1640, 560], zoom: [1230, 330, 2060, 980],
+    polys: [[[1255, 378], [2050, 345], [2020, 968], [1248, 825]]] },
+  { id: 'laptop', label: 'Laptop', what: 'The terminal', route: 'terminal', tag: [1035, 600], zoom: [800, 520, 1270, 1080],
+    polys: [[[852, 550], [1225, 572], [1215, 835], [1200, 1060], [760, 1030], [845, 810]]] },
+  { id: 'board', label: 'LED board', what: 'Live from GitHub', route: 'browser/github', tag: [496, 470],
+    polys: [[[355, 462], [635, 470], [635, 730], [362, 753]]] },
+  { id: 'frame', label: 'Framed print', what: 'About me', route: 'wall/about', tag: [470, 210],
+    polys: [[[288, 0], [650, 0], [655, 405], [300, 385]]] },
+  { id: 'card', label: 'Index card', what: 'Projects timeline', route: 'wall/timeline', tag: [875, 290],
+    polys: [[[726, 291], [1016, 283], [1022, 508], [734, 516]]] },
+  { id: 'lately', label: 'Sticky note', what: 'Progress', route: 'wall/progress', tag: [1905, 770],
+    polys: [[[1838, 768], [1988, 778], [1978, 918], [1828, 908]]] },
+  { id: 'research', label: 'Sticky note', what: 'Research', route: 'wall/research', tag: [2212, 430],
+    polys: [[[2124, 438], [2294, 428], [2302, 588], [2132, 598]]] },
+  { id: 'reading', label: 'Sticky note', what: 'Philosophy & psychology', route: 'wall/books', tag: [2245, 650],
+    polys: [[[2166, 646], [2336, 654], [2328, 814], [2158, 806]]] },
+  { id: 'lightbar', label: 'Light bar', what: 'Change the light', act: 'lamp', tag: [1610, 300],
+    polys: [[[1290, 300], [1930, 290], [1932, 362], [1292, 372]]] },
+  { id: 'keyboard', label: 'Keyboard', what: 'Typing test', route: 'type', tag: [1200, 1190], zoom: [880, 1120, 1520, 1480],
+    polys: [[[928, 1215], [1060, 1155], [1455, 1310], [1460, 1375], [1305, 1445], [930, 1250]]] },
+  { id: 'speaker', label: 'Speaker', what: 'Music', route: 'music', tag: [1452, 1020],
+    polys: [[[1395, 1050], [1450, 1020], [1505, 1050], [1510, 1150], [1450, 1185], [1400, 1160]]] },
+  { id: 'mic', label: 'Microphone', what: 'Say hello', route: 'contact', tag: [440, 870],
+    polys: [[[378, 880], [450, 865], [504, 880], [505, 1080], [470, 1200], [400, 1200], [380, 1080]]] },
+  { id: 'mug', label: 'Mug', what: 'Refill', act: 'coffee', tag: [1960, 1130],
+    polys: [[[1854, 1135], [2000, 1128], [2080, 1200], [2050, 1300], [2000, 1341], [1870, 1335]]] },
+  { id: 'webcam', label: 'Webcam', what: 'Say cheese', act: 'cam', tag: [1545, 1035],
+    polys: [[[1505, 1040], [1585, 1036], [1592, 1190], [1502, 1190]]] },
+  { id: 'mouse', label: 'Mouse', what: 'Take the tour', act: 'tour', tag: [1530, 1365],
+    polys: [[[1420, 1440], [1450, 1385], [1530, 1365], [1610, 1380], [1640, 1430], [1610, 1500], [1530, 1515], [1440, 1490]]] },
+  { id: 'window', label: 'Window', what: 'Lights on or off', act: 'switch', tag: [38, 300],
+    polys: [[[0, 0], [75, 0], [75, 585], [0, 600]]] },
+  { id: 'chair', label: 'Chair', what: 'Sit down: play the game', act: 'hotel', tag: [190, 1100],
+    polys: [[[0, 895], [80, 890], [150, 1000], [210, 1200], [260, 1450], [300, 1800], [0, 1800]]] },
 ];
 const byId = (id) => OBJ.find((o) => o.id === id);
 const ROUTES = new Set([...OBJ.map((o) => o.route).filter(Boolean), 'contact', 'wall']);
 
 // screen quads (TL, TR, BR, BL) for the live overlays
 const QUADS = {
-  monitor: { w: 1280, h: 920, q: [[1523, 545], [1865, 555], [1852, 800], [1473, 788]] },
+  monitor: { w: 1440, h: 900, q: [[1278, 402], [2005, 382], [1980, 922], [1270, 802]] },
+  laptop: { w: 1280, h: 800, q: [[865, 568], [1213, 592], [1203, 820], [857, 797]] },
+  board: { w: 640, h: 640, q: [[372, 477], [622, 482], [621, 720], [370, 742]] },
 };
-const KB = [[1258, 1030], [1646, 1039], [1663, 1078], [1252, 1064]]; // keyboard top face
+const KB = [[1045, 1158], [1420, 1295], [1375, 1362], [958, 1222]]; // keyboard top face (back-left, back-right, front-right, front-left)
 
 // ── stage transform ─────────────────────────────────────────────────────────
 const room = $('[data-room]');
@@ -217,6 +221,8 @@ function screens() {
     el.style.transform = quadMatrix(w, h, q);
   }
   miniMonitor($('[data-screen="monitor"]'));
+  miniLaptop($('[data-screen="laptop"]'), RM);
+  ledBoard($('[data-screen="board"]'));
   reel($('[data-screen="monitor"]'));
 }
 
@@ -316,7 +322,7 @@ function route(hash) {
     cleanup = plaque(plq, sub, { leave, go, toast, lights });
     return;
   }
-  const o = current === 'contact' ? byId('keyboard') : OBJ.find((x) => x.route === current);
+  const o = current === 'contact' ? byId('keyboard') : OBJ.find((x) => x.route === current || x.route?.startsWith(`${current}/`));
   document.documentElement.dataset.route = current;
   if (!o) return apply(deskView());
   document.body.classList.add('touched');
@@ -352,7 +358,7 @@ function act(name) {
   document.body.classList.add('touched');
   if (name === 'lamp') lights.cycle();
   if (name === 'switch') lights.power(), toast(light.on ? 'Lights on' : 'Lights off');
-  if (name === 'poster') click(), toast(poster());
+  if (name === 'cam') click(), toast('Smile. (It isn’t on. Nothing here is recorded.)');
   if (name === 'coffee') click(), toast(++cups === 1 ? 'Refilled. That’s one.' : cups < 4 ? `That’s ${cups} cups.` : `${cups} cups. Maybe some water?`);
   if (name === 'tour') tour();
   if (name === 'hotel') location.href = '../hotel/';
@@ -369,14 +375,15 @@ function bbox(o, pad = 120) {
 
 // ── the guided tour: the camera visits each object with a caption ──────────
 const TOUR = [
-  ['tablet', 'A working browser. Every project with its live README, and all my GitHub repositories.'],
-  ['calendar', 'Every project I’ve built, by month.'],
-  ['notes', 'What I’m doing lately. The paper beside it is for my research.'],
-  ['books', 'The shelf: philosophy and psychology.'],
+  ['monitor', 'A working browser. Every project with its live README, and all my GitHub repositories.'],
+  ['board', 'Counts my public repositories, live from GitHub. The clock is Hyderabad time.'],
+  ['laptop', 'A real terminal. Try help, ls or cat about.md.'],
+  ['card', 'Every project I’ve built, by month.'],
+  ['lately', 'What I’m doing lately. The notes on the right are research and reading.'],
   ['keyboard', 'A typing test. Every key clicks and lights up. Beat your best.'],
-  ['radio', 'Three original loops, synthesised live in your browser.'],
-  ['lamp', 'Click the lamp to change the colour of the whole room.'],
-]
+  ['speaker', 'Three original loops, synthesised live in your browser.'],
+  ['lightbar', 'Click the light bar to change the colour of the whole room.'],
+];
 let touring = null;
 function tour() {
   if (touring) return;
@@ -397,7 +404,7 @@ function tour() {
     const o = byId(id);
     apply(zoomView(bbox(o), { top: 0.04, h: 0.7, fill: 0.92 }));
     lit(id);
-    if (id === 'lamp') setTimeout(() => touring && lights.cycle(), 1200);
+    if (id === 'lightbar') setTimeout(() => touring && lights.cycle(), 1200);
     box.innerHTML = `<span class="tour-n">${i + 1} / ${TOUR.length}</span><p><b>${esc(o.label)}.</b> ${esc(text)}</p>
       <span class="tour-b"><button type="button" data-tour-end>End tour</button><button type="button" class="next" data-tour-next>${i === TOUR.length - 1 ? 'Finish' : 'Next'} →</button></span>`;
     box.classList.remove('in');

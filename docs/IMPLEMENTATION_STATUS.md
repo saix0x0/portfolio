@@ -1,8 +1,16 @@
 # Implementation status
 
-_Last updated: 2026-11-03, front page + desk at /desk/._
+_Last updated: 2026-11-08, desk rebuilt on a front-facing desk photo._
 
-## The desk is now a rendered study (2026-11-06)
+## The desk is now a front-facing desk setup (2026-11-08)
+- Owner wanted a front-facing desk like the reference site. Studied the reference: it is an empty wall plate with every object layered on as a cut-out. Shortlisted 10 straight-on Unsplash photos; the owner picked "a desk with a laptop and a monitor on it" by João Inácio (`assets/img/setup.jpg`, 2400×1800, Unsplash License, credit in `assets/img/CREDITS.md`). `study.jpg` removed.
+- Stage is 2400×1800. 17 hotspots (`OBJ` in `pages/desk.js`): monitor (live screen + reel → #browser), laptop (live mini terminal → #terminal), LED board (→ #browser/github), framed print (#wall/about), index card (#wall/timeline), three sticky notes (#wall/progress, #wall/research, #wall/books), light bar (lamp colour), keyboard (#type), speaker (#music), microphone (#contact), mug (refill), webcam (toast), mouse (tour), window (lights on/off), chair (the hotel).
+- The photo's YouTube LED board now shows a live GitHub repo count and Hyderabad time (`ledBoard()` in `desk/wall.js`). An index card ("Built so far") and sticky notes are drawn onto the wall and monitor bezel.
+- Keyboard glow quad re-measured for the 65% board. Lamp tints re-centred on the light bar and LED strip.
+- Tested in the browser pane at 1440×900 and 375×812: all routes open, keys light on the photo's keyboard, no horizontal overflow. Not tested in Safari or real phones.
+- Still to come: F1 car, LEGO, PS5 minigames, posters and the portrait as overlays or apps on the monitor.
+
+## The desk was a rendered study (2026-11-06, superseded)
 - Owner rejected the code-built gallery wall ("not aesthetic enough") and asked for a good desk-setup image like the reference site, not their own desk.
 - `/desk/` now uses `assets/img/study.jpg`: a 3D render of a dark, warm study by Taitopia Render, free under the Unsplash License (credit in `assets/img/CREDITS.md`). Stage is 2400×1350; no more wall extension or gallery.
 - 16 hotspots on the render (`OBJ` in `pages/desk.js`): tablet (live reel, opens the browser), keyboard (typing test), radio (music), lamp (colour), photograph (#wall/about), calendar (#wall/timeline), pinned note (#wall/progress), paper (#wall/research), bookshelf (#wall/books, philosophy + human-sciences shelf, shown as "Want to read"), folders (#browser/overview), card (#contact), laptop stand (#terminal), bust (tour), coffee and poster (in place), chair (the hotel).

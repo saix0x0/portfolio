@@ -1,14 +1,16 @@
 // ─────────────────────────────────────────────────────────────────────────────
-//  THE STUDY'S OWN THINGS. Words written onto the photo (the poster's title,
-//  notes on the pinned papers, the card on the wall) and the plaques that
-//  slide in when you open the wall's things (#wall/<id>). Boxes are photo px
-//  of assets/img/study.jpg (2400×1350).
+//  THE ROOM'S OWN THINGS. Paper stuck onto the photo (an index card, sticky
+//  notes), the LED board's live GitHub counter, and the plaques that slide in
+//  when you open them (#wall/<id>). Boxes are photo px of
+//  assets/img/setup.jpg (2400×1800).
 // ─────────────────────────────────────────────────────────────────────────────
 import { $, esc, href } from '../core/base.js';
 import { site } from '../../../content/site.js';
 import { desk } from '../../../content/desk.js';
 import { projects, STATUS } from '../../../content/projects.js';
 import { books, STATUSES } from '../../../content/books.js';
+import { gh, USER } from '../core/github.js';
+import { clockIn } from '../core/sun.js';
 
 const real = (s = '') => !!s && !/^TODO/.test(String(s));
 const MONTHS = 'jan feb mar apr may jun jul aug sep oct nov dec'.split(' ');
@@ -21,17 +23,29 @@ const NOW = site.now.filter((n) => real(n.text));
 const R = desk.research || {};
 const hasResearch = real(R.title);
 const SHELF = books.filter((b) => b.shelves?.some((s) => s === 'philosophy' || s === 'human'));
-const film = desk.films[0];
 
 // ── written onto the photo ──────────────────────────────────────────────────
 const at = ([x, y, w, h], rot = 0) => `left:${x}px;top:${y}px;width:${w}px;height:${h}px${rot ? `;transform:rotate(${rot}deg)` : ''}`;
 export function notes(root) {
-  const exp = site.experience[0];
   root.innerHTML = `
-    <div class="n-poster" style="${at([1026, 370, 278, 94])}"><b>${esc(film.title)}</b></div>
-    <div class="n-hand" style="${at([1404, 372, 214, 196], -1.2)}"><b>Lately</b>${NOW.slice(0, 1).map((n) => `<span>${esc(n.text)}</span>`).join('')}${exp ? `<span>${esc(exp.role)}, ${esc(exp.org)}</span>` : ''}</div>
-    <div class="n-hand" style="${at([1722, 380, 226, 190], 1.4)}"><b>Research</b><span>${hasResearch ? esc(R.title) : 'in progress…'}</span></div>
-    <div class="n-hand small" style="${at([2030, 418, 200, 60], -2)}"><b>Say hello →</b></div>`;
+    <div class="n-card" style="${at([730, 285, 290, 225], -1.5)}"><b>Built so far</b>${BUILT.slice(0, 4).map((p) => `<span>${esc(p.title)}</span>`).join('')}</div>
+    <div class="n-sticky" style="${at([1832, 772, 150, 140], 4)}"><b>Lately</b><span>${NOW[0] ? esc(NOW[0].text) : ''}</span></div>
+    <div class="n-sticky" style="${at([2128, 430, 170, 160], -3)}"><b>Research</b><span>${hasResearch ? esc(R.title) : 'in progress…'}</span></div>
+    <div class="n-sticky pink" style="${at([2160, 650, 170, 160], 2.5)}"><b>Reading</b><span>philosophy &amp; psychology</span></div>`;
+}
+
+// ── the LED board on the wall: a live GitHub counter and the time ───────────
+export function ledBoard(el) {
+  el.innerHTML = `<div class="led"><p class="led-h"><i class="led-logo">&lt;/&gt;</i>GitHub</p><p class="led-k">· REPOS ·</p>
+    <p class="led-n" data-led-n>…</p><p class="led-u">(${esc(USER)})</p><p class="led-t"><span data-led-d></span><b data-led-t></b></p></div>`;
+  const tick = () => {
+    const d = new Date();
+    $('[data-led-d]', el).innerHTML = `${d.toLocaleDateString('en-GB', { weekday: 'short', timeZone: 'Asia/Kolkata' }).toUpperCase()}<br>${d.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', timeZone: 'Asia/Kolkata' }).replace('/', '-')}`;
+    $('[data-led-t]', el).textContent = clockIn('Asia/Kolkata').replace(/\s*[ap]m$/i, '');
+  };
+  tick();
+  setInterval(tick, 15000);
+  gh.repos().then((rs) => ($('[data-led-n]', el).textContent = String(rs.length))).catch(() => ($('[data-led-n]', el).textContent = '--'));
 }
 
 // ── the plaques ─────────────────────────────────────────────────────────────
@@ -68,5 +82,3 @@ export function plaque(el, id, c) {
   $('[data-close]', el).focus({ preventScroll: true });
   return () => {};
 }
-
-export const poster = () => `${film.title} (${film.year}). ${film.line}`;
