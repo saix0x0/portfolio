@@ -9,6 +9,7 @@
 import { $, $$, esc, seeded, clamp, reducedMotion, canHover } from '../core/base.js';
 import { clockIn } from '../core/sun.js';
 import { desk } from '../../../content/desk.js';
+import { site } from '../../../content/site.js';
 import { drawPerson, LOOKS, playerLook } from '../world/actors.js';
 import { isMuted, setMuted, note } from '../world/sound.js';
 import { browserApp, miniMonitor } from '../desk/browser.js';
@@ -61,7 +62,7 @@ const OBJ = [
     polys: [[[0, 0], [75, 0], [75, 585], [0, 600]]] },
   { id: 'chair', label: 'Chair', what: 'Sit down: play the game', act: 'hotel', tag: [190, 1100],
     polys: [[[0, 895], [80, 890], [150, 1000], [210, 1200], [260, 1450], [300, 1800], [0, 1800]]] },
-];
+].filter((o) => o.act !== 'hotel' || site.game); // the chair is the hotel's door
 const byId = (id) => OBJ.find((o) => o.id === id);
 const ROUTES = new Set([...OBJ.map((o) => o.route).filter(Boolean), 'contact', 'wall']);
 
@@ -489,6 +490,7 @@ function boot() {
 
 // ── chrome: clock, mute, the hotel door ─────────────────────────────────────
 function chrome() {
+  $$('.hotel-pill').forEach((a) => (a.hidden = !site.game)); // the hotel is off the site for now
   const c = $('[data-clock]');
   const tick = () => (c.textContent = `Hyderabad · ${clockIn('Asia/Kolkata')}`);
   tick();

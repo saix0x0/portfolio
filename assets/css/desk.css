@@ -45,6 +45,7 @@ kbd { font: 500 11px var(--mono); padding: 2px 6px; border: 1px solid var(--line
 .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
 .hotel-pill { display: inline-flex; align-items: center; gap: 9px; font: 400 11px var(--px); text-transform: uppercase; text-decoration: none; color: var(--mint); border: 2px solid var(--mint); padding: 6px 11px 6px 7px; background: rgba(7, 6, 13, 0.6); }
 .hotel-pill:hover { background: var(--mint); color: #04140e; }
+.hotel-pill[hidden] { display: none; }
 .px-avatar { width: 16px; height: 20px; background: no-repeat center / contain; image-rendering: pixelated; }
 
 /* ── the room ─────────────────────────────────────────────────────────────── */

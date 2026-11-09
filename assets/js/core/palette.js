@@ -55,7 +55,7 @@ export function palette({ desk = false, extra = [] } = {}) {
     ...contact,
     { t: 'Terminal', k: 'Desk', g: '>_', run: to('terminal'), x: 'laptop shell command line' },
     { t: 'Typing test', k: 'Desk', g: '⌨', run: to('type'), x: 'keyboard wpm speed game' },
-    game,
+    ...(site.game ? [game] : []),
     ...projects.map((p) => ({ t: p.title, k: 'Project', g: '◆', run: to(`browser/p:${p.id}`), x: `${p.subtitle || ''} ${(p.tech || []).join(' ')} ${p.repo || ''}` })),
     ...extra,
   ] : [
@@ -65,7 +65,7 @@ export function palette({ desk = false, extra = [] } = {}) {
     { t: 'GitHub', k: 'Section', g: '⌥', run: here('code'), x: 'code repos languages' },
     { t: 'Contact', k: 'Section', g: '✉', run: here('talk'), x: 'hire email reach message' },
     ...contact,
-    game,
+    ...(site.game ? [game] : []),
     ...projects.filter((p) => !p.placeholder).map((p) => ({ t: p.title, k: 'Project', g: '◆', run: here(`p/${p.id}`), x: `${p.subtitle || ''} ${(p.tech || []).join(' ')} ${p.repo || ''}` })),
     ...extra,
   ];

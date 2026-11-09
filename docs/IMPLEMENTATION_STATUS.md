@@ -1,6 +1,21 @@
 # Implementation status
 
-_Last updated: 2026-11-08, front page About/Skills sections and real project screenshots._
+_Last updated: 2026-11-09, front page redesigned (black water, dot-matrix type); the hotel game taken off the site._
+
+## Front page: black water and dot-matrix type; the game is off the site (2026-11-09)
+- Owner: remove the game for now (keep its files); the front page's fonts looked "AI" and the gallery theme wasn't sticking; wanted something more niche, black, with an animated background and unique touches.
+- **The game:** `site.game = false` in `content/site.js`. With it off, nothing links to `/hotel/`: the layout nav, the search palette, the desk's pill (now `hidden` in HTML) and its chair hotspot are filtered out, and the terminal's `hotel` says it's closed. `/hotel/` and `assets/js/world/` are untouched. Set `game: true` to bring every door back.
+- **Look:** pure black (#050505), one accent (lifeguard orange #ff5f1f). Type: Doto (dot-matrix, variable weight) for display, Newsreader for reading, Fragment Mono for labels. Instrument Serif, Inter, the gold and the Van Gogh hero are gone from `/`.
+- **The pool** (`assets/js/front/pool.js`): the whole background is a canvas dot grid running a 2D wave equation. Dots refract with the slope and light up on crests; the pointer stirs it, a click drops a stone, and it rains now and then. Reduced motion draws it still. Pauses when the tab is hidden.
+- **The name:** each letter's weight follows the pointer (dots swell near it); on touch screens the letters breathe on their own. Hero shows Hyderabad time and the latest GitHub push, live.
+- **About:** the four "Off the clock" paintings are printed as halftone dots on canvas (`assets/js/front/halftone.js`) and turn to colour on hover or focus. Glance numbers in Doto.
+- **Projects:** a stack of cards (sticky, each sinks back as the next slides over, on wide screens with motion). Each card has the screenshot under a `user/repo` bar. Case pages keep the FLIP grow and live README.
+- **GitHub:** a 100-dot waffle of language share (largest remainder), live stats, and a recent-activity list of the latest pushed repos.
+- **Footer** weighs the page with the Performance API (KB, requests, load time).
+- Section headings decode out of noise characters as they scroll in.
+- Tested in the browser pane at 1440×900 and 375×812: every section renders, case pages open, no horizontal overflow at 375 (the name stacks on three lines on phones), `npm run check` passes, desk still works with no game links. Not tested in Safari or on real phones. Headless Chrome renders `/#section` URLs black (a headless quirk; the pane is fine).
+- Next: owner's résumé PDF, real skills in `skills.js`, internship details; consider showing the desk more prominently from `/`.
+
 
 ## Front page: About, Off the clock, Skills, real project screenshots (2026-11-08)
 - Owner: the front page felt too small and the project images too generic; wanted a part about their college, reading philosophy, building things, art, swimming and sport, plus more for people hiring.

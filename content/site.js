@@ -25,11 +25,15 @@ export const site = {
       art: { src: 'assets/art/wanderer.webp', w: 820, h: 1050, by: 'Caspar David Friedrich', name: 'Wanderer above the Sea of Fog', year: 'c. 1818', where: 'Hamburger Kunsthalle', alt: 'A man in a dark coat stands on a rocky peak, his back to us, looking out over a sea of fog.' } },
     { k: 'Making', title: 'Building things', line: 'I love building things: apps, tools, games, this site.', link: ['#work', 'See what I’ve built'],
       art: { src: 'assets/art/composition.webp', w: 1100, h: 732, by: 'Wassily Kandinsky', name: 'Composition VII', year: '1913', where: 'Tretyakov Gallery, Moscow', alt: 'An explosion of colour and line: hundreds of shapes crowd and overlap across the canvas.' } },
-    { k: 'Looking', title: 'Art', line: 'I’m very into art. It’s why this site is hung like a gallery.', link: ['#top', 'Back to the Van Gogh'],
+    { k: 'Looking', title: 'Art', line: 'I’m very into art. It’s why the paintings on this page are printed in dots.', link: null,
       art: { src: 'assets/art/pearl.webp', w: 820, h: 972, by: 'Johannes Vermeer', name: 'Girl with a Pearl Earring', year: 'c. 1665', where: 'Mauritshuis, The Hague', alt: 'A girl in a blue and yellow turban looks over her shoulder, a pearl earring catching the light.' } },
     { k: 'Moving', title: 'Swimming & sport', line: 'I swim, and I play a lot of sport.', link: null,
       art: { src: 'assets/art/swimming.webp', w: 820, h: 608, by: 'Thomas Eakins', name: 'Swimming', year: '1885', where: 'Amon Carter Museum of American Art', alt: 'Six young men swim and dive from a stone pier into a green lake, a dog paddling beside them.' } },
   ],
+
+  // The pixel-art hotel at /hotel/. Off the site for now (owner, 2026-11-09): its
+  // files stay, but nothing links to it. Set true to bring every door back.
+  game: false,
 
   // A link to your résumé PDF (e.g. 'assets/resume.pdf'). Empty → the button is hidden. TODO
   resume: '',

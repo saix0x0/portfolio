@@ -133,7 +133,7 @@ export function terminalApp(root, ctx) {
     },
     rgb: (a) => print(`keyboard rgb → ${esc(ctx.lights.rgb(a))}`),
     music: () => ctx.go('music'),
-    hotel: () => C.open('hotel'),
+    hotel: () => (site.game ? C.open('hotel') : print('the hotel is closed for renovation. come back later.')),
     date: () => print(new Date().toString()),
     echo: (a) => print(esc(a)),
     clear: () => (out.innerHTML = ''),
@@ -196,7 +196,7 @@ export function terminalApp(root, ctx) {
     coffee: () => print('HTTP 418: I’m a teapot.'),
     ping: () => print('pong'),
     42: () => print('the answer. still working on the question.'),
-    duck: () => print('🦆 seven rubber ducks are hiding in the hotel. one per floor.'),
+    duck: () => print(site.game ? '🦆 seven rubber ducks are hiding in the hotel. one per floor.' : '🦆 quack.'),
     matrix: () => print('wake up, sai…  the matrix has you.  follow the white rubber duck. 🦆'),
   };
   C.hi = C.hello;

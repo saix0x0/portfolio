@@ -24,7 +24,7 @@ export const NAV = [
   { key: 'compass', label: 'Compass', path: 'compass/', note: 'Useful sites' },
   { key: 'lab', label: 'Lab', path: 'lab/', note: 'Experiments' },
   { key: 'vault', label: 'Vault', path: 'vault/', note: 'Private', cls: 'nav-lock' },
-];
+].filter((n) => n.key !== 'hotel' || site.game);
 
 export const CHAPTERS = [
   { id: 'paris', n: '01', title: 'The beginning', city: 'Paris', about: 'Who I am' },

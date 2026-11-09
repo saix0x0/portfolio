@@ -4,169 +4,134 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Sai Siddhanth Challa</title>
-  <meta name="description" content="Sai Siddhanth Challa: sophomore at IIIT Hyderabad, Computer Science and Computing &amp; Human Sciences by Research. Builds AI apps, tools and games; reads philosophy; loves art; swims.">
-  <meta name="theme-color" content="#070814">
+  <meta name="description" content="Sai Siddhanth Challa: sophomore at IIIT Hyderabad, Computer Science and Computing &amp; Human Sciences by Research. Builds AI apps and tools; reads philosophy; loves art; swims.">
+  <meta name="theme-color" content="#050505">
   <meta property="og:title" content="Sai Siddhanth Challa">
   <meta property="og:description" content="Exploring broadly, building obsessively. Selected projects and live GitHub. IIIT Hyderabad.">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="preload" href="assets/art/rhone.webp" as="image">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Silkscreen&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Doto:ROND,wght@0..100,100..900&family=Fragment+Mono&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&display=swap">
   <link rel="stylesheet" href="assets/css/landing.css">
-  <!-- the opening curtain plays once per visit -->
-  <script>try{sessionStorage.getItem('front:intro')&&document.documentElement.classList.add('seen');sessionStorage.setItem('front:intro','1')}catch(e){}</script>
   <script type="module" src="assets/js/pages/landing.js"></script>
 </head>
 <body>
   <a class="skip" href="#work">Skip to projects</a>
 
-  <div class="curtain" aria-hidden="true"><i class="c-top"></i><i class="c-bot"></i><div class="c-mid"><span class="c-mark">SC</span><span class="c-line"></span><span class="c-name">Sai Siddhanth Challa</span></div></div>
-  <div class="ambient" aria-hidden="true"></div>
+  <!-- the pool: a field of dots that behaves like water -->
+  <canvas class="pool" data-pool aria-hidden="true"></canvas>
 
   <header class="bar">
-    <a class="brand" href="#top" aria-label="Sai Siddhanth Challa, IIIT Hyderabad. Back to the top"><span class="mark" aria-hidden="true">SC</span><span class="who"><b>Sai Siddhanth Challa</b><span>, IIITH</span></span></a>
+    <a class="brand" href="#top" aria-label="Sai Siddhanth Challa, back to the top"><b>SSC</b><span>IIIT Hyderabad</span></a>
     <nav class="bar-m" aria-label="Sections">
-      <a href="#about">About</a><a href="#experience">Experience</a><a href="#work">Projects</a><a href="#skills">Skills</a><a href="#code">GitHub</a><a href="#talk">Contact</a>
+      <a href="#about"><i>01</i>About</a><a href="#experience"><i>02</i>Experience</a><a href="#work"><i>03</i>Projects</a><a href="#skills"><i>04</i>Skills</a><a href="#code"><i>05</i>GitHub</a><a href="#talk"><i>06</i>Contact</a>
     </nav>
     <div class="bar-r">
-      <button class="search" type="button" data-palette aria-label="Search the site"><span aria-hidden="true">⌕</span><span class="lbl">Search</span><kbd>⌘K</kbd></button>
+      <button class="search" type="button" data-palette aria-label="Search the site"><span class="lbl">Search</span><kbd>⌘K</kbd></button>
       <a class="ico" href="https://www.linkedin.com/in/sai-siddhanth-challa-1b63a4377/" target="_blank" rel="noopener" aria-label="LinkedIn">in</a>
-      <a class="ico" href="https://github.com/saix0x0" target="_blank" rel="noopener" aria-label="GitHub"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0a8 8 0 0 0-2.53 15.59c.4.07.55-.17.55-.38v-1.34c-2.22.48-2.69-1.07-2.69-1.07-.36-.92-.89-1.17-.89-1.17-.73-.5.05-.49.05-.49.8.06 1.23.83 1.23.83.71 1.22 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.77-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8 8 0 0 0 8 0Z"/></svg></a>
+      <a class="ico" href="https://github.com/saix0x0" target="_blank" rel="noopener" aria-label="GitHub">gh</a>
     </div>
     <i class="prog" data-prog aria-hidden="true"></i>
   </header>
 
   <main>
-    <!-- ── The entrance: scroll, and you walk into the painting ────────── -->
-    <section class="portal" id="top" data-portal data-tone="#2b348c">
-      <div class="stage">
-        <div class="hero-txt" data-herotxt>
-          <h1 class="name" aria-label="Sai Siddhanth Challa"><span class="ln" aria-hidden="true"><span style="--i:0">S</span><span style="--i:1">a</span><span style="--i:2">i</span> <span style="--i:3">S</span><span style="--i:4">i</span><span style="--i:5">d</span><span style="--i:6">d</span><span style="--i:7">h</span><span style="--i:8">a</span><span style="--i:9">n</span><span style="--i:10">t</span><span style="--i:11">h</span></span><span class="ln gold" aria-hidden="true"><em style="--i:12">C</em><em style="--i:13">h</em><em style="--i:14">a</em><em style="--i:15">l</em><em style="--i:16">l</em><em style="--i:17">a</em></span></h1>
-          <p class="lede" data-tagline></p>
-          <div class="cta">
-            <a class="go" href="#work" data-magnet><span>See my projects</span><b aria-hidden="true">↓</b></a>
-            <a class="game" href="hotel/"><span class="px" aria-hidden="true"></span>Enter game</a>
-          </div>
-        </div>
-
-        <figure class="hero-art" data-art data-spot>
-          <div class="gilt"><div class="mat">
-            <img class="dim" src="assets/art/rhone.webp" width="1100" height="853" alt="Starry Night Over the Rhône by Vincent van Gogh: a deep blue night sky full of stars over a river, with gaslights reflected in the water.">
-            <img class="lit" src="assets/art/rhone.webp" width="1100" height="853" alt="" aria-hidden="true">
-            <i class="veil" data-veil></i>
-          </div></div>
-          <figcaption class="label" data-label><b>Vincent van Gogh</b><span><i>Starry Night Over the Rhône</i>, 1888</span><small>Oil on canvas · Musée d’Orsay, Paris</small></figcaption>
-        </figure>
-
-        <div class="passage" data-passage>
-          <img class="passage-bg" src="assets/art/rhone.webp" width="1100" height="853" alt="" aria-hidden="true" loading="lazy">
-          <p class="quiet" data-words>Exploring broadly, <em>building obsessively.</em></p>
-          <p class="cogito" title="I think, therefore I am."><em>Cogito, ergo sum.</em></p>
-        </div>
-        <span class="hint" data-hint aria-hidden="true">Scroll<i></i></span>
+    <!-- ── The front: a name made of dots, over water ──────────────────── -->
+    <section class="hero" id="top">
+      <p class="hero-k"><span>Portfolio</span><span>Computer Science × Human Sciences</span><span data-year></span></p>
+      <h1 class="name" data-name aria-label="Sai Siddhanth Challa"><span class="ln">Sai Siddhanth</span><span class="ln">Challa</span></h1>
+      <div class="hero-foot">
+        <p class="lede" data-tagline></p>
+        <ul class="status" data-status aria-label="Right now">
+          <li><i class="led"></i><span>Hyderabad</span><b data-clock>--:--</b></li>
+          <li><span>Last push</span><b data-push>reading GitHub…</b></li>
+        </ul>
+        <a class="go" href="#work"><span>See the work</span><b aria-hidden="true">↓</b></a>
       </div>
+      <p class="touch" aria-hidden="true"><span class="fine">Move the cursor; the water is real. Click to drop a stone.</span><span class="coarse">Touch the water.</span></p>
     </section>
 
-    <!-- ── About: who, where, and off the clock ─────────────────────────── -->
-    <section class="about" id="about" aria-labelledby="about-h" data-tone="#2f2a6e">
+    <!-- ── 01 About ─────────────────────────────────────────────────────── -->
+    <section class="sec about" id="about" aria-labelledby="about-h">
+      <header class="sec-h"><span class="sec-n">01</span><h2 id="about-h" data-decode>About</h2></header>
       <div class="about-top">
         <div>
-          <p class="kicker rv">About</p>
-          <h2 id="about-h" data-split>Hello, I’m <em>Siddhanth.</em></h2>
-        </div>
-        <div>
           <p class="about-lede rv" data-about></p>
-          <a class="school rv" data-school target="_blank" rel="noopener"></a>
+          <p class="cogito rv" title="I think, therefore I am."><em>Cogito, ergo sum.</em> <span>I think, therefore I am.</span></p>
         </div>
+        <a class="school rv" data-school target="_blank" rel="noopener"></a>
       </div>
       <dl class="glance rv" data-glance></dl>
       <div class="life-h">
-        <h3 class="kicker rv">Off the clock</h3>
-        <p class="intro rv">Four things I’d talk about for hours, each hung beside a painting.</p>
+        <h3 class="kick rv">Off the clock</h3>
+        <p class="intro rv">Four things I’d talk about for hours. Each one beside a painting, printed in dots; hover to see it in colour.</p>
       </div>
       <ol class="hang" data-life></ol>
     </section>
 
-    <!-- ── Experience ──────────────────────────────────────────────────── -->
-    <section class="prov" id="experience" aria-labelledby="exp-h" data-tone="#3b2a78">
-      <h2 id="exp-h" data-split>Experience</h2>
+    <!-- ── 02 Experience ────────────────────────────────────────────────── -->
+    <section class="sec prov" id="experience" aria-labelledby="exp-h">
+      <header class="sec-h"><span class="sec-n">02</span><h2 id="exp-h" data-decode>Experience</h2></header>
       <ol class="prov-list" data-exp></ol>
     </section>
 
-    <!-- ── Projects: a corridor you walk sideways ──────────────────────── -->
-    <section class="corridor" id="work" aria-labelledby="work-h" data-corridor data-tone="#4a1a3c">
-      <div class="corr-stage">
-        <ol class="track" data-track>
-          <li class="track-intro">
-            <h2 id="work-h" data-split>Selected <em>projects.</em></h2>
-            <p class="intro">Things I designed and built. Each one opens into its own page, with the live README straight from GitHub.</p>
-            <span class="keep" aria-hidden="true">Keep scrolling <i>→</i></span>
-          </li>
-        </ol>
-        <div class="corr-bar" aria-hidden="true"><i data-corrprog></i></div>
-      </div>
+    <!-- ── 03 Projects: cards that stack as you scroll ─────────────────── -->
+    <section class="sec work-s" id="work" aria-labelledby="work-h">
+      <header class="sec-h"><span class="sec-n">03</span><h2 id="work-h" data-decode>Projects</h2>
+        <p class="intro rv">Things I designed and built. Each one opens into its own page, with the live README straight from GitHub.</p></header>
+      <ol class="stack" data-track></ol>
     </section>
 
-    <!-- ── Skills: every tool, with the projects that use it ──────────────── -->
-    <section class="kit" id="skills" aria-labelledby="kit-h" data-tone="#3d2252">
-      <div class="kit-l">
-        <p class="kicker rv">Skills</p>
-        <h2 id="kit-h" data-split>The <em>toolkit.</em></h2>
-        <p class="intro rv">What I’ve actually built with. Each tool links to the projects that use it.</p>
-      </div>
-      <div class="kit-r">
-        <ul class="used rv" data-used></ul>
-        <div class="also rv" data-also></div>
-      </div>
+    <!-- ── 04 Skills ────────────────────────────────────────────────────── -->
+    <section class="sec kit" id="skills" aria-labelledby="kit-h">
+      <header class="sec-h"><span class="sec-n">04</span><h2 id="kit-h" data-decode>Skills</h2>
+        <p class="intro rv">What I’ve actually built with. Each tool links to the projects that use it.</p></header>
+      <ul class="used rv" data-used></ul>
+      <div class="also rv" data-also></div>
     </section>
 
-    <!-- ── GitHub ──────────────────────────────────────────────────────── -->
-    <section class="room" id="code" aria-labelledby="code-h" data-tone="#163f66">
-      <figure class="room-art">
-        <div class="unveil"><div class="gilt"><div class="mat"><img src="assets/art/circles.webp" width="1200" height="1222" loading="lazy" alt="Several Circles by Wassily Kandinsky: coloured, overlapping circles floating on a dark ground around one large black-and-blue circle."></div></div></div>
-        <figcaption class="label"><b>Wassily Kandinsky</b><span><i>Several Circles</i>, 1926</span><small>Oil on canvas · Solomon R. Guggenheim Museum, New York</small></figcaption>
-      </figure>
-      <div class="room-txt">
-        <h2 id="code-h" data-split>Written in <em>public.</em></h2>
-        <p class="intro rv">Read live from GitHub each time this page opens. After Kandinsky: every circle is a language, sized by how much of my code is written in it.</p>
-        <dl class="stats rv" data-gh><p class="muted">Reading GitHub…</p></dl>
-        <div class="circles" data-circles aria-hidden="true"></div>
-        <ul class="key" data-key></ul>
-        <a class="more" href="https://github.com/saix0x0" target="_blank" rel="noopener">github.com/saix0x0 ↗</a>
-      </div>
-    </section>
-
-    <!-- ── Contact ─────────────────────────────────────────────────────── -->
-    <section class="room flip talk" id="talk" aria-labelledby="talk-h" data-tone="#7a3416">
-      <figure class="room-art">
-        <div class="unveil"><div class="gilt"><div class="mat"><img src="assets/art/sunrise.webp" width="1200" height="899" loading="lazy" alt="Impression, Sunrise by Claude Monet: an orange sun over a hazy blue harbour, with small boats in silhouette."></div></div></div>
-        <figcaption class="label"><b>Claude Monet</b><span><i>Impression, Sunrise</i>, 1872</span><small>Oil on canvas · Musée Marmottan Monet, Paris</small></figcaption>
-      </figure>
-      <div class="room-txt">
-        <h2 id="talk-h" data-split>Let’s <em>talk.</em></h2>
-        <p class="intro rv">Reach out to me. Email is the quickest way, and I read everything.</p>
-        <button class="mail rv" type="button" data-copy><span data-email></span><small data-copied>Copy</small></button>
-        <div class="cta rv">
-          <a class="go small" href="mailto:" data-mailto data-magnet><span>Write to me</span><b aria-hidden="true">→</b></a>
-          <a class="out" href="" data-resume hidden>Résumé (PDF) ↓</a>
-          <a class="out" href="https://www.linkedin.com/in/sai-siddhanth-challa-1b63a4377/" target="_blank" rel="noopener">LinkedIn ↗</a>
-          <a class="out" href="https://github.com/saix0x0" target="_blank" rel="noopener">GitHub ↗</a>
+    <!-- ── 05 GitHub, live ──────────────────────────────────────────────── -->
+    <section class="sec code" id="code" aria-labelledby="code-h">
+      <header class="sec-h"><span class="sec-n">05</span><h2 id="code-h" data-decode>GitHub</h2>
+        <p class="intro rv">Read live from GitHub each time this page opens. A hundred dots: each one is a percent of my code, coloured by language.</p></header>
+      <div class="code-grid">
+        <div>
+          <dl class="stats rv" data-gh><p class="muted">Reading GitHub…</p></dl>
+          <div class="waffle rv" data-waffle aria-hidden="true"></div>
+          <ul class="key" data-key></ul>
         </div>
+        <div class="feed rv">
+          <h3 class="kick">Recent activity</h3>
+          <ol data-feed><li class="muted">Reading GitHub…</li></ol>
+          <a class="more" href="https://github.com/saix0x0" target="_blank" rel="noopener">github.com/saix0x0 ↗</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 06 Contact ───────────────────────────────────────────────────── -->
+    <section class="sec talk" id="talk" aria-labelledby="talk-h">
+      <header class="sec-h"><span class="sec-n">06</span><span class="sec-t">Contact</span></header>
+      <h2 class="big" id="talk-h" data-decode>Let’s talk.</h2>
+      <p class="intro rv">Reach out to me. Email is the quickest way, and I read everything.</p>
+      <button class="mail rv" type="button" data-copy><span data-email></span><small data-copied>Copy</small></button>
+      <div class="cta rv">
+        <a class="go" href="mailto:" data-mailto><span>Write to me</span><b aria-hidden="true">→</b></a>
+        <a class="out" href="" data-resume hidden>Résumé (PDF) ↓</a>
+        <a class="out" href="https://www.linkedin.com/in/sai-siddhanth-challa-1b63a4377/" target="_blank" rel="noopener">LinkedIn ↗</a>
+        <a class="out" href="https://github.com/saix0x0" target="_blank" rel="noopener">GitHub ↗</a>
+        <a class="out" href="desk/">The desk →</a>
       </div>
     </section>
   </main>
 
   <footer class="foot">
-    <p class="sig" data-split><em>Thank you</em> for walking through.</p>
+    <p data-weight>Hand-written HTML, CSS and JavaScript. No frameworks, no build step.</p>
     <div class="foot-row">
       <span><b>Sai Siddhanth Challa</b> · IIIT Hyderabad · © <span data-year></span></span>
-      <span><a href="hotel/">Play the hotel</a> · Paintings in the public domain, via Wikimedia Commons</span>
+      <span>Paintings in the public domain, via Wikimedia Commons</span>
     </div>
   </footer>
-  <div class="glow" data-glow aria-hidden="true"></div>
 
   <div class="toast" data-toast role="status" aria-live="polite"></div>
-  <noscript><style>.curtain{display:none}.stats,.circles{display:none}.rv,.unveil,[data-split]{opacity:1!important;transform:none!important;clip-path:none!important}</style></noscript>
+  <noscript><style>.rv{opacity:1!important;transform:none!important}.stats,.waffle,.feed{display:none}</style></noscript>
 </body>
 </html>
