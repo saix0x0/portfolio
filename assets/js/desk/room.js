@@ -11,6 +11,8 @@ import { site } from '../../../content/site.js';
 import { desk } from '../../../content/desk.js';
 import { projects } from '../../../content/projects.js';
 import { books } from '../../../content/books.js';
+import { KEYS } from './keys.js';
+import { halftone } from '../front/halftone.js';
 
 const real = (s = '') => !!s && !/^TODO/.test(String(s));
 const at = (x0, y0, x1, y1, rot = 0) => `left:${x0}px;top:${y0}px;width:${x1 - x0}px;height:${y1 - y0}px${rot ? `;transform:rotate(${rot}deg)` : ''}`;
@@ -84,7 +86,7 @@ export function room(root) {
   const R = desk.research || {};
   root.innerHTML = `
   <div class="r-wall"></div>
-  <div class="r-glow g-desk"></div><div class="r-glow g-left"></div><div class="r-glow g-right"></div><div class="r-glow g-bar"></div>
+  <div class="r-glow g-desk"></div><div class="r-glow g-left"></div><div class="r-glow g-right"></div><div class="r-glow g-bar"></div><div class="r-glow g-pulse"></div>
 
   <!-- left shelf: a record player, some sleeves and a trailing plant -->
   <div class="r-shelf" style="${at(150, 352, 790, 380)}"><i class="r-strip"></i></div>
@@ -92,7 +94,11 @@ export function room(root) {
   <div class="r-tt" data-thing="record" style="${at(300, 268, 610, 352)}"><i class="tt-rec"><i></i></i><i class="tt-arm"></i><i class="tt-base"><i class="tt-led"></i><i class="tt-knob"></i></i></div>
   <div class="r-sleeves" style="${at(630, 186, 780, 352)}"><i class="sl1"></i><i class="sl2"></i><i class="sl3"></i></div>
 
-  ${frame('pearl', art('pearl'), at(206, 452, 548, 860))}
+  <figure class="r-frame me" data-thing="portrait" style="${at(220, 430, 532, 800)}"><span class="r-mat"><span class="me-sheet">
+    <i class="me-top"><span>No. 02</span><span>IIIT-H</span></i>
+    <span class="me-pic"><img src="../${desk.portrait.src || 'assets/img/portrait.jpg'}" alt=""><canvas></canvas></span>
+    <b class="me-word">Curious.</b>
+    <i class="me-cap">${esc(site.fullName || 'Sai Siddhanth Challa')}</i></span></span></figure>
   <div class="r-note" data-thing="lately" style="${at(600, 492, 784, 704, -2.5)}"><i class="pin"></i><b>Lately</b><span>${NOW[0] ? esc(NOW[0].text) : 'Writing this down soon.'}</span></div>
   <div class="r-switch" data-thing="switch" style="${at(64, 610, 116, 694)}"><i></i></div>
 
@@ -110,41 +116,78 @@ export function room(root) {
   <div class="r-card" data-thing="research" style="${at(2044, 654, 2210, 806, 2)}"><i class="pin"></i><b>Research</b><span>${real(R.title) ? esc(R.title) : 'In progress. More soon.'}</span></div>
 
   <!-- the desk -->
-  <div class="r-desk"><i class="top"></i><i class="edge"></i></div>
+  <div class="r-desk"><i class="d-top"></i><i class="d-edge"></i></div>
   <div class="r-under"><i class="cab l"></i><i class="cab r"></i></div>
 
-  <div class="r-plant" style="left:120px;top:700px">${plant(21, { w: 200, h: 350, stems: 8 })}<i class="r-pot"></i></div>
-  <div class="r-laptop" data-thing="laptop" style="${at(330, 828, 662, 1046)}"><i class="lid"></i><i class="base"></i><i class="stand"></i></div>
-  <div class="r-tray" data-thing="letters" style="${at(690, 948, 830, 1046)}"><i class="env e1"></i><i class="env e2"></i><i class="box"></i></div>
+  <div class="r-plant" style="left:90px;top:720px">${plant(21, { w: 200, h: 350, stems: 8 })}<i class="r-pot"></i></div>
+  <div class="r-laptop" data-thing="laptop" style="${at(300, 786, 770, 1078)}"><i class="lid"></i><i class="base"></i></div>
+  <div class="r-tray" data-thing="letters" style="${at(790, 996, 920, 1090)}"><i class="env e1"></i><i class="env e2"></i><i class="box"></i></div>
 
   <i class="r-bar-glow"></i>
   <div class="r-lightbar" data-thing="lightbar" style="${at(940, 628, 1460, 648)}"><i></i></div>
   <div class="r-mon" data-thing="monitor" style="${at(688, 646, 1712, 1002)}"></div>
   <div class="r-stand"><i class="neck"></i><i class="foot"></i></div>
-  <div class="r-mat-pad" style="${at(850, 1046, 1570, 1084)}"></div>
-  <div class="r-kb" data-thing="keyboard" style="${at(930, 1044, 1392, 1078)}"><i class="caps"></i><i class="under"></i></div>
-  <div class="r-mouse" data-thing="mouse" style="${at(1448, 1052, 1508, 1078)}"></div>
+  <div class="r-mat-pad" style="${at(860, 1070, 1560, 1140)}"></div>
+  <i class="r-kb-glow" style="${at(946, 1118, 1396, 1142)}"></i>
+  <div class="r-kb" data-thing="keyboard" style="${at(930, 1060, 1410, 1134)}">${keyboard()}</div>
+  <div class="r-mouse" data-thing="mouse" style="${at(1452, 1092, 1506, 1122)}"></div>
 
-  <div class="r-mug" data-thing="mug" style="${at(1726, 974, 1818, 1048)}"><i class="steam"><i></i><i></i><i></i></i><i class="cup"></i><i class="handle"></i></div>
-  <div class="r-board" data-thing="board" style="${at(1846, 860, 2028, 1046)}"></div>
-  <div class="r-phones" data-thing="phones" style="${at(2072, 796, 2254, 1048)}">${phones()}</div>
+  <div class="r-mug" data-thing="mug" style="${at(1570, 1032, 1662, 1106)}"><i class="steam"><i></i><i></i><i></i></i><i class="cup"></i><i class="handle"></i></div>
+  <div class="r-board" data-thing="board" style="${at(1730, 886, 1912, 1072)}"></div>
+  <div class="r-spk" data-thing="speaker" style="${at(1950, 846, 2262, 1072)}">${speaker()}</div>
 
   <div class="r-chair" data-thing="chair">${chair()}</div>
   <div class="r-dark"></div>
   <div class="r-grain"></div>`;
+  const me = root.querySelector('.me');
+  halftone(me.querySelector('canvas'), me.querySelector('img'), { cell: 4, ink: '#1a0b05', invert: true });
 }
 
-function phones() {
-  return `<svg viewBox="0 0 182 252" width="182" height="252" aria-hidden="true">
-    <ellipse class="ph-foot" cx="91" cy="244" rx="62" ry="8"/>
-    <rect class="ph-pole" x="86" y="40" width="10" height="204" rx="3"/>
-    <path class="ph-hook" d="M60 44 Q91 18 122 44" />
-    <path class="ph-band" d="M30 128 C26 40 156 40 152 128" />
-    <path class="ph-pad" d="M40 112 C40 58 142 58 142 112" />
-    <rect class="ph-cup" x="14" y="112" width="38" height="78" rx="17"/>
-    <rect class="ph-cup" x="130" y="112" width="38" height="78" rx="17"/>
-    <rect class="ph-cush" x="44" y="118" width="12" height="66" rx="6"/>
-    <rect class="ph-cush" x="126" y="118" width="12" height="66" rx="6"/>
+// ── the keyboard, key by key, on the desk in perspective ───────────────────
+// CASE is its outline, TOP the area the keys fill (back-left, back-right,
+// front-right, front-left, in stage px). Each key is a <polygon data-k=code>.
+const CASE = [[966, 1064], [1374, 1064], [1404, 1124], [936, 1124]];
+const TOP = [[978, 1068], [1362, 1068], [1390, 1119], [950, 1119]];
+const lerp = (q, u, v) => {
+  const t = [q[0][0] + (q[1][0] - q[0][0]) * u, q[0][1] + (q[1][1] - q[0][1]) * u];
+  const b = [q[3][0] + (q[2][0] - q[3][0]) * u, q[3][1] + (q[2][1] - q[3][1]) * u];
+  return [t[0] + (b[0] - t[0]) * v, t[1] + (b[1] - t[1]) * v].map((n) => n.toFixed(1)).join(',');
+};
+function keyboard() {
+  const pts = (q) => q.map((p) => p.join(',')).join(' ');
+  const keys = KEYS.map(({ code, x, w, r }) => {
+    const u0 = (x + 0.07) / 16, u1 = (x + w - 0.07) / 16, v0 = (r + 0.1) / 6, v1 = (r + 0.9) / 6;
+    if (code === 'Knob') {
+      const [cx, cy] = lerp(TOP, (x + 0.5) / 16, (r + 0.5) / 6).split(',');
+      return `<ellipse class="kb-knob" data-k="Knob" cx="${cx}" cy="${cy}" rx="10" ry="4.5"/>`;
+    }
+    return `<polygon data-k="${code}" points="${lerp(TOP, u0, v0)} ${lerp(TOP, u1, v0)} ${lerp(TOP, u1, v1)} ${lerp(TOP, u0, v1)}"/>`;
+  }).join('');
+  return `<svg viewBox="930 1060 480 74" width="480" height="74" aria-hidden="true">
+    <polygon class="kb-case" points="${pts(CASE)}"/>
+    <polygon class="kb-front" points="936,1124 1404,1124 1402,1132 938,1132"/>
+    <g class="kb-keys">${keys}</g></svg>`;
+}
+
+// ── the speaker: an amp-style Marshall on the right of the desk ────────────
+function speaker() {
+  const knobs = [158, 194, 230, 266].map((x) => `<circle class="spk-knob" cx="${x}" cy="35" r="10"/><circle class="spk-cap" cx="${x}" cy="35" r="4"/>`).join('');
+  return `<svg viewBox="0 0 312 226" width="312" height="226" aria-hidden="true">
+    <defs>
+      <pattern id="weave" width="5" height="5" patternUnits="userSpaceOnUse"><rect width="5" height="5" fill="#1b1612"/><path d="M0 2.5H5M2.5 0V5" stroke="#2b241c" stroke-width="0.9"/></pattern>
+      <linearGradient id="brass" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#e2c27a"/><stop offset="0.5" stop-color="#b8924a"/><stop offset="1" stop-color="#8a6a30"/></linearGradient>
+      <radialGradient id="cone"><stop offset="0" stop-color="#3a3027"/><stop offset="0.6" stop-color="#1f1914" stop-opacity="0.6"/><stop offset="1" stop-color="#1b1612" stop-opacity="0"/></radialGradient>
+    </defs>
+    <rect class="spk-body" x="0" y="0" width="312" height="220" rx="13"/>
+    <rect x="6" y="6" width="300" height="208" rx="9" fill="none" stroke="#c9a35a" stroke-width="1.6" opacity="0.8"/>
+    <rect x="14" y="16" width="284" height="38" rx="4" fill="url(#brass)"/>
+    <rect x="30" y="27" width="10" height="17" rx="2" fill="#141210"/><rect x="31" y="28" width="8" height="8" rx="1" fill="#e9e2d2"/>
+    <circle class="spk-led" cx="56" cy="35" r="3"/>
+    ${knobs}
+    <rect x="14" y="62" width="284" height="146" rx="4" fill="url(#weave)"/>
+    <g class="spk-cones"><circle cx="90" cy="135" r="52" fill="url(#cone)"/><circle cx="222" cy="135" r="52" fill="url(#cone)"/></g>
+    <text class="spk-logo" x="156" y="106" text-anchor="middle">Marshall</text>
+    <rect x="22" y="218" width="30" height="8" rx="2" fill="#0a0908"/><rect x="260" y="218" width="30" height="8" rx="2" fill="#0a0908"/>
   </svg>`;
 }
 

@@ -1,9 +1,10 @@
 // ─────────────────────────────────────────────────────────────────────────────
 //  HALFTONE: a painting printed in dots, like the rest of the page. The image
 //  is sampled on a grid and each cell becomes one dot, sized by how light the
-//  paint is there. Redrawn when the canvas changes size.
+//  paint is there (or how dark, with `invert`, for dark ink on a light
+//  ground). Redrawn when the canvas changes size.
 // ─────────────────────────────────────────────────────────────────────────────
-export function halftone(canvas, img, { cell = 7, ink = '#ecebe4' } = {}) {
+export function halftone(canvas, img, { cell = 7, ink = '#ecebe4', invert = false } = {}) {
   const ctx = canvas.getContext('2d');
   const probe = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
   let w = 0;
@@ -30,7 +31,8 @@ export function halftone(canvas, img, { cell = 7, ink = '#ecebe4' } = {}) {
     ctx.beginPath();
     for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) {
       const i = (y * cols + x) * 4;
-      const l = (0.2126 * px[i] + 0.7152 * px[i + 1] + 0.0722 * px[i + 2]) / 255;
+      const lum = (0.2126 * px[i] + 0.7152 * px[i + 1] + 0.0722 * px[i + 2]) / 255;
+      const l = invert ? 1 - lum : lum;
       const rad = (cell / 2) * Math.sqrt(l) * 0.98;
       if (rad < 0.35) continue;
       const cx = x * cell + cell / 2;

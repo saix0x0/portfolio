@@ -101,6 +101,21 @@ main, .foot { position: relative; z-index: 1; }
 .cogito { margin: 28px 0 0; font-size: 19px; color: var(--dim); }
 .cogito em { color: var(--ink); }
 .cogito span { margin-left: 10px; font: 400 11px var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint); }
+.about-r { display: grid; gap: 22px; }
+/* the portrait: a printed sheet in a black frame, the face in dots */
+.me { margin: 0; padding: 12px; background: #0b0b0b; border: 1px solid var(--line); box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5); transform: rotate(-1.2deg); transition: transform 0.5s var(--out); }
+.me:hover { transform: rotate(0deg); }
+.me-sheet { position: relative; display: grid; grid-template-columns: 1fr auto; grid-template-rows: auto 1fr auto; gap: 10px 12px; padding: 14px; background: var(--hot); color: #1a0b05; overflow: hidden; }
+.me-top { grid-column: 1 / -1; display: flex; justify-content: space-between; margin: 0; font: 400 10px var(--mono); letter-spacing: 0.18em; text-transform: uppercase; }
+.me-pic { position: relative; aspect-ratio: 392 / 371; }
+.me-pic img, .me-pic canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.me-pic img { object-fit: cover; opacity: 0; filter: grayscale(1) contrast(1.1); mix-blend-mode: multiply; transition: opacity 0.6s var(--out); }
+.me:hover .me-pic img { opacity: 0.9; }
+.me:hover .me-pic canvas { opacity: 0.25; }
+.me-pic canvas { transition: opacity 0.6s var(--out); }
+.me-word { margin: 0; writing-mode: vertical-rl; transform: rotate(180deg); font: 900 clamp(46px, 5vw, 74px)/0.85 var(--dot); letter-spacing: -0.02em; text-transform: uppercase; }
+.me figcaption { grid-column: 1 / -1; font: 400 13px/1.35 var(--serif); }
+.me figcaption b { font: 600 14px var(--serif); }
 .school { position: relative; display: grid; gap: 8px; padding: 26px 28px 28px; border: 1px solid var(--line); background: rgba(11, 11, 11, 0.82); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); text-decoration: none; transition: border-color 0.25s; }
 .school:hover { border-color: var(--hot); }
 .school .kick { margin: 0; }

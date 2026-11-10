@@ -11,13 +11,15 @@ import { clockIn } from '../core/sun.js';
 import { desk } from '../../../content/desk.js';
 import { site } from '../../../content/site.js';
 import { drawPerson, LOOKS, playerLook } from '../world/actors.js';
-import { isMuted, setMuted, note } from '../world/sound.js';
+import { isMuted, setMuted, note, level } from '../world/sound.js';
 import { browserApp } from '../desk/browser.js';
 import { terminalApp, miniLaptop } from '../desk/terminal.js';
 import { contactSheet, typeSheet, musicCard } from '../desk/bits.js';
 import { palette } from '../core/palette.js';
 import { ledBoard, plaque, PLAQUES } from '../desk/wall.js';
 import { room as drawRoom, lockScreen } from '../desk/room.js';
+import { onKey } from '../desk/keys.js';
+import { critter } from '../desk/critter.js';
 
 const RM = reducedMotion();
 const W = 2400;
@@ -30,25 +32,25 @@ const CY = 740;
 // route: the URL hash it opens · act: an in-place action
 const OBJ = [
   { id: 'monitor', label: 'Monitor', what: 'Projects & GitHub', route: 'browser', box: [688, 646, 1712, 1002], zoom: [680, 600, 1720, 1012] },
-  { id: 'laptop', label: 'Laptop', what: 'The terminal', route: 'terminal', box: [330, 828, 662, 1046], zoom: [300, 790, 700, 1060] },
-  { id: 'board', label: 'LED board', what: 'Live from GitHub', route: 'browser/github', box: [1846, 860, 2028, 1046] },
-  { id: 'pearl', label: 'Portrait', what: 'About me', route: 'wall/about', box: [206, 452, 548, 860] },
+  { id: 'laptop', label: 'Laptop', what: 'The terminal', route: 'terminal', box: [300, 786, 770, 1078], zoom: [260, 740, 810, 1100] },
+  { id: 'board', label: 'LED board', what: 'Live from GitHub', route: 'browser/github', box: [1730, 886, 1912, 1072] },
+  { id: 'portrait', label: 'Portrait', what: 'About me', route: 'wall/about', box: [220, 430, 532, 800] },
   { id: 'poster', label: 'Poster', what: 'Projects timeline', route: 'wall/timeline', box: [1690, 430, 1962, 800] },
   { id: 'lately', label: 'Note', what: 'What I’m doing lately', route: 'wall/progress', box: [600, 492, 784, 704] },
   { id: 'research', label: 'Index card', what: 'Research', route: 'wall/research', box: [2044, 654, 2210, 806] },
   { id: 'books', label: 'Bookshelf', what: 'Philosophy & psychology', route: 'wall/books', box: [1664, 140, 2184, 352] },
-  { id: 'record', label: 'Record player', what: 'Music', route: 'music', box: [300, 268, 610, 352] },
+  { id: 'speaker', label: 'Speaker', what: 'Spotify & music', route: 'music', box: [1950, 846, 2262, 1072] },
+  { id: 'record', label: 'Record player', what: 'Original loops', route: 'music/loops', box: [300, 268, 610, 352] },
   { id: 'lightbar', label: 'Light bar', what: 'Change the light', act: 'lamp', box: [940, 622, 1460, 650] },
-  { id: 'keyboard', label: 'Keyboard', what: 'Typing test', route: 'type', box: [930, 1040, 1392, 1082], zoom: [820, 930, 1600, 1130] },
-  { id: 'letters', label: 'Letters', what: 'Write to me', route: 'contact', box: [690, 948, 830, 1046] },
-  { id: 'phones', label: 'Headphones', what: 'Sound on or off', act: 'sound', box: [2072, 796, 2254, 1048] },
-  { id: 'mug', label: 'Mug', what: 'Refill', act: 'coffee', box: [1726, 974, 1818, 1048] },
-  { id: 'mouse', label: 'Mouse', what: 'Take the tour', act: 'tour', box: [1448, 1050, 1508, 1080] },
+  { id: 'keyboard', label: 'Keyboard', what: 'Typing test', route: 'type', box: [930, 1060, 1410, 1134], zoom: [870, 990, 1470, 1150] },
+  { id: 'letters', label: 'Letters', what: 'Write to me', route: 'contact', box: [790, 996, 920, 1090] },
+  { id: 'mug', label: 'Mug', what: 'Refill', act: 'coffee', box: [1570, 1032, 1662, 1106] },
+  { id: 'mouse', label: 'Mouse', what: 'Take the tour', act: 'tour', box: [1452, 1092, 1506, 1122] },
   { id: 'switch', label: 'Light switch', what: 'Lights on or off', act: 'switch', box: [56, 600, 124, 704] },
   { id: 'wanderer', label: 'Painting', what: 'Wanderer above the Sea of Fog', act: 'art', box: [866, 96, 1120, 432] },
   { id: 'composition', label: 'Painting', what: 'Composition VII', act: 'art', box: [1184, 168, 1556, 420] },
   { id: 'swimming', label: 'Painting', what: 'Swimming', act: 'art', box: [2010, 440, 2252, 620] },
-  { id: 'chair', label: 'Chair', what: 'Sit down: play the game', act: 'hotel', box: [750, 1170, 1650, 1500] },
+  { id: 'chair', label: 'Chair', what: 'Sit down: play the game', act: 'hotel', box: [750, 1150, 1650, 1500] },
 ].filter((o) => o.act !== 'hotel' || site.game); // the chair is the hotel's door
 for (const o of OBJ) {
   const [x0, y0, x1, y1] = o.box;
@@ -61,10 +63,9 @@ const ROUTES = new Set([...OBJ.map((o) => o.route).filter(Boolean), 'contact', '
 // screen quads (TL, TR, BR, BL) for the live overlays
 const QUADS = {
   monitor: { w: 1440, h: 470, q: [[702, 660], [1698, 660], [1698, 988], [702, 988]] },
-  laptop: { w: 1280, h: 760, q: [[352, 842], [640, 842], [640, 1012], [352, 1012]] },
-  board: { w: 640, h: 640, q: [[1858, 872], [2016, 872], [2016, 1030], [1858, 1030]] },
+  laptop: { w: 640, h: 379, q: [[324, 802], [746, 802], [746, 1052], [324, 1052]] },
+  board: { w: 640, h: 640, q: [[1742, 898], [1900, 898], [1900, 1056], [1742, 1056]] },
 };
-const KB = [[944, 1047], [1378, 1047], [1384, 1072], [938, 1072]]; // keyboard keys (back-left, back-right, front-right, front-left)
 
 // ── stage transform ─────────────────────────────────────────────────────────
 const room = $('[data-room]');
@@ -113,12 +114,6 @@ function quadMatrix(w, h, q) {
   const d = y1 - y0 + g * y1, e = y3 - y0 + k * y3;
   return `matrix3d(${[a / w, d / w, 0, g / w, b / h, e / h, 0, k / h, 0, 0, 1, 0, x0, y0, 0, 1].map((n) => +n.toFixed(6)).join(',')})`;
 }
-const bilerp = (q, u, v) => {
-  const top = [q[0][0] + (q[1][0] - q[0][0]) * u, q[0][1] + (q[1][1] - q[0][1]) * u];
-  const bot = [q[3][0] + (q[2][0] - q[3][0]) * u, q[3][1] + (q[2][1] - q[3][1]) * u];
-  return [top[0] + (bot[0] - top[0]) * v, top[1] + (bot[1] - top[1]) * v];
-};
-
 // ── hotspots, labels and the plain list ─────────────────────────────────────
 function hotspots() {
   const pts = (p) => p.map((xy) => xy.join(',')).join(' ');
@@ -179,36 +174,24 @@ export const lights = {
   rgb(mode) { light.rgb = RGB.includes(mode) ? mode : RGB[(RGB.indexOf(light.rgb) + 1) % RGB.length]; paintLight(); return light.rgb; },
 };
 
-// keys light up on the photo's keyboard as you type (rough 75% layout map)
-const ROWS = [
-  [0.08, 0.5, ['Escape', 'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10', 'F11', 'F12'], 1.08],
-  [0.26, 0.5, '`1234567890-='.split(''), 1],
-  [0.44, 2, 'qwertyuiop[]\\'.split(''), 1],
-  [0.62, 2.25, "asdfghjkl;'".split(''), 1],
-  [0.79, 2.75, 'zxcvbnm,./'.split(''), 1],
-];
-const SPECIAL = { ' ': [6.9, 0.94], Backspace: [14, 0.26], Enter: [13.9, 0.62], Shift: [1, 0.79], Tab: [0.7, 0.44], ArrowUp: [14.5, 0.8], ArrowDown: [14.5, 0.95], ArrowLeft: [13.5, 0.95], ArrowRight: [15.5, 0.95] };
-function keyPos(key) {
-  const k = key.length === 1 ? key.toLowerCase() : key;
-  if (SPECIAL[k]) return SPECIAL[k];
-  for (const [v, start, keys, step] of ROWS) {
-    const i = keys.indexOf(k);
-    if (i >= 0) return [start + i * step, v];
-  }
-  return null;
-}
+// keys light up on the room's keyboard as you type, and the room keeps the beat
 function keyGlow() {
-  const box = $('[data-keys]');
-  addEventListener('keydown', (e) => {
-    const p = keyPos(e.key);
-    if (!p) return;
-    const [x, y] = bilerp(KB, (p[0] + 0.5) / 16, p[1]);
-    const g = document.createElement('i');
-    g.style.left = x + 'px';
-    g.style.top = y + 'px';
-    box.append(g);
-    setTimeout(() => g.remove(), 700);
-  });
+  const svg = $('.r-kb svg');
+  onKey((code, down) => svg.querySelector(`[data-k="${code}"]`)?.classList.toggle('down', down));
+}
+function beat() {
+  if (RM) return;
+  const root = document.documentElement;
+  let v = 0;
+  let shown = '';
+  const tick = () => {
+    const on = root.dataset.playing === '1' || root.dataset.keys === '1';
+    v = on ? Math.max(level() * 2.2, v * 0.86) : v * 0.9;
+    const out = v < 0.01 ? '0' : Math.min(1, v).toFixed(2);
+    if (out !== shown) root.style.setProperty('--beat', (shown = out)); // only restyle when it changes
+    requestAnimationFrame(tick);
+  };
+  tick();
 }
 
 // ── live screens on the photo ───────────────────────────────────────────────
@@ -285,6 +268,8 @@ function frameView() {
   const box = [x0 - 40, y0 - 60, x1 + 40, y1 + 60];
   return narrow() ? zoomView(box, { top: 0.03, h: 0.4, fill: 0.92 }) : zoomView(box, { left: 0.04, w: 0.52, top: 0.08, h: 0.84, fill: 0.86 });
 }
+// the keyboard interface needs most of the window, so the camera gets less
+const sheetArea = (name) => ({ top: 0.02, h: name === 'type' ? (narrow() ? 0.2 : 0.22) : narrow() ? 0.34 : 0.42, fill: 0.96 });
 let current = '';
 let cleanup = null;
 let flyTimer = 0;
@@ -337,7 +322,7 @@ function route(hash) {
       requestAnimationFrame(() => app.classList.add('open'));
     }, RM ? 0 : 760);
   } else if (name === 'contact' || name === 'type') {
-    apply(zoomView(o.zoom, { top: 0.02, h: narrow() ? 0.34 : 0.42, fill: 0.96 }));
+    apply(zoomView(o.zoom, sheetArea(name)));
     sheet.hidden = false;
     document.body.classList.add('in-sheet');
     cleanup = (name === 'type' ? typeSheet : contactSheet)(sheet, ctx);
@@ -346,7 +331,7 @@ function route(hash) {
     apply(deskView());
     pop.hidden = false;
     pop.dataset.at = o.id;
-    cleanup = musicCard(pop, ctx);
+    cleanup = musicCard(pop, { ...ctx, tab: sub });
     requestAnimationFrame(() => pop.classList.add('open'));
   }
 }
@@ -386,7 +371,8 @@ const TOUR = [
   ['books', 'What I’m reading. The card below it is research.'],
   ['board', 'Counts my public repositories, live from GitHub. The clock is Hyderabad time.'],
   ['keyboard', 'A typing test. Every key clicks and lights up. Beat your best.'],
-  ['record', 'Three original loops, synthesised live in your browser.'],
+  ['speaker', 'Spotify on the speaker: pick a playlist or paste any link. It keeps playing while you look around.'],
+  ['record', 'Three original loops, synthesised live in your browser. The lights move with them.'],
   ['lightbar', 'Click the light bar, or the dial in the corner, to change the colour of the whole room.'],
 ];
 let touring = null;
@@ -541,6 +527,8 @@ hotspots();
 screens();
 paintLight();
 keyGlow();
+beat();
+critter(stage, { reduced: RM, toast });
 lookAround();
 parallax();
 boot();
@@ -569,7 +557,7 @@ addEventListener('keydown', (e) => {
 addEventListener('hashchange', () => (touring?.end(), route(location.hash.slice(1))));
 addEventListener('resize', () => {
   if (!current) apply(deskView(), false);
-  else if (current === 'contact' || current === 'type') apply(zoomView(byId('keyboard').zoom, { top: 0.02, h: narrow() ? 0.34 : 0.42, fill: 0.96 }), false);
+  else if (current === 'contact' || current === 'type') apply(zoomView(byId('keyboard').zoom, sheetArea(current)), false);
   else if (current === 'wall') apply(frameView(), false);
 });
 document.documentElement.classList.toggle('touch', !canHover());

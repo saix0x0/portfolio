@@ -119,6 +119,8 @@ function about() {
       <figcaption><b>${esc(x.art.by)}</b>, <i>${esc(x.art.name)}</i>, ${esc(x.art.year)}</figcaption></figure>
     <p class="kick">${no(i)} · ${esc(x.k)}</p><h3>${esc(x.title)}</h3><p>${esc(x.line)}</p>${x.link ? `<a class="more" href="${esc(x.link[0].startsWith('#') ? x.link[0] : href(x.link[0]))}">${esc(x.link[1])} →</a>` : ''}</li>`).join('');
   $$('.print').forEach((f) => halftone($('canvas', f), $('img', f), { cell: innerWidth < 700 ? 6 : 7 }));
+  const me = $('[data-me]');
+  if (me) halftone($('canvas', me), $('img', me), { cell: 5, ink: '#1a0b05', invert: true });
 }
 
 // ── the toolkit: every tool in a project, linked to it; then the rest ───────

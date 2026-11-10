@@ -4,6 +4,8 @@
 // ─────────────────────────────────────────────────────────────────────────────
 let ac = null;
 let master = null;
+let meter = null;
+let bins = null;
 let muted = (() => { try { return localStorage.getItem('hotel:mute') === '1'; } catch { return false; } })();
 
 function ctx() {
@@ -14,6 +16,10 @@ function ctx() {
     master = ac.createGain();
     master.gain.value = muted ? 0 : 0.5;
     master.connect(ac.destination);
+    meter = ac.createAnalyser();
+    meter.fftSize = 256;
+    bins = new Uint8Array(meter.fftSize);
+    master.connect(meter);
   }
   if (ac.state === 'suspended') ac.resume();
   return ac;
@@ -24,6 +30,15 @@ export function setMuted(m) {
   muted = m;
   try { localStorage.setItem('hotel:mute', m ? '1' : '0'); } catch {}
   if (master) master.gain.value = m ? 0 : 0.5;
+}
+
+/** How loud the synth is right now, 0–1 (for lights that move with the music). */
+export function level() {
+  if (!meter) return 0;
+  meter.getByteTimeDomainData(bins);
+  let peak = 0;
+  for (const b of bins) peak = Math.max(peak, Math.abs(b - 128));
+  return peak / 128;
 }
 
 export const hz = (semi) => 440 * 2 ** ((semi - 9) / 12); // semitones from C4

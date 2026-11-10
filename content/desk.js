@@ -14,10 +14,9 @@ export const desk = {
   hintTouch: 'Drag to look around. Tap anything.',
 
   // ── The gallery wall above the desk ───────────────────────────────────────
-  // Your portrait: put a photo at assets/img/portrait.jpg (face centred) and
-  // set src to that path. The wall paints it as an oil portrait. Until then
-  // the frame shows a painted silhouette.
-  portrait: { src: '', title: 'Self-Portrait', year: 2026, medium: 'Oil on code' },
+  // Your portrait, printed in dots on the poster at the left of the room (and
+  // on the front page). Face centred, any size; a sharper photo prints better.
+  portrait: { src: 'assets/img/portrait.jpg', title: 'Self-Portrait', year: 2026, medium: 'Halftone' },
 
   // The research frame. Empty fields keep the frame as a visible placeholder.
   // TODO: title, lab / advisor, one line on the question, status.
