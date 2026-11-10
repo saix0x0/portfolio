@@ -61,12 +61,12 @@ export function contactSheet(root, ctx) {
   return () => {};
 }
 
-// ── AirPods: now playing (keeps playing after the card closes) ──────────────
+// ── the record player: now playing (keeps playing after the card closes) ──────────────
 let stop = null;
 let playing = '';
 export function musicCard(root, ctx) {
   const paint = () => {
-    root.innerHTML = `<div class="pc player">${close}<p class="eyebrow">AirPods</p><h2>Now <em>playing.</em></h2>
+    root.innerHTML = `<div class="pc player">${close}<p class="eyebrow">The record player</p><h2>Now <em>playing.</em></h2>
       <ol class="tracks">${RECORDS.map((r) => `<li><button type="button" data-track="${r.id}" aria-pressed="${playing === r.id}"><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span><b>${esc(r.title)}</b><small>Side ${r.side} · ${r.bpm} bpm</small></button></li>`).join('')}</ol>
       ${isMuted() ? '<p class="muted small">Sound is off. <button class="link" type="button" data-unmute>Turn it on</button></p>' : ''}
       <p class="muted small">Three loops written for this site, synthesised live in your browser. ${playing ? '<button class="link" type="button" data-stop>Pause</button>' : ''}</p></div>`;

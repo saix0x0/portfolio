@@ -4,63 +4,76 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>The desk · Sai Siddhanth Challa</title>
-  <meta name="description" content="The interactive portfolio of Sai Siddhanth Challa: a desk setup at night where every object opens something. Projects, live GitHub, a working terminal and a typing test.">
+  <meta name="description" content="The interactive portfolio of Sai Siddhanth Challa: a room at night where every object on the desk and the wall opens something. Projects, live GitHub, a working terminal and a typing test.">
   <meta name="theme-color" content="#0b0605">
   <meta property="og:title" content="Sai Siddhanth Challa">
   <meta property="og:description" content="A desk at night. Every object on it opens part of my portfolio.">
   <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
-  <link rel="preload" href="../assets/img/setup.jpg" as="image">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Silkscreen&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Doto:wght@500..900&family=Fragment+Mono&family=Inter:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&family=Silkscreen&display=swap">
   <link rel="stylesheet" href="../assets/css/desk.css">
   <script>document.documentElement.classList.add('js')</script>
   <script type="module" src="../assets/js/pages/desk.js"></script>
 </head>
 <body>
-  <a class="skip" href="#objects">Skip to the list of everything on the desk</a>
+  <a class="skip" href="#objects">Skip to the list of everything in the room</a>
 
   <header class="top">
-    <span class="top-l"><a class="home" href="../" aria-label="Back to the front page">SC</a><span class="clock" data-clock></span></span>
+    <a class="home" href="../"><span aria-hidden="true">←</span> Front<b> page</b></a>
     <div class="top-r">
-      <button class="chip" type="button" data-palette aria-label="Search the site (Command K)">⌕ Search</button>
-      <button class="chip" type="button" data-mute aria-pressed="false">Sound off</button>
-      <a class="chip" href="#browser/github">GitHub</a>
-      <a class="chip" href="https://www.linkedin.com/in/sai-siddhanth-challa-1b63a4377/" target="_blank" rel="noopener">LinkedIn</a>
-      <a class="chip solid" href="#contact">Contact</a>
+      <span class="clock"><i aria-hidden="true"></i>Hyderabad <b data-clock></b></span>
+      <button class="tl" type="button" data-palette aria-label="Search the site (Command K)">Search <kbd>⌘K</kbd></button>
+      <button class="tl snd" type="button" data-mute aria-pressed="false"><span class="bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button>
+      <a class="cta" href="#contact">Say hello <span aria-hidden="true">→</span></a>
       <a class="hotel-pill" href="../hotel/" data-enter-hotel hidden><span class="px-avatar" aria-hidden="true"></span>Enter game <span aria-hidden="true">▸</span></a>
     </div>
   </header>
 
-  <!-- The room: the photo, its lights, its screens and a hotspot per object -->
+  <!-- The room: drawn in code (assets/js/desk/room.js), its screens and a hotspot per object -->
   <main class="room" data-room>
     <div class="stage" data-stage>
-      <img class="photo" src="../assets/img/setup.jpg" width="2400" height="1800" alt="A desk setup at night, lit orange by an LED strip: a monitor on an arm with a light bar, a laptop on a stand, a mechanical keyboard, a mug, a microphone, a framed print and an LED board on the wall.">
-      <div class="tint lamp-hue" data-lamp-hue></div>
-      <div class="tint lamp-off" data-lamp-off></div>
+      <div class="set" data-set></div>
       <div class="keys" data-keys></div>
       <div class="screen" data-screen="monitor" aria-hidden="true"></div>
       <div class="screen" data-screen="laptop" aria-hidden="true"></div>
       <div class="screen" data-screen="board" aria-hidden="true"></div>
-      <!-- paper stuck onto the photo: an index card and sticky notes (assets/js/desk/wall.js) -->
-      <div class="notes" data-notes aria-hidden="true"></div>
-      <svg class="hots" viewBox="0 0 2400 1800" data-hots></svg>
+      <svg class="hots" viewBox="0 0 2400 1500" data-hots></svg>
       <div class="tags" data-tags aria-hidden="true"></div>
-    </div>
-    <div class="wall" data-wall>
-      <h1><span>Sai Siddhanth</span> <em>Challa</em></h1>
-      <p data-wall-line></p>
     </div>
   </main>
 
   <p class="hint" data-hint></p>
 
-  <!-- The same things as a plain list (keyboard, screen readers, the impatient) -->
-  <nav class="objects" id="objects" aria-label="Everything on the desk" data-objects></nav>
+  <nav class="socials" aria-label="Elsewhere">
+    <a href="https://github.com/saix0x0" target="_blank" rel="noopener" aria-label="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.2 19.5c.5.1.7-.2.7-.5v-1.7c-2.8.6-3.4-1.3-3.4-1.3-.4-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.6.3-1.1.6-1.3-2.2-.3-4.6-1.1-4.6-5 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.8 1a9.6 9.6 0 0 1 5 0c1.9-1.3 2.8-1 2.8-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 3.9-2.3 4.7-4.6 5 .4.3.7.9.7 1.9V21c0 .3.2.6.7.5A10 10 0 0 0 12 2Z"/></svg></a>
+    <a href="https://www.linkedin.com/in/sai-siddhanth-challa-1b63a4377/" target="_blank" rel="noopener" aria-label="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9.75h4v11.5H3V9.75Zm6.5 0h3.8v1.6h.06c.53-1 1.84-2.06 3.79-2.06 4.05 0 4.8 2.66 4.8 6.13v5.83h-4v-5.17c0-1.23-.02-2.82-1.72-2.82-1.72 0-1.98 1.34-1.98 2.73v5.26h-4V9.75Z"/></svg></a>
+    <a href="mailto:siddhanthchalla@gmail.com" aria-label="Email"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18v14H3V5Zm2 2v.4l7 4.9 7-4.9V7H5Zm14 2.8-7 4.9-7-4.9V17h14V9.8Z"/></svg></a>
+  </nav>
+
+  <!-- The main places, then the same things as the room as a plain list -->
+  <div class="menu">
+    <nav class="sections" aria-label="Sections">
+      <a href="#wall/about"><i>01</i>About</a>
+      <a href="#browser"><i>02</i>Projects &amp; work</a>
+      <a href="#wall/timeline"><i>03</i>Timeline</a>
+      <a href="#contact"><i>04</i>Contact</a>
+    </nav>
+    <div class="menu-more">
+      <button class="tour-btn" type="button" data-tour><span aria-hidden="true">▶</span> <b>Take the </b>tour</button>
+      <nav class="objects" id="objects" aria-label="Everything in the room" data-objects></nav>
+    </div>
+  </div>
+
+  <!-- The lamp: turn the dial for the next colour; the button under it is the switch -->
+  <div class="dial-box">
+    <button class="dial" type="button" data-dial aria-label="Change the colour of the light"><i class="dial-ticks" aria-hidden="true"></i><i class="dial-knob" aria-hidden="true"></i></button>
+    <p class="dial-k"><span data-dial-name>Amber</span><button type="button" data-power>On / off</button></p>
+  </div>
 
   <!-- Full-screen apps (the monitor's browser, the laptop's terminal) -->
   <div class="app" data-app hidden></div>
-  <!-- Bottom sheet (keyboard: typing test, #contact: message form) and the AirPods card -->
+  <!-- Bottom sheet (keyboard: typing test, #contact: message form) and the record player's card -->
   <div class="sheet" data-sheet hidden></div>
   <div class="card-pop" data-pop hidden></div>
   <aside class="plaque" data-plaque hidden></aside>

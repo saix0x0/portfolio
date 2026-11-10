@@ -1,8 +1,8 @@
 // ─────────────────────────────────────────────────────────────────────────────
-//  THE DESK at /desk/. The photo is your real desk (assets/img/desk.jpg, with
-//  both screens blurred so nothing private ships). Every object on it opens
-//  something. Edit the words here; positions of the objects live in
-//  assets/js/pages/desk.js (they are tied to the photo).
+//  THE DESK at /desk/. A room drawn in code (assets/js/desk/room.js): a desk,
+//  shelves and frames on a wall lit by LED strips. Every object opens
+//  something. Edit the words here; positions of the objects live in room.js
+//  and assets/js/pages/desk.js (the two match).
 //
 //  Rule of this site: never publish a claim that isn't true.
 // ─────────────────────────────────────────────────────────────────────────────
@@ -10,7 +10,7 @@
 export const desk = {
   // Under your name on the wall
   wallLine: 'CS + Computing & Human Sciences · IIIT Hyderabad',
-  hint: 'Click anything on the desk.',
+  hint: 'Click anything in the room.',
   hintTouch: 'Drag to look around. Tap anything.',
 
   // ── The gallery wall above the desk ───────────────────────────────────────

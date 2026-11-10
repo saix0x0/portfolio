@@ -1,8 +1,6 @@
 // ─────────────────────────────────────────────────────────────────────────────
-//  THE ROOM'S OWN THINGS. Paper stuck onto the photo (an index card, sticky
-//  notes), the LED board's live GitHub counter, and the plaques that slide in
-//  when you open them (#wall/<id>). Boxes are photo px of
-//  assets/img/setup.jpg (2400×1800).
+//  THE ROOM'S OWN THINGS. The LED board's live GitHub counter, and the
+//  plaques that slide in when you open something on the wall (#wall/<id>).
 // ─────────────────────────────────────────────────────────────────────────────
 import { $, esc, href } from '../core/base.js';
 import { site } from '../../../content/site.js';
@@ -23,16 +21,6 @@ const NOW = site.now.filter((n) => real(n.text));
 const R = desk.research || {};
 const hasResearch = real(R.title);
 const SHELF = books.filter((b) => b.shelves?.some((s) => s === 'philosophy' || s === 'human'));
-
-// ── written onto the photo ──────────────────────────────────────────────────
-const at = ([x, y, w, h], rot = 0) => `left:${x}px;top:${y}px;width:${w}px;height:${h}px${rot ? `;transform:rotate(${rot}deg)` : ''}`;
-export function notes(root) {
-  root.innerHTML = `
-    <div class="n-card" style="${at([730, 285, 290, 225], -1.5)}"><b>Built so far</b>${BUILT.slice(0, 4).map((p) => `<span>${esc(p.title)}</span>`).join('')}</div>
-    <div class="n-sticky" style="${at([1832, 772, 150, 140], 4)}"><b>Lately</b><span>${NOW[0] ? esc(NOW[0].text) : ''}</span></div>
-    <div class="n-sticky" style="${at([2128, 430, 170, 160], -3)}"><b>Research</b><span>${hasResearch ? esc(R.title) : 'in progress…'}</span></div>
-    <div class="n-sticky pink" style="${at([2160, 650, 170, 160], 2.5)}"><b>Reading</b><span>philosophy &amp; psychology</span></div>`;
-}
 
 // ── the LED board on the wall: a live GitHub counter and the time ───────────
 export function ledBoard(el) {

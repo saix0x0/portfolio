@@ -1,6 +1,18 @@
 # Implementation status
 
-_Last updated: 2026-11-09, front page redesigned (black water, dot-matrix type); the hotel game taken off the site._
+_Last updated: 2026-11-10, the desk is a room drawn in code, straight on, with changing light._
+
+## The desk is a room drawn in code (2026-11-10)
+- Owner: didn't like the angled photo or any stock photo ("very basic"); wanted a frontal room like their reference (a dark wall with amber LED strips, floating shelves, framed posters, an ultrawide monitor, the back of a chair), but with changing lights, the frames in different places, the books on the right, something other than chess, and a less "vibecoded" UI.
+- **The room** (`assets/js/desk/room.js`, a 2400×1500 stage): dark plaster wall; LED strips under two floating shelves and behind the desk; on the left a record player with sleeves, a trailing plant, the Vermeer in a matted frame, a pinned note (Lately) and a light switch; above the monitor the Friedrich and the Kandinsky, hung off-centre; the name in Doto with the tagline in Fragment Mono; on the right a shelf of book spines from `content/books.js`, a "Built so far" poster listing real projects, the Eakins and a research card; on the desk a plant, a laptop, a letter tray, an ultrawide monitor with a light bar, a keyboard with RGB underglow, a mouse, a mug, the GitHub LED board and headphones on a stand; the back of a mesh chair in the foreground. No photo: `assets/img/setup.jpg` is removed.
+- **Light:** every glow, strip, mat and paper tint is `var(--lamp)`, registered with `@property` so it fades between colours. The light bar or the new dial (bottom right) cycles Amber, Warm white, Violet hour, Aurora, Rose, Deep blue; the wall switch or "On / off" under the dial turns the room dark (screens stay lit).
+- **Objects** (`OBJ` in `pages/desk.js`, boxes match room.js): monitor → browser, laptop → terminal, LED board → GitHub, portrait → About, poster → timeline, note → progress, card → research, bookshelf → books, record player → music (its record spins while a loop plays), keyboard → typing test, letters → contact, headphones → sound on/off, mug → refill (steam), mouse → tour, switch → lights, each painting → a credit toast. Hover lifts the object and shows a small label; the white dots and marching outlines are gone.
+- **Monitor:** a lock screen with the Hyderabad date and time; the action reel still plays behind it until the monitor is opened.
+- **Chrome:** "← Front page" top left; clock, Search ⌘K, a sound toggle and an outlined "Say hello →" top right; GitHub / LinkedIn / email icons down the left; numbered sections bottom left (01 About, 02 Projects & work, 03 Timeline, 04 Contact) with "Take the tour" and "Everything in the room" (the full plain list) under them. Fonts match the front page: Doto, Fragment Mono, Newsreader (Inter stays for the apps).
+- Phones: the camera shows the middle 1050px of the room (drag to look around); the wall and floor carry on above and below the stage.
+- Tested in the browser pane at 1440×900 and 375×812: all hash routes open (browser, terminal, type, contact, music, every wall plaque, browser/github), light bar, dial, switch, paintings, mug, headphones and hover labels work, no horizontal overflow at 375, `npm run check` passes. Not tested in Safari or on real phones; `color-mix` and `@property` need a 2023+ browser.
+- Next: owner's portrait or résumé; real research card text (`desk.research`); maybe let the owner choose which books stand on the shelf.
+
 
 ## Front page: black water and dot-matrix type; the game is off the site (2026-11-09)
 - Owner: remove the game for now (keep its files); the front page's fonts looked "AI" and the gallery theme wasn't sticking; wanted something more niche, black, with an animated background and unique touches.

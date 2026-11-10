@@ -1,10 +1,10 @@
 // ─────────────────────────────────────────────────────────────────────────────
-//  THE DESK at /desk/. A desk setup at night, shot straight on (2400×1800 "stage"),
-//  scaled to cover the window, with live screens and lights layered on top and
-//  a hotspot per object. Every object has a URL (#browser, #terminal, …) so
-//  each destination is linkable; the lamp and switch act in place.
+//  THE DESK at /desk/. A room drawn in code, straight on (a 2400×1500 "stage",
+//  assets/js/desk/room.js), scaled to cover the window, with live screens on
+//  it and a hotspot per object. Every object has a URL (#browser, #terminal, …)
+//  so each destination is linkable; the lamp and the switch act in place.
 //
-//  Coordinates below are photo pixels. If the photo changes, re-measure them.
+//  Boxes below are stage pixels and match the positions in room.js.
 // ─────────────────────────────────────────────────────────────────────────────
 import { $, $$, esc, seeded, clamp, reducedMotion, canHover } from '../core/base.js';
 import { clockIn } from '../core/sun.js';
@@ -12,67 +12,59 @@ import { desk } from '../../../content/desk.js';
 import { site } from '../../../content/site.js';
 import { drawPerson, LOOKS, playerLook } from '../world/actors.js';
 import { isMuted, setMuted, note } from '../world/sound.js';
-import { browserApp, miniMonitor } from '../desk/browser.js';
+import { browserApp } from '../desk/browser.js';
 import { terminalApp, miniLaptop } from '../desk/terminal.js';
 import { contactSheet, typeSheet, musicCard } from '../desk/bits.js';
 import { palette } from '../core/palette.js';
-import { notes, ledBoard, plaque, PLAQUES } from '../desk/wall.js';
+import { ledBoard, plaque, PLAQUES } from '../desk/wall.js';
+import { room as drawRoom, lockScreen } from '../desk/room.js';
 
 const RM = reducedMotion();
 const W = 2400;
-const H = 1800;
-const cx0 = () => (narrow() ? 1640 : 1250); // where the camera looks: the desk (phones: the monitor)
-const CY = 820;
+const H = 1500;
+const CX = 1200; // where the camera looks: the monitor
+const CY = 740;
 
-// ── the objects on the desk ─────────────────────────────────────────────────
-// poly: the outline in photo px · tag: where the label sits · zoom: the box the
-// camera flies to · route: the URL hash it opens · act: an in-place action
+// ── the objects in the room ─────────────────────────────────────────────────
+// box: [x0, y0, x1, y1] in stage px · zoom: the box the camera flies to ·
+// route: the URL hash it opens · act: an in-place action
 const OBJ = [
-  { id: 'monitor', label: 'Monitor', what: 'Projects & GitHub', route: 'browser', tag: [1640, 560], zoom: [1230, 330, 2060, 980],
-    polys: [[[1255, 378], [2050, 345], [2020, 968], [1248, 825]]] },
-  { id: 'laptop', label: 'Laptop', what: 'The terminal', route: 'terminal', tag: [1035, 600], zoom: [800, 520, 1270, 1080],
-    polys: [[[852, 550], [1225, 572], [1215, 835], [1200, 1060], [760, 1030], [845, 810]]] },
-  { id: 'board', label: 'LED board', what: 'Live from GitHub', route: 'browser/github', tag: [496, 470],
-    polys: [[[355, 462], [635, 470], [635, 730], [362, 753]]] },
-  { id: 'frame', label: 'Framed print', what: 'About me', route: 'wall/about', tag: [470, 210],
-    polys: [[[288, 0], [650, 0], [655, 405], [300, 385]]] },
-  { id: 'card', label: 'Index card', what: 'Projects timeline', route: 'wall/timeline', tag: [875, 290],
-    polys: [[[726, 291], [1016, 283], [1022, 508], [734, 516]]] },
-  { id: 'lately', label: 'Sticky note', what: 'Progress', route: 'wall/progress', tag: [1905, 770],
-    polys: [[[1838, 768], [1988, 778], [1978, 918], [1828, 908]]] },
-  { id: 'research', label: 'Sticky note', what: 'Research', route: 'wall/research', tag: [2212, 430],
-    polys: [[[2124, 438], [2294, 428], [2302, 588], [2132, 598]]] },
-  { id: 'reading', label: 'Sticky note', what: 'Philosophy & psychology', route: 'wall/books', tag: [2245, 650],
-    polys: [[[2166, 646], [2336, 654], [2328, 814], [2158, 806]]] },
-  { id: 'lightbar', label: 'Light bar', what: 'Change the light', act: 'lamp', tag: [1610, 300],
-    polys: [[[1290, 300], [1930, 290], [1932, 362], [1292, 372]]] },
-  { id: 'keyboard', label: 'Keyboard', what: 'Typing test', route: 'type', tag: [1200, 1190], zoom: [880, 1120, 1520, 1480],
-    polys: [[[928, 1215], [1060, 1155], [1455, 1310], [1460, 1375], [1305, 1445], [930, 1250]]] },
-  { id: 'speaker', label: 'Speaker', what: 'Music', route: 'music', tag: [1452, 1020],
-    polys: [[[1395, 1050], [1450, 1020], [1505, 1050], [1510, 1150], [1450, 1185], [1400, 1160]]] },
-  { id: 'mic', label: 'Microphone', what: 'Say hello', route: 'contact', tag: [440, 870],
-    polys: [[[378, 880], [450, 865], [504, 880], [505, 1080], [470, 1200], [400, 1200], [380, 1080]]] },
-  { id: 'mug', label: 'Mug', what: 'Refill', act: 'coffee', tag: [1960, 1130],
-    polys: [[[1854, 1135], [2000, 1128], [2080, 1200], [2050, 1300], [2000, 1341], [1870, 1335]]] },
-  { id: 'webcam', label: 'Webcam', what: 'Say cheese', act: 'cam', tag: [1545, 1035],
-    polys: [[[1505, 1040], [1585, 1036], [1592, 1190], [1502, 1190]]] },
-  { id: 'mouse', label: 'Mouse', what: 'Take the tour', act: 'tour', tag: [1530, 1365],
-    polys: [[[1420, 1440], [1450, 1385], [1530, 1365], [1610, 1380], [1640, 1430], [1610, 1500], [1530, 1515], [1440, 1490]]] },
-  { id: 'window', label: 'Window', what: 'Lights on or off', act: 'switch', tag: [38, 300],
-    polys: [[[0, 0], [75, 0], [75, 585], [0, 600]]] },
-  { id: 'chair', label: 'Chair', what: 'Sit down: play the game', act: 'hotel', tag: [190, 1100],
-    polys: [[[0, 895], [80, 890], [150, 1000], [210, 1200], [260, 1450], [300, 1800], [0, 1800]]] },
+  { id: 'monitor', label: 'Monitor', what: 'Projects & GitHub', route: 'browser', box: [688, 646, 1712, 1002], zoom: [680, 600, 1720, 1012] },
+  { id: 'laptop', label: 'Laptop', what: 'The terminal', route: 'terminal', box: [330, 828, 662, 1046], zoom: [300, 790, 700, 1060] },
+  { id: 'board', label: 'LED board', what: 'Live from GitHub', route: 'browser/github', box: [1846, 860, 2028, 1046] },
+  { id: 'pearl', label: 'Portrait', what: 'About me', route: 'wall/about', box: [206, 452, 548, 860] },
+  { id: 'poster', label: 'Poster', what: 'Projects timeline', route: 'wall/timeline', box: [1690, 430, 1962, 800] },
+  { id: 'lately', label: 'Note', what: 'What I’m doing lately', route: 'wall/progress', box: [600, 492, 784, 704] },
+  { id: 'research', label: 'Index card', what: 'Research', route: 'wall/research', box: [2044, 654, 2210, 806] },
+  { id: 'books', label: 'Bookshelf', what: 'Philosophy & psychology', route: 'wall/books', box: [1664, 140, 2184, 352] },
+  { id: 'record', label: 'Record player', what: 'Music', route: 'music', box: [300, 268, 610, 352] },
+  { id: 'lightbar', label: 'Light bar', what: 'Change the light', act: 'lamp', box: [940, 622, 1460, 650] },
+  { id: 'keyboard', label: 'Keyboard', what: 'Typing test', route: 'type', box: [930, 1040, 1392, 1082], zoom: [820, 930, 1600, 1130] },
+  { id: 'letters', label: 'Letters', what: 'Write to me', route: 'contact', box: [690, 948, 830, 1046] },
+  { id: 'phones', label: 'Headphones', what: 'Sound on or off', act: 'sound', box: [2072, 796, 2254, 1048] },
+  { id: 'mug', label: 'Mug', what: 'Refill', act: 'coffee', box: [1726, 974, 1818, 1048] },
+  { id: 'mouse', label: 'Mouse', what: 'Take the tour', act: 'tour', box: [1448, 1050, 1508, 1080] },
+  { id: 'switch', label: 'Light switch', what: 'Lights on or off', act: 'switch', box: [56, 600, 124, 704] },
+  { id: 'wanderer', label: 'Painting', what: 'Wanderer above the Sea of Fog', act: 'art', box: [866, 96, 1120, 432] },
+  { id: 'composition', label: 'Painting', what: 'Composition VII', act: 'art', box: [1184, 168, 1556, 420] },
+  { id: 'swimming', label: 'Painting', what: 'Swimming', act: 'art', box: [2010, 440, 2252, 620] },
+  { id: 'chair', label: 'Chair', what: 'Sit down: play the game', act: 'hotel', box: [750, 1170, 1650, 1500] },
 ].filter((o) => o.act !== 'hotel' || site.game); // the chair is the hotel's door
+for (const o of OBJ) {
+  const [x0, y0, x1, y1] = o.box;
+  o.polys = [[[x0, y0], [x1, y0], [x1, y1], [x0, y1]]];
+  o.tag = [(x0 + x1) / 2, y0];
+}
 const byId = (id) => OBJ.find((o) => o.id === id);
 const ROUTES = new Set([...OBJ.map((o) => o.route).filter(Boolean), 'contact', 'wall']);
 
 // screen quads (TL, TR, BR, BL) for the live overlays
 const QUADS = {
-  monitor: { w: 1440, h: 900, q: [[1278, 402], [2005, 382], [1980, 922], [1270, 802]] },
-  laptop: { w: 1280, h: 800, q: [[865, 568], [1213, 592], [1203, 820], [857, 797]] },
-  board: { w: 640, h: 640, q: [[372, 477], [622, 482], [621, 720], [370, 742]] },
+  monitor: { w: 1440, h: 470, q: [[702, 660], [1698, 660], [1698, 988], [702, 988]] },
+  laptop: { w: 1280, h: 760, q: [[352, 842], [640, 842], [640, 1012], [352, 1012]] },
+  board: { w: 640, h: 640, q: [[1858, 872], [2016, 872], [2016, 1030], [1858, 1030]] },
 };
-const KB = [[1045, 1158], [1420, 1295], [1375, 1362], [958, 1222]]; // keyboard top face (back-left, back-right, front-right, front-left)
+const KB = [[944, 1047], [1378, 1047], [1384, 1072], [938, 1072]]; // keyboard keys (back-left, back-right, front-right, front-left)
 
 // ── stage transform ─────────────────────────────────────────────────────────
 const room = $('[data-room]');
@@ -84,11 +76,13 @@ const narrow = () => innerWidth / innerHeight < 1.05;
 function deskView() {
   const vw = innerWidth;
   const vh = innerHeight;
-  const s = narrow() ? vh / H : Math.max(vw / W, vh / H);
+  // phones see the middle 1050px and drag to look around; the wall and floor
+  // carry on past the stage's edges, so a short room still fills the window
+  const s = narrow() ? Math.max(vw / 1050, (vh / H) * 0.6) : Math.max(vw / W, vh / H);
   const hw = vw / 2 / s;
   const hh = vh / 2 / s;
-  const cx = clamp(cx0() + pan, hw, W - hw);
-  const cy = clamp(CY, hh, H - hh);
+  const cx = W * s <= vw ? W / 2 : clamp(CX + pan, hw, W - hw);
+  const cy = H * s <= vh ? H / 2 : clamp(CY, hh, H - hh);
   return { s, x: vw / 2 - cx * s, y: vh / 2 - cy * s };
 }
 // fly the camera so stage box [x0,y0,x1,y1] fills `area` of the window
@@ -132,11 +126,11 @@ function hotspots() {
     const target = o.route ? `href="#${o.route}"` : `href="#" role="button" data-act="${o.act}"`;
     return `<a ${target} data-obj="${o.id}" aria-label="${esc(o.label)}: ${esc(o.what)}">${o.polys.map((p) => `<polygon points="${pts(p)}"/>`).join('')}</a>`;
   }).join('');
-  $('[data-tags]').innerHTML = OBJ.map((o, i) => `<span class="dot" style="left:${o.tag[0]}px;top:${o.tag[1] + 26}px;--i:${i}"></span><span class="tag" data-tag="${o.id}" style="left:${o.tag[0]}px;top:${o.tag[1]}px"><b>${esc(o.label)}</b><small>${esc(o.what)}</small></span>`).join('');
-  $('[data-objects]').innerHTML = `<button class="tour-btn" type="button" data-tour><span aria-hidden="true">▶</span> Take the 20-second tour</button><details${innerWidth > 1100 && innerHeight > 1000 ? ' open' : ''}><summary class="objects-h">Everything in the room (${OBJ.length})</summary><ol>${OBJ.map((o, i) => `<li><a ${o.route ? `href="#${o.route}"` : `href="#" role="button" data-act="${o.act}"`} data-obj="${o.id}"><span class="n">${String(i + 1).padStart(2, '0')}</span><b>${esc(o.label)}</b><span class="w">${esc(o.what)}</span></a></li>`).join('')}</ol></details>`;
+  $('[data-tags]').innerHTML = OBJ.map((o) => `<span class="tag" data-tag="${o.id}" style="left:${o.tag[0]}px;top:${o.tag[1]}px"><b>${esc(o.label)}</b><small>${esc(o.what)}</small></span>`).join('');
+  $('[data-objects]').innerHTML = `<details><summary><b>Everything in the room</b><em>All</em> <span>${OBJ.length}</span></summary><ol>${OBJ.map((o, i) => `<li><a ${o.route ? `href="#${o.route}"` : `href="#" role="button" data-act="${o.act}"`} data-obj="${o.id}"><span class="n">${String(i + 1).padStart(2, '0')}</span><b>${esc(o.label)}</b><span class="w">${esc(o.what)}</span></a></li>`).join('')}</ol></details>`;
   const show = (id) => {
     $$('[data-tag]').forEach((t) => t.classList.toggle('on', t.dataset.tag === id));
-    $$('[data-hots] [data-obj]').forEach((a) => a.classList.toggle('lit', a.dataset.obj === id));
+    $$('[data-thing]').forEach((t) => t.classList.toggle('lit', t.dataset.thing === id));
   };
   document.addEventListener('pointerover', (e) => {
     const a = e.target.closest('[data-obj]');
@@ -150,7 +144,8 @@ function hotspots() {
 
 // ── lighting: the lamp (colours), the switch (on/off), keyboard RGB ─────────
 const LAMPS = [
-  { id: 'sunset', name: 'Sunset', c: '' },
+  { id: 'sunset', name: 'Amber', c: '#ff7a2a' },
+  { id: 'warm', name: 'Warm white', c: '#ffc98a' },
   { id: 'violet', name: 'Violet hour', c: '#8f5bff' },
   { id: 'aurora', name: 'Aurora', c: '#21f0a8' },
   { id: 'rose', name: 'Rose', c: '#ff3d86' },
@@ -164,10 +159,13 @@ const light = { lamp: +saved('desk:lamp', 0) % LAMPS.length, on: saved('desk:on'
 function paintLight() {
   const L = LAMPS[light.lamp];
   const root = document.documentElement;
-  root.style.setProperty('--lamp', L.c || '#ff7a2a');
+  root.style.setProperty('--lamp', L.c);
   root.dataset.lamp = L.id;
+  root.style.setProperty('--turn', `${light.lamp * 30}deg`);
   root.dataset.light = light.on ? 'on' : 'off';
   root.dataset.rgb = light.rgb;
+  const d = $('[data-dial-name]');
+  if (d) d.textContent = light.on ? L.name : 'Off';
   save('desk:lamp', light.lamp);
   save('desk:on', light.on ? '1' : '0');
   save('desk:rgb', light.rgb);
@@ -221,7 +219,7 @@ function screens() {
     el.style.height = h + 'px';
     el.style.transform = quadMatrix(w, h, q);
   }
-  miniMonitor($('[data-screen="monitor"]'));
+  lockScreen($('[data-screen="monitor"]'));
   miniLaptop($('[data-screen="laptop"]'), RM);
   ledBoard($('[data-screen="board"]'));
   reel($('[data-screen="monitor"]'));
@@ -355,11 +353,17 @@ function route(hash) {
 
 // ── in-place acts ───────────────────────────────────────────────────────────
 let cups = 0;
-function act(name) {
+function act(name, id) {
   document.body.classList.add('touched');
+  if (name === 'art') {
+    const a = site.life.find((l) => l.art.src.includes(id))?.art;
+    if (a) click(), toast(`${a.name} · ${a.by}, ${a.year} · public domain`);
+  }
+  if (name === 'sound') setMuted(!isMuted()), paintMute(), click(), toast(isMuted() ? 'Sound off' : 'Sound on');
   if (name === 'lamp') lights.cycle();
   if (name === 'switch') lights.power(), toast(light.on ? 'Lights on' : 'Lights off');
   if (name === 'cam') click(), toast('Smile. (It isn’t on. Nothing here is recorded.)');
+  if (name === 'coffee') $('.r-mug').classList.add('hot'), clearTimeout(act.steam), (act.steam = setTimeout(() => $('.r-mug').classList.remove('hot'), 7000));
   if (name === 'coffee') click(), toast(++cups === 1 ? 'Refilled. That’s one.' : cups < 4 ? `That’s ${cups} cups.` : `${cups} cups. Maybe some water?`);
   if (name === 'tour') tour();
   if (name === 'hotel') location.href = '../hotel/';
@@ -377,13 +381,13 @@ function bbox(o, pad = 120) {
 // ── the guided tour: the camera visits each object with a caption ──────────
 const TOUR = [
   ['monitor', 'A working browser. Every project with its live README, and all my GitHub repositories.'],
-  ['board', 'Counts my public repositories, live from GitHub. The clock is Hyderabad time.'],
   ['laptop', 'A real terminal. Try help, ls or cat about.md.'],
-  ['card', 'Every project I’ve built, by month.'],
-  ['lately', 'What I’m doing lately. The notes on the right are research and reading.'],
+  ['poster', 'Every project I’ve built, by month.'],
+  ['books', 'What I’m reading. The card below it is research.'],
+  ['board', 'Counts my public repositories, live from GitHub. The clock is Hyderabad time.'],
   ['keyboard', 'A typing test. Every key clicks and lights up. Beat your best.'],
-  ['speaker', 'Three original loops, synthesised live in your browser.'],
-  ['lightbar', 'Click the light bar to change the colour of the whole room.'],
+  ['record', 'Three original loops, synthesised live in your browser.'],
+  ['lightbar', 'Click the light bar, or the dial in the corner, to change the colour of the whole room.'],
 ];
 let touring = null;
 function tour() {
@@ -396,7 +400,7 @@ function tour() {
   document.body.classList.add('touring', 'touched');
   let i = -1;
   let timer = 0;
-  const lit = (id) => $$('[data-hots] [data-obj], [data-tag]').forEach((a) => a.classList.toggle(a.matches('[data-tag]') ? 'on' : 'lit', (a.dataset.obj || a.dataset.tag) === id));
+  const lit = (id) => $$('[data-thing], [data-tag]').forEach((a) => a.classList.toggle(a.matches('[data-tag]') ? 'on' : 'lit', (a.dataset.thing || a.dataset.tag) === id));
   const step = () => {
     clearTimeout(timer);
     i++;
@@ -459,7 +463,7 @@ function lookAround() {
   const settle = () => {
     const s = view.s;
     const hw = innerWidth / 2 / s;
-    pan = clamp(cx0() + pan, hw, W - hw) - cx0();
+    pan = clamp(CX + pan, hw, W - hw) - CX;
   };
   addEventListener('pointerup', settle);
 }
@@ -488,17 +492,24 @@ function boot() {
   setTimeout(() => el.remove(), 2200);
 }
 
-// ── chrome: clock, mute, the hotel door ─────────────────────────────────────
+function paintMute() {
+  const m = $('[data-mute]');
+  m.setAttribute('aria-pressed', String(!isMuted()));
+  m.setAttribute('aria-label', isMuted() ? 'Sound is off. Turn it on' : 'Sound is on. Turn it off');
+}
+
+// ── chrome: clock, mute, the light dial, the hotel door ─────────────────────────────────────
 function chrome() {
   $$('.hotel-pill').forEach((a) => (a.hidden = !site.game)); // the hotel is off the site for now
   const c = $('[data-clock]');
-  const tick = () => (c.textContent = `Hyderabad · ${clockIn('Asia/Kolkata')}`);
+  const tick = () => (c.textContent = clockIn('Asia/Kolkata'));
   tick();
   setInterval(tick, 15000);
-  const m = $('[data-mute]');
-  const paint = () => ((m.textContent = isMuted() ? 'Sound off' : 'Sound on'), m.setAttribute('aria-pressed', String(!isMuted())));
-  m.addEventListener('click', () => (setMuted(!isMuted()), paint(), click()));
-  paint();
+  $('[data-mute]').addEventListener('click', () => (setMuted(!isMuted()), paintMute(), click()));
+  paintMute();
+  // the dial in the corner: turn it for the next colour, the button under it is the switch
+  $('[data-dial]').addEventListener('click', () => lights.cycle());
+  $('[data-power]').addEventListener('click', () => (lights.power(), toast(light.on ? 'Lights on' : 'Lights off')));
   // the pixel-you avatar in the hotel pill
   let look = LOOKS.player;
   try { look = playerLook(JSON.parse(localStorage.getItem('hotel:v1'))?.flags?.look); } catch {}
@@ -525,7 +536,7 @@ function chrome() {
 }
 
 // ── wire it up ──────────────────────────────────────────────────────────────
-notes($('[data-notes]'));
+drawRoom($('[data-set]'));
 hotspots();
 screens();
 paintLight();
@@ -550,7 +561,7 @@ document.addEventListener('click', (e) => {
   const a = e.target.closest('[data-act]');
   if (!a) return;
   e.preventDefault();
-  act(a.dataset.act);
+  act(a.dataset.act, a.dataset.obj);
 });
 addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && current) leave();
