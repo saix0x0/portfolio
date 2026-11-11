@@ -11,7 +11,6 @@ compass/    ─▶ pages/compass.js
 lab/        ─▶ pages/lab.js ──▶ lab/experiments/*.js  (dynamic import, sandboxed)
 vault/      ─▶ pages/vault.js ─┐
 observatory/ ▶ pages/observatory.js ─┴▶ core/vault.js ─▶ fetch */sealed.json → WebCrypto decrypt
-college/ projects/ hire/ books/  → tiny redirect pages (short, shareable URLs)
 ```
 
 ## Routes & deep links

@@ -6,7 +6,6 @@
 //    /work/#college            college projects only
 //    /work/#p/<id>             one project's case study
 //    /work/?q=python           search
-//    /college/                 shortcut → /work/#college
 //
 //  `shot` is a real screenshot of the project (from its repo or live demo),
 //  shown on the front page. Without one, the card is a colour field.

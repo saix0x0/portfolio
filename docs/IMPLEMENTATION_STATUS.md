@@ -1,6 +1,17 @@
 # Implementation status
 
-_Last updated: 2026-11-11, the owner's own library; the front page says each thing once._
+_Last updated: 2026-11-11, repo made public-ready._
+
+## Repo made public-ready (2026-11-11)
+- Owner: make the code public-ready with no personal metadata and a proper structure; keep the game's files but don't link it; deploy later, after a final structure and feature check.
+- Audit: no EXIF, GPS or XMP in any image; the video carries only an encoder tag; `private/` has never been in git history; no phone numbers, addresses or local paths in tracked files or in history. The contact email in `content/site.js` and the desk is meant to be public.
+- Removed: unused files (`assets/art/circles|rhone|storm|sunrise.webp`, and the owner's desk photo `assets/img/desk.jpg`) and the four redirect folders (`books/ college/ hire/ projects/`), which nothing linked to. References to where the library came from are gone from code and docs.
+- `HANDOFF.md` (the owner's profile and working preferences) moved to the git-ignored `notes/HANDOFF.md`, kept locally and not published; CLAUDE.md points to it. `graphify-out/` is ignored.
+- Hotel: still unlinked (`site.game: false`); `hotel/index.html` is now `noindex`; its files stay.
+- README rewritten for the current site (front page → desk), with structure, pages, deploy and credits.
+- New commits use the GitHub no-reply address (repo-local git config). The earlier commits still carry a work email until the history is rewritten or squashed (owner's call, before going public).
+- Tested: all ten pages load with no failed requests and no visible links to the hotel; `npm run check` passes.
+- Next, before deploying: (1) rewrite or squash git history so the old email is gone; (2) re-seal both private rooms with the owner's own passphrases; (3) make the repo public (or use GitHub Pro) and turn Pages on.
 
 ## Desk: a darker portrait, steadier dots (2026-11-11)
 - The portrait poster prints darker (`halftone` gained `tone`; the desk uses `tone: 3`, `cell: 6`).

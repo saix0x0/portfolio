@@ -6,3 +6,9 @@ private/
 node_modules/
 *.log
 .scratch/
+
+# Owner-only working notes (local, never published)
+notes/
+
+# Generated knowledge graph (local tooling)
+graphify-out/

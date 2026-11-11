@@ -1,7 +1,7 @@
 # CLAUDE.md — instructions for any session continuing this project
 
 ## CRITICAL: PRESERVE THE WORLD
-The front page `/` (`index.html`, `pages/landing.js`) leads into the desk at `/desk/`: the owner's real desk photo with clickable objects (`desk/index.html`, `pages/desk.js`, `assets/js/desk/`, words in `content/desk.js`). The playable isometric pixel-art hotel lives at `/hotel/` (`assets/js/world/`). Before touching it, read `docs/WORLD_DESIGN.md`. Never redesign a floor just to add content, never make floors look alike, and never swap themed rooms for cards or dashboards. Content goes in `content/*.js`, and the rooms render it through their existing slots.
+The front page `/` (`index.html`, `pages/landing.js`) leads into the desk at `/desk/`: a room drawn in code with clickable objects (`desk/index.html`, `pages/desk.js`, `assets/js/desk/`, words in `content/desk.js`). The playable isometric pixel-art hotel lives at `/hotel/` (`assets/js/world/`). It is **not linked** from the site (`site.game: false`) and is `noindex`; keep its files. Before touching it, read `docs/WORLD_DESIGN.md`. Never redesign a floor just to add content, never make floors look alike, and never swap themed rooms for cards or dashboards. Content goes in `content/*.js`, and the rooms render it through their existing slots.
 **Scope for now (owner's call):** local only. No auth, no deployment, no backends or live APIs, no pushes unless asked. Locked floors use simple local unlocks on purpose.
 Portfolio Mode (the older scrolling site) lives at `/portfolio/` plus `/work/`, `/library/` etc.
 
@@ -10,6 +10,7 @@ Portfolio Mode (the older scrolling site) lives at `/portfolio/` plus `/work/`, 
 The personal portfolio of **Sai Siddhanth Challa** (IIIT Hyderabad, CS + Computing & Human Sciences). It's a scroll journey through five sunset cities, plus pages for work, library, links, lab and two encrypted private rooms. Central principle: **a beautiful world that is also a serious, fast, professional portfolio.** Neither side gets sacrificed.
 
 ## Before you change anything
+0. If `notes/HANDOFF.md` exists locally (git-ignored, owner-only), read it for the full history and the owner's preferences.
 1. Read `docs/IMPLEMENTATION_STATUS.md` (current truth) and `docs/ROADMAP.md` (next tasks).
 2. Run `git status`. Don't discard uncommitted work.
 3. Run `npm run dev` and look at the page in a browser before and after your change.
