@@ -2,6 +2,13 @@
 
 _Last updated: 2026-11-11, the owner's own library; the front page says each thing once._
 
+## Desk: a darker portrait, steadier dots (2026-11-11)
+- The portrait poster prints darker (`halftone` gained `tone`; the desk uses `tone: 3`, `cell: 6`).
+- `halftone` now sizes from layout (`offsetWidth`) instead of the on-screen box. Before, the dots depended on the camera zoom at the moment the page loaded and never redrew. `res: 2` keeps it sharp when the camera zooms into About.
+- Hover labels sit above the critter (`.tags { z-index: 4 }`).
+- Tested: /desk/ at 1440×900, overview and #wall/about; front page paintings unchanged; `npm run check` passes.
+- Next: the owner reported the desk "glitching"; no errors or dropped frames found here. Ask what they see if it persists.
+
 ## The owner's library; the front page says each thing once (2026-11-11)
 - Owner: put my own library on the site; stop repeating things; keep it minimal; cut explanatory lines like "Four things I'd talk about for hours…", keep playful ones like "Move the cursor; the water is real."
 - **Library** (`content/books.js`): the starter shelf (well-known books picked to match interests) is replaced by the owner's 22 books, from their own collection. Shelves follow their categories: Philosophy, Decisions & behaviour, Psychology, Fiction & history, Maths & statistics, Computer science, AI, Management & consulting. Only titles and authors are used, never the files. A new status `shelf` ("On the shelf") is the default, since owning isn't the same as having read; the owner marks books `reading` / `read`. Five have legal free links (four on Project Gutenberg, plus the authors' own PDF of *Introduction to Probability*). Covers use English-edition ISBNs from Open Library. The desk's shelf, its plaque (Philosophy & psychology) and the front page all read from this list.

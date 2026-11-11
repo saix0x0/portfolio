@@ -296,7 +296,7 @@ body:not(.ready) .stage { opacity: 0; }
 .hots a { outline: none; cursor: pointer; }
 .hots polygon { fill: transparent; }
 .hots a:focus-visible polygon { fill: rgba(255, 228, 196, 0.06); stroke: var(--hot); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
-.tags { position: absolute; inset: 0; pointer-events: none; }
+.tags { position: absolute; inset: 0; z-index: 4; pointer-events: none; } /* above the critter */
 .tag { position: absolute; transform-origin: 0 0; transform: scale(var(--inv)) translate(-50%, calc(-100% - 12px)); display: flex; align-items: baseline; gap: 10px; white-space: nowrap; padding: 8px 12px; background: rgba(12, 7, 4, 0.88); border: 1px solid color-mix(in srgb, var(--lamp) 35%, transparent); backdrop-filter: blur(8px); opacity: 0; transition: opacity 0.2s; }
 .tag.on { opacity: 1; }
 .tag b { font: 400 10.5px var(--mono); letter-spacing: 0.18em; text-transform: uppercase; color: rgba(243, 230, 214, 0.6); }

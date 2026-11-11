@@ -140,7 +140,7 @@ export function room(root) {
   <div class="r-dark"></div>
   <div class="r-grain"></div>`;
   const me = root.querySelector('.me');
-  halftone(me.querySelector('canvas'), me.querySelector('img'), { cell: 4, ink: '#1a0b05', invert: true });
+  halftone(me.querySelector('canvas'), me.querySelector('img'), { cell: 6, ink: '#1a0b05', invert: true, tone: 3, res: 2 });
 }
 
 // ── the keyboard, key by key, on the desk in perspective ───────────────────
