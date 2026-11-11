@@ -77,8 +77,9 @@ body:not(.ready) .stage { opacity: 0; }
 .room::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse 75% 70% at 50% 52%, transparent 50%, rgba(0, 0, 0, 0.6)); }
 .set { position: absolute; inset: 0; overflow: hidden; user-select: none; }
 .set > * { position: absolute; }
-.set [data-thing], .set .r-frame { transition: filter 0.3s; }
-.set .lit { filter: brightness(1.22) drop-shadow(0 0 22px var(--glow)); }
+/* the hover light (desk.js → halo): light added on top, no filter on the object */
+.halo { position: absolute; z-index: 2; pointer-events: none; border-radius: 14px; background: radial-gradient(closest-side, color-mix(in srgb, var(--lamp) 24%, transparent), color-mix(in srgb, var(--lamp) 9%, transparent)); box-shadow: 0 0 46px 8px color-mix(in srgb, var(--lamp) 30%, transparent); mix-blend-mode: screen; opacity: 0; transition: opacity 0.25s; }
+.halo.on { opacity: 1; }
 
 /* the wall and the light on it */
 .r-wall { inset: 0 0 auto; height: 1132px; background:

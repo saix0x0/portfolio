@@ -7,7 +7,8 @@ _Last updated: 2026-11-11, the owner's own library; the front page says each thi
 - `halftone` now sizes from layout (`offsetWidth`) instead of the on-screen box. Before, the dots depended on the camera zoom at the moment the page loaded and never redrew. `res: 2` keeps it sharp when the camera zooms into About.
 - Hover labels sit above the critter (`.tags { z-index: 4 }`).
 - Tested: /desk/ at 1440×900, overview and #wall/about; front page paintings unchanged; `npm run check` passes.
-- Next: the owner reported the desk "glitching"; no errors or dropped frames found here. Ask what they see if it persists.
+- Hover flicker (owner: "flickers on hover"): the highlight was `filter: brightness() drop-shadow(22px)` on the hovered object, which made big objects flicker and, once, the speaker render as a black box. Now one `.halo` element (desk.js → `halo()`) fades a soft screen-blended glow over the object's box; nothing is filtered. The tour uses it too.
+- Next: if the owner still sees flicker, check the parallax (`.room` transform on pointermove).
 
 ## The owner's library; the front page says each thing once (2026-11-11)
 - Owner: put my own library on the site; stop repeating things; keep it minimal; cut explanatory lines like "Four things I'd talk about for hours…", keep playful ones like "Move the cursor; the water is real."

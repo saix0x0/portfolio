@@ -114,6 +114,19 @@ function quadMatrix(w, h, q) {
   const d = y1 - y0 + g * y1, e = y3 - y0 + k * y3;
   return `matrix3d(${[a / w, d / w, 0, g / w, b / h, e / h, 0, k / h, 0, 0, 1, 0, x0, y0, 0, 1].map((n) => +n.toFixed(6)).join(',')})`;
 }
+// ── the hover light: one soft glow laid over the object. (A filter on the
+// object itself made big things like the speaker flicker or flash black.) ──
+const haloEl = document.createElement('i');
+haloEl.className = 'halo';
+stage.insertBefore(haloEl, $('[data-hots]'));
+function halo(id) {
+  const o = id && byId(id);
+  haloEl.classList.toggle('on', !!o);
+  if (!o) return;
+  const [x0, y0, x1, y1] = o.box;
+  Object.assign(haloEl.style, { left: `${x0}px`, top: `${y0}px`, width: `${x1 - x0}px`, height: `${y1 - y0}px` });
+}
+
 // ── hotspots, labels and the plain list ─────────────────────────────────────
 function hotspots() {
   const pts = (p) => p.map((xy) => xy.join(',')).join(' ');
@@ -125,7 +138,7 @@ function hotspots() {
   $('[data-objects]').innerHTML = `<details><summary><b>Everything in the room</b><em>All</em> <span>${OBJ.length}</span></summary><ol>${OBJ.map((o, i) => `<li><a ${o.route ? `href="#${o.route}"` : `href="#" role="button" data-act="${o.act}"`} data-obj="${o.id}"><span class="n">${String(i + 1).padStart(2, '0')}</span><b>${esc(o.label)}</b><span class="w">${esc(o.what)}</span></a></li>`).join('')}</ol></details>`;
   const show = (id) => {
     $$('[data-tag]').forEach((t) => t.classList.toggle('on', t.dataset.tag === id));
-    $$('[data-thing]').forEach((t) => t.classList.toggle('lit', t.dataset.thing === id));
+    halo(id);
   };
   document.addEventListener('pointerover', (e) => {
     const a = e.target.closest('[data-obj]');
@@ -386,7 +399,7 @@ function tour() {
   document.body.classList.add('touring', 'touched');
   let i = -1;
   let timer = 0;
-  const lit = (id) => $$('[data-thing], [data-tag]').forEach((a) => a.classList.toggle(a.matches('[data-tag]') ? 'on' : 'lit', (a.dataset.thing || a.dataset.tag) === id));
+  const lit = (id) => ($$('[data-tag]').forEach((a) => a.classList.toggle('on', a.dataset.tag === id)), halo(id));
   const step = () => {
     clearTimeout(timer);
     i++;
