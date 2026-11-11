@@ -14,8 +14,9 @@ export const site = {
   // One sentence. Shown under your name in Paris.
   tagline: 'Sophomore at IIIT Hyderabad, studying Computer Science and Computing & Human Sciences by Research. Curious about artificial intelligence, algorithms, and understanding why humans do the things they do.',
 
-  // The front page's About section, in the owner's own words (2026-11-08)
-  about: 'I study Computer Science and Computing & Human Sciences by Research at IIIT Hyderabad. I love building things and reading philosophy. I’m very into art, I swim, and I play a lot of sport.',
+  // The front page's About section: the owner's own points (2026-11-08), rephrased
+  // 2026-11-11. Paste your own version here any time.
+  about: 'I’m a sophomore at IIIT Hyderabad, studying Computer Science alongside Computing & Human Sciences by Research, so my days run between writing code and asking why people do what they do. Building things is what I love most. Away from the screen, it’s philosophy, art, the pool, and a lot of sport.',
   school: { name: 'IIIT Hyderabad', full: 'International Institute of Information Technology, Hyderabad', url: 'https://www.iiit.ac.in/', year: 'Sophomore', place: 'Hyderabad, India' },
 
   // Off the clock: what the owner does away from the desk, each hung beside a
@@ -28,7 +29,7 @@ export const site = {
     { k: 'Looking', title: 'Art', line: 'I’m very into art. It’s why the paintings on this page are printed in dots.', link: null,
       art: { src: 'assets/art/pearl.webp', w: 820, h: 972, by: 'Johannes Vermeer', name: 'Girl with a Pearl Earring', year: 'c. 1665', where: 'Mauritshuis, The Hague', alt: 'A girl in a blue and yellow turban looks over her shoulder, a pearl earring catching the light.' } },
     { k: 'Moving', title: 'Swimming & sport', line: 'I swim, and I play a lot of sport.', link: null,
-      art: { src: 'assets/art/swimming.webp', w: 820, h: 608, by: 'Thomas Eakins', name: 'Swimming', year: '1885', where: 'Amon Carter Museum of American Art', alt: 'Six young men swim and dive from a stone pier into a green lake, a dog paddling beside them.' } },
+      art: { src: 'assets/art/bathers.webp', w: 820, h: 545, by: 'Georges Seurat', name: 'Bathers at Asnières', year: '1884', where: 'The National Gallery, London', alt: 'Young men rest on a sunny riverbank while boys stand in the water, factory chimneys hazy on the far bank.' } },
   ],
 
   // The pixel-art hotel at /hotel/. Off the site for now (owner, 2026-11-09): its

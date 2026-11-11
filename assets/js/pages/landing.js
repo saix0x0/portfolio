@@ -75,7 +75,8 @@ function hero() {
   let k = 0;
   for (const ln of $$('.ln', name)) {
     ln.setAttribute('aria-hidden', 'true');
-    ln.innerHTML = [...ln.textContent].map((ch) => (ch === ' ' ? ' ' : `<span class="ch" style="--i:${k++}">${esc(ch)}</span>`)).join('');
+    // each word kept whole, so a narrow screen breaks between words, never inside one
+    ln.innerHTML = ln.textContent.split(' ').map((w) => `<span class="wd">${[...w].map((ch) => `<span class="ch" style="--i:${k++}">${esc(ch)}</span>`).join('')}</span>`).join(' ');
   }
   if (RM || !canHover()) return;
   const chs = $$('.ch', name);

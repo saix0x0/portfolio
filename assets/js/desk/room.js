@@ -112,7 +112,7 @@ export function room(root) {
   <div class="r-shelf" style="${at(1620, 352, 2270, 380)}"><i class="r-strip"></i></div>
   <div class="r-cact" style="left:2186px;top:192px">${plant(3, { w: 90, h: 160, stems: 4, leaf: 0.6 })}<i class="r-pot small"></i></div>
   <div class="r-poster" data-thing="poster" style="${at(1690, 430, 1962, 800)}">${poster()}</div>
-  ${frame('swimming', art('swimming'), at(2010, 440, 2252, 620))}
+  ${frame('bathers', art('bathers'), at(2010, 440, 2252, 620))}
   <div class="r-card" data-thing="research" style="${at(2044, 654, 2210, 806, 2)}"><i class="pin"></i><b>Research</b><span>${real(R.title) ? esc(R.title) : 'In progress. More soon.'}</span></div>
 
   <!-- the desk -->

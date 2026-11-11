@@ -1,6 +1,14 @@
 # Implementation status
 
-_Last updated: 2026-11-10, the desk gets a speaker with Spotify, a keyboard you can use, a portrait and a critter._
+_Last updated: 2026-11-11, front page: a new swimming painting, a rewritten intro, the name fits, clear ways into the desk._
+
+## Front page: Seurat, a rewritten intro, the name fits, ways into the desk (2026-11-11)
+- Owner: change the swimming & sport painting; phrase the About intro well instead of pasting their list; "Siddhanth" ran off the page; there was no obvious button or next page to the desk.
+- **Painting:** Eakins' *Swimming* is replaced by Seurat's *Bathers at Asnières* (1884, National Gallery, public domain, Wikimedia Commons), `assets/art/bathers.webp`. Seurat is the painter of dots, which suits a page that prints its paintings in dots. It also hangs in the desk's right-hand frame (id `bathers`). Sorolla's beach paintings were considered and passed over (nude children in the foreground).
+- **Intro** (`site.about`): rewritten from the owner's points only (CS + CHS by Research at IIIT-H, building things, philosophy, art, swimming, sport). The owner may paste their own version there.
+- **Name:** "Sai Siddhanth" is 7.35em wide in Doto and the gutters leave 90vw, so 12.4vw (and the 236px cap on wide screens) overflowed. Now `clamp(50px, 11.6vw, 196px)`. On phones each letter was its own inline-block, so the line could break mid-word ("Siddh / anth"); letters are now grouped in `.wd` spans that don't break.
+- **Ways into the desk:** an orange "Enter the desk →" button in the top bar ("Desk →" on phones), a second hero button "Step into the desk →" beside "See the work", and a "Next page: The desk →" block before the footer. The Contact link stays.
+- Tested in the browser pane at 1920, 1440, 700 and 375 wide: the name stays inside the margins, phones read Sai / Siddhanth / Challa, no horizontal overflow at 375, the new painting loads on both pages, `npm run check` passes.
 
 ## Desk: speaker + Spotify, a working keyboard, the owner's portrait, a critter (2026-11-10)
 - Owner: swap the headphones for a Marshall speaker, put a keyboard on the desk (AULA F75 black) and make it a real interface, keep the laptop terminal, add a free Spotify player they can play anything on, add their face in a framed picture like their red halftone reference, and have the orange Claude-style creature hop around.

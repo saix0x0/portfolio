@@ -49,7 +49,7 @@ const OBJ = [
   { id: 'switch', label: 'Light switch', what: 'Lights on or off', act: 'switch', box: [56, 600, 124, 704] },
   { id: 'wanderer', label: 'Painting', what: 'Wanderer above the Sea of Fog', act: 'art', box: [866, 96, 1120, 432] },
   { id: 'composition', label: 'Painting', what: 'Composition VII', act: 'art', box: [1184, 168, 1556, 420] },
-  { id: 'swimming', label: 'Painting', what: 'Swimming', act: 'art', box: [2010, 440, 2252, 620] },
+  { id: 'bathers', label: 'Painting', what: 'Bathers at Asnières', act: 'art', box: [2010, 440, 2252, 620] },
   { id: 'chair', label: 'Chair', what: 'Sit down: play the game', act: 'hotel', box: [750, 1150, 1650, 1500] },
 ].filter((o) => o.act !== 'hotel' || site.game); // the chair is the hotel's door
 for (const o of OBJ) {

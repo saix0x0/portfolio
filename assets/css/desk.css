@@ -113,8 +113,8 @@ body:not(.ready) .stage { opacity: 0; }
 .r-frame.wanderer .r-mat { padding: 18px; }
 .r-frame.composition { padding: 9px; }
 .r-frame.composition .r-mat { padding: 0; }
-.r-frame.swimming { padding: 9px; background: linear-gradient(160deg, #7a5532, #4a3019); }
-.r-frame.swimming .r-mat { padding: 14px; }
+.r-frame.bathers { padding: 9px; background: linear-gradient(160deg, #7a5532, #4a3019); }
+.r-frame.bathers .r-mat { padding: 14px; }
 
 /* the name on the wall */
 .r-name { left: 0; width: 2400px; top: 464px; text-align: center; pointer-events: none; }
