@@ -645,6 +645,7 @@ details.readme-wrap summary:hover { color: var(--amber); }
   .sheet { max-height: 64vh; }
   .ledger a { grid-template-columns: 30px 1fr 44px; }
   .ledger span:nth-child(3) { display: none; }
+  .hint { top: 74px; bottom: auto; }
 }
 @media (max-width: 560px) {
   .top { padding: 16px; }
