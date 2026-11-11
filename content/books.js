@@ -1,49 +1,54 @@
 // ─────────────────────────────────────────────────────────────────────────────
-//  THE LIBRARY → /library/ and the Arctic scene.
+//  THE LIBRARY → /library/, the desk's bookshelf and the front page.
 //
-//  A STARTER SHELF of real, well-known books matched to your interests. Every
-//  `free` link points to a copy the author/publisher or Project Gutenberg
-//  offers legally for free. Covers load from Open Library by ISBN (free API);
-//  if a cover is missing, a hand-drawn cover is used.
+//  The owner's own library (2026-11-11), grouped into their own categories.
+//  Only titles and authors go here.
+//  Covers load from Open Library by ISBN (free API); if a cover is missing, a
+//  hand-drawn cover is used. `free` links are legal free copies only (Project
+//  Gutenberg, or the authors' own).
 //
-//  status: 'reading' | 'read' | 'next' | 'revisit'   — all start as 'next';
-//  move them as you go. `note` is YOUR note — the starter text is just a
-//  neutral description; rewrite it.
+//  status: 'shelf' | 'reading' | 'read' | 'next' | 'revisit'. Everything starts
+//  as 'shelf' (owned, not marked yet): move books to 'reading' or 'read' as you go.
+//  `note` is a neutral one-line description; rewrite it in your words any time.
 //  type: 'book' (default) | 'paper' | 'course' | 'article' | 'video'
+//  The first 13 stand on the desk's shelf; the first 5 show on the front page.
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const SHELVES = {
-  cs: 'Computer science',
-  ai: 'AI & agents',
-  human: 'Human sciences',
-  econ: 'Economics',
-  history: 'History',
   philosophy: 'Philosophy',
+  decisions: 'Decisions & behaviour',
+  psychology: 'Psychology',
+  stories: 'Fiction & history',
+  math: 'Maths & statistics',
+  cs: 'Computer science',
+  ai: 'AI',
+  work: 'Management & consulting',
   free: 'Free to read online',
 };
 
-export const STATUSES = { reading: 'Reading now', next: 'Want to read', read: 'Finished', revisit: 'Revisit' };
+export const STATUSES = { shelf: 'On the shelf', reading: 'Reading now', next: 'Want to read', read: 'Finished', revisit: 'Revisit' };
 
 export const books = [
-  // Computer science
-  { title: 'Structure and Interpretation of Computer Programs', author: 'Abelson & Sussman', isbn: '9780262510875', year: 1996, status: 'next', shelves: ['cs', 'free'], free: 'https://mitp-content-server.mit.edu/books/content/sectbyfn/books_pres_0/6515/sicp.zip/index.html', note: 'The classic MIT introduction to programming as a way of thinking.' },
-  { title: 'Operating Systems: Three Easy Pieces', author: 'Remzi & Andrea Arpaci-Dusseau', isbn: '9781985086593', year: 2018, status: 'next', shelves: ['cs', 'free'], free: 'https://pages.cs.wisc.edu/~remzi/OSTEP/', note: 'Virtualisation, concurrency and persistence, explained clearly.' },
-  { title: 'Crafting Interpreters', author: 'Robert Nystrom', isbn: '9780990582939', year: 2021, status: 'next', shelves: ['cs', 'free'], free: 'https://craftinginterpreters.com/contents.html', note: 'Build a programming language from scratch, twice.' },
-  { title: 'Designing Data-Intensive Applications', author: 'Martin Kleppmann', isbn: '9781449373320', year: 2017, status: 'next', shelves: ['cs'], note: 'How real systems store, move and agree on data.' },
-  { title: 'Introduction to Algorithms', author: 'Cormen, Leiserson, Rivest & Stein', isbn: '9780262046305', year: 2022, status: 'next', shelves: ['cs'], note: 'The standard algorithms reference (CLRS).' },
-  { title: 'Pro Git', author: 'Scott Chacon & Ben Straub', isbn: '9781484200773', year: 2014, status: 'next', shelves: ['cs', 'free'], free: 'https://git-scm.com/book/en/v2', note: 'The official Git book.' },
-
-  // AI
-  { title: 'Artificial Intelligence: A Modern Approach', author: 'Stuart Russell & Peter Norvig', isbn: '9780134610993', year: 2020, status: 'next', shelves: ['ai'], note: 'The field’s standard textbook, including agents.' },
-  { title: 'Deep Learning', author: 'Goodfellow, Bengio & Courville', isbn: '9780262035613', year: 2016, status: 'next', shelves: ['ai', 'free'], free: 'https://www.deeplearningbook.org/', note: 'Foundations of deep learning, free online.' },
-  { title: 'Reinforcement Learning: An Introduction', author: 'Richard Sutton & Andrew Barto', isbn: '9780262039246', year: 2018, status: 'next', shelves: ['ai', 'free'], free: 'http://incompleteideas.net/book/the-book-2nd.html', note: 'How agents learn from reward.' },
-
-  // Human sciences / philosophy / economics / history
-  { title: 'Gödel, Escher, Bach', author: 'Douglas Hofstadter', isbn: '9780465026562', year: 1979, status: 'next', shelves: ['philosophy', 'ai'], note: 'Minds, self-reference and strange loops.' },
-  { title: 'Thinking, Fast and Slow', author: 'Daniel Kahneman', isbn: '9780374533557', year: 2011, status: 'next', shelves: ['human', 'econ'], note: 'The two systems of human judgement.' },
-  { title: 'Meditations', author: 'Marcus Aurelius', isbn: '9780812968255', year: 180, status: 'next', shelves: ['philosophy', 'history', 'free'], free: 'https://www.gutenberg.org/ebooks/2680', note: 'A Roman emperor’s private notebook.' },
-  { title: 'The Wealth of Nations', author: 'Adam Smith', isbn: '9780553585971', year: 1776, status: 'next', shelves: ['econ', 'history', 'free'], free: 'https://www.gutenberg.org/ebooks/3300', note: 'Where modern economics starts.' },
-  { title: 'Sapiens', author: 'Yuval Noah Harari', isbn: '9780062316097', year: 2015, status: 'next', shelves: ['history', 'human'], note: 'A brief history of humankind.' },
-  { title: 'Siddhartha', author: 'Hermann Hesse', isbn: '9780553208849', year: 1922, status: 'next', shelves: ['philosophy', 'free'], free: 'https://www.gutenberg.org/ebooks/2500', note: 'A short novel about a search for meaning. Almost a namesake.' },
-  { title: 'The Little Prince', author: 'Antoine de Saint-Exupéry', isbn: '9780156012195', year: 1943, status: 'next', shelves: ['philosophy'], note: 'The one who watched the sun set forty-four times in a day.' },
+  { title: 'The Myth of Sisyphus', author: 'Albert Camus', isbn: '9780394700755', year: 1942, status: 'shelf', shelves: ['philosophy'], note: 'Camus on the absurd, and why life is worth living anyway.' },
+  { title: 'Thus Spoke Zarathustra', author: 'Friedrich Nietzsche', isbn: '9780140441185', year: 1883, status: 'shelf', shelves: ['philosophy', 'free'], free: 'https://www.gutenberg.org/ebooks/1998', note: 'Nietzsche’s prophet comes down the mountain.' },
+  { title: 'Thinking, Fast and Slow', author: 'Daniel Kahneman', isbn: '9780374533557', year: 2011, status: 'shelf', shelves: ['decisions', 'psychology'], note: 'The two systems of human judgement.' },
+  { title: 'Crime and Punishment', author: 'Fyodor Dostoevsky', isbn: '9780143058144', year: 1866, status: 'shelf', shelves: ['stories', 'free'], free: 'https://www.gutenberg.org/ebooks/2554', note: 'A murder in St Petersburg, and the conscience that follows it.' },
+  { title: 'The Prince', author: 'Niccolò Machiavelli', isbn: '9780140449150', year: 1532, status: 'shelf', shelves: ['philosophy', 'free'], free: 'https://www.gutenberg.org/ebooks/1232', note: 'How power is won and kept, written for a Medici.' },
+  { title: 'Reality+', author: 'David J. Chalmers', isbn: '9781543662894', year: 2022, status: 'shelf', shelves: ['philosophy', 'ai'], note: 'Virtual worlds and the problems of philosophy.' },
+  { title: 'Predictably Irrational', author: 'Dan Ariely', isbn: '9780062018205', year: 2008, status: 'shelf', shelves: ['decisions'], note: 'The hidden forces that shape our decisions.' },
+  { title: 'The Interpretation of Dreams', author: 'Sigmund Freud', isbn: '9780465019779', year: 1899, status: 'shelf', shelves: ['psychology', 'free'], free: 'https://www.gutenberg.org/ebooks/66048', note: 'Freud’s theory of what dreams are for.' },
+  { title: 'Noise: A Flaw in Human Judgment', author: 'Daniel Kahneman, Olivier Sibony & Cass R. Sunstein', isbn: '9780316451406', year: 2021, status: 'shelf', shelves: ['decisions'], note: 'Why judgements that should agree so often don’t.' },
+  { title: 'Superforecasting', author: 'Philip E. Tetlock & Dan Gardner', isbn: '9781101905562', year: 2015, status: 'shelf', shelves: ['decisions'], note: 'What the best forecasters do differently.' },
+  { title: 'Fluent Python', author: 'Luciano Ramalho', isbn: '9781492056355', year: 2022, status: 'shelf', shelves: ['cs'], note: 'Idiomatic Python, second edition.' },
+  { title: 'AI Engineering', author: 'Chip Huyen', isbn: '9781098166304', year: 2024, status: 'shelf', shelves: ['ai'], note: 'Building applications on top of foundation models.' },
+  { title: 'Thinking in Systems', author: 'Donella H. Meadows', isbn: '9781603588478', year: 2008, status: 'shelf', shelves: ['decisions'], note: 'Stocks, flows and feedback loops: a primer.' },
+  { title: 'Introduction to Probability', author: 'Joseph K. Blitzstein & Jessica Hwang', isbn: '9781466575578', year: 2014, status: 'shelf', shelves: ['math', 'free'], free: 'http://probabilitybook.net/', note: 'The textbook behind Harvard’s Stat 110.' },
+  { title: 'Thinking in Bets', author: 'Annie Duke', isbn: '9780735216358', year: 2018, status: 'shelf', shelves: ['decisions'], note: 'Deciding well when you can’t know everything.' },
+  { title: 'Irrationality: A History of the Dark Side of Reason', author: 'Justin E. H. Smith', isbn: '9780691210513', year: 2019, status: 'shelf', shelves: ['philosophy', 'decisions'], note: 'How reason keeps producing its opposite.' },
+  { title: 'Freakonomics', author: 'Steven D. Levitt & Stephen J. Dubner', isbn: '9780061234002', year: 2005, status: 'shelf', shelves: ['decisions', 'work'], note: 'Economics applied to everyday puzzles.' },
+  { title: 'The First 20 Hours', author: 'Josh Kaufman', isbn: '9781591845553', year: 2013, status: 'shelf', shelves: ['decisions'], note: 'How to learn a new skill fast.' },
+  { title: 'Change by Design', author: 'Tim Brown', isbn: '9780061766084', year: 2009, status: 'shelf', shelves: ['work'], note: 'Design thinking, from the head of IDEO.' },
+  { title: 'Bulletproof Problem Solving', author: 'Charles Conn & Robert McLean', isbn: '9781119553021', year: 2018, status: 'shelf', shelves: ['work'], note: 'A seven-step method for hard problems.' },
+  { title: 'The McKinsey Way', author: 'Ethan M. Rasiel', isbn: '9780071368834', year: 1999, status: 'shelf', shelves: ['work'], note: 'How McKinsey consultants work.' },
+  { title: 'Mossad', author: 'Michael Bar-Zohar & Nissim Mishal', isbn: '9780062123411', year: 2012, status: 'shelf', shelves: ['stories'], note: 'The greatest missions of the Israeli secret service.' },
 ];

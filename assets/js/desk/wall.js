@@ -20,7 +20,7 @@ const BUILT = projects.filter((p) => !p.placeholder).sort((a, b) => when(b) - wh
 const NOW = site.now.filter((n) => real(n.text));
 const R = desk.research || {};
 const hasResearch = real(R.title);
-const SHELF = books.filter((b) => b.shelves?.some((s) => s === 'philosophy' || s === 'human'));
+const SHELF = books.filter((b) => b.shelves?.some((s) => s === 'philosophy' || s === 'psychology'));
 
 // ── the LED board on the wall: a live GitHub counter and the time ───────────
 export function ledBoard(el) {

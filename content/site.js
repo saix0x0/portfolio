@@ -14,6 +14,9 @@ export const site = {
   // One sentence. Shown under your name in Paris.
   tagline: 'Sophomore at IIIT Hyderabad, studying Computer Science and Computing & Human Sciences by Research. Curious about artificial intelligence, algorithms, and understanding why humans do the things they do.',
 
+  // The front page's first screen, under the name (the degree is in About)
+  hero: 'Curious about artificial intelligence, algorithms, and why humans do the things they do.',
+
   // The front page's About section: the owner's own points (2026-11-08), rephrased
   // 2026-11-11. Paste your own version here any time.
   about: 'I’m a sophomore at IIIT Hyderabad, studying Computer Science alongside Computing & Human Sciences by Research, so my days run between writing code and asking why people do what they do. Building things is what I love most. Away from the screen, it’s philosophy, art, the pool, and a lot of sport.',

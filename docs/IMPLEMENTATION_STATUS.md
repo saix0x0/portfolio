@@ -1,6 +1,13 @@
 # Implementation status
 
-_Last updated: 2026-11-11, front page: a new swimming painting, a rewritten intro, the name fits, clear ways into the desk._
+_Last updated: 2026-11-11, the owner's own library; the front page says each thing once._
+
+## The owner's library; the front page says each thing once (2026-11-11)
+- Owner: put my own library on the site; stop repeating things; keep it minimal; cut explanatory lines like "Four things I'd talk about for hours…", keep playful ones like "Move the cursor; the water is real."
+- **Library** (`content/books.js`): the starter shelf (well-known books picked to match interests) is replaced by the owner's 22 books, from their own collection. Shelves follow their categories: Philosophy, Decisions & behaviour, Psychology, Fiction & history, Maths & statistics, Computer science, AI, Management & consulting. Only titles and authors are used, never the files. A new status `shelf` ("On the shelf") is the default, since owning isn't the same as having read; the owner marks books `reading` / `read`. Five have legal free links (four on Project Gutenberg, plus the authors' own PDF of *Introduction to Probability*). Covers use English-edition ISBNs from Open Library. The desk's shelf, its plaque (Philosophy & psychology) and the front page all read from this list.
+- **Front page, one place per fact:** under the name, only the curious line (`site.hero`); the degree and year live in the About text; the school card shows name and place only; the portrait keeps "Curious." without the definition; "Off the clock" shows each painting with its title and link, without the line repeating the intro. The explanatory intros for Off the clock, Projects, Skills, GitHub and Contact are gone. The next-page block says "A room you can click around." The playful hints (water, "Touch the water") stay.
+- Tested in the browser pane at 1440×900 and 375×812: the library shows 22 books on 8 shelves with covers, no horizontal overflow on `/` or `/library/`, `npm run check` passes.
+- Next: the owner marks which books are read or reading; `/library/` still uses the older sunset styling and could be brought in line with the front page.
 
 ## Front page: Seurat, a rewritten intro, the name fits, ways into the desk (2026-11-11)
 - Owner: change the swimming & sport painting; phrase the About intro well instead of pasting their list; "Siddhanth" ran off the page; there was no obvious button or next page to the desk.

@@ -51,7 +51,7 @@ function toast(msg) {
 
 // ── words from content/ ─────────────────────────────────────────────────────
 function words() {
-  $('[data-tagline]').textContent = site.tagline;
+  $('[data-tagline]').textContent = site.hero || site.tagline;
   $('[data-email]').textContent = site.email;
   $('[data-mailto]').href = `mailto:${site.email}`;
   $$('[data-year]').forEach((y) => (y.textContent = new Date().getFullYear()));
@@ -103,8 +103,7 @@ function about() {
   const sc = site.school;
   const a = $('[data-school]');
   a.href = sc.url;
-  a.innerHTML = `<span class="kick">Studying at</span><b>${esc(sc.name)}</b><span class="sc-full">${esc(sc.full)}</span>
-    <span class="sc-d">${esc(site.degree)}</span><span class="sc-y">${esc(sc.year)} · ${esc(sc.place)}</span><i aria-hidden="true">↗</i>`;
+  a.innerHTML = `<span class="kick">Studying at</span><b>${esc(sc.name)}</b><span class="sc-full">${esc(sc.full)}</span><span class="sc-y">${esc(sc.place)}</span><i aria-hidden="true">↗</i>`;
   const real = projects.filter((p) => !p.placeholder);
   const interns = (site.experience || []).filter((x) => /intern/i.test(`${x.kind} ${x.role}`)).length;
   const glance = [
@@ -118,7 +117,7 @@ function about() {
     <figure class="print" tabindex="0"><div class="plate">
       <img src="${esc(href(x.art.src))}" width="${x.art.w}" height="${x.art.h}" loading="lazy" decoding="async" alt="${esc(`${x.art.name} by ${x.art.by}. ${x.art.alt}`)}"><canvas aria-hidden="true"></canvas></div>
       <figcaption><b>${esc(x.art.by)}</b>, <i>${esc(x.art.name)}</i>, ${esc(x.art.year)}</figcaption></figure>
-    <p class="kick">${no(i)} · ${esc(x.k)}</p><h3>${esc(x.title)}</h3><p>${esc(x.line)}</p>${x.link ? `<a class="more" href="${esc(x.link[0].startsWith('#') ? x.link[0] : href(x.link[0]))}">${esc(x.link[1])} →</a>` : ''}</li>`).join('');
+    <p class="kick">${no(i)} · ${esc(x.k)}</p><h3>${esc(x.title)}</h3>${x.link ? `<a class="more" href="${esc(x.link[0].startsWith('#') ? x.link[0] : href(x.link[0]))}">${esc(x.link[1])} →</a>` : ''}</li>`).join('');
   $$('.print').forEach((f) => halftone($('canvas', f), $('img', f), { cell: innerWidth < 700 ? 6 : 7 }));
   const me = $('[data-me]');
   if (me) halftone($('canvas', me), $('img', me), { cell: 5, ink: '#1a0b05', invert: true });

@@ -368,7 +368,7 @@ const TOUR = [
   ['monitor', 'A working browser. Every project with its live README, and all my GitHub repositories.'],
   ['laptop', 'A real terminal. Try help, ls or cat about.md.'],
   ['poster', 'Every project I’ve built, by month.'],
-  ['books', 'What I’m reading. The card below it is research.'],
+  ['books', 'My library. The card below it is research.'],
   ['board', 'Counts my public repositories, live from GitHub. The clock is Hyderabad time.'],
   ['keyboard', 'A typing test. Every key clicks and lights up. Beat your best.'],
   ['speaker', 'Spotify on the speaker: pick a playlist or paste any link. It keeps playing while you look around.'],

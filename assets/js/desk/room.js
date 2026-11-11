@@ -50,7 +50,7 @@ function plant(seed, { w, h, stems = 7, hang = false, leaf = 1 }) {
 const SPINES = [['#283645', '#e9dcc4'], ['#7a2e22', '#f2dcc0'], ['#d8c7a2', '#2a1d12'], ['#1f2a24', '#d9c79e'], ['#ece3d1', '#5a2a1c'], ['#3b2b3f', '#e6d3b0'],
   ['#9b4a1f', '#fbe7cc'], ['#20242b', '#e0b36a'], ['#b8452f', '#fff0dc'], ['#e2d6bd', '#1f2a3a'], ['#435a4f', '#f0e2c4'], ['#5b4636', '#f3dcb8'], ['#131416', '#cfc6b4']];
 // short spine titles where the full one won't fit
-const SHORT = { 'Structure and Interpretation of Computer Programs': 'SICP', 'Designing Data-Intensive Applications': 'Data-Intensive Apps', 'Introduction to Algorithms': 'Algorithms', 'Artificial Intelligence: A Modern Approach': 'AI: A Modern Approach' };
+const SHORT = { 'The Interpretation of Dreams': 'Interpretation of Dreams', 'Introduction to Probability': 'Probability' };
 function shelfBooks() {
   const r = seeded(11);
   let x = 0;
