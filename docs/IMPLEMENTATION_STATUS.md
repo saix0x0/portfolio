@@ -9,9 +9,9 @@ _Last updated: 2026-11-11, repo made public-ready._
 - `HANDOFF.md` (the owner's profile and working preferences) moved to the git-ignored `notes/HANDOFF.md`, kept locally and not published; CLAUDE.md points to it. `graphify-out/` is ignored.
 - Hotel: still unlinked (`site.game: false`); `hotel/index.html` is now `noindex`; its files stay.
 - README rewritten for the current site (front page → desk), with structure, pages, deploy and credits.
-- New commits use the GitHub no-reply address (repo-local git config). The earlier commits still carry a work email until the history is rewritten or squashed (owner's call, before going public).
+- History rewritten (owner: keep the work-over-time history, nothing personal): all 27 commits keep their dates and messages, but every author and committer is now the GitHub no-reply address, `HANDOFF.md` and the old desk photo are gone from every commit, and the library-source lines were scrubbed from old versions. New commits use the same address (repo-local git config).
 - Tested: all ten pages load with no failed requests and no visible links to the hotel; `npm run check` passes.
-- Next, before deploying: (1) rewrite or squash git history so the old email is gone; (2) re-seal both private rooms with the owner's own passphrases; (3) make the repo public (or use GitHub Pro) and turn Pages on.
+- Next, before deploying: (1) GitHub's private `saix0x0/portfolio` still holds the 3 old commits on `main`; publish the clean history to a fresh public repo (or delete and recreate this one), since a force-push can leave old commits reachable by their hash; (2) re-seal both private rooms with the owner's own passphrases; (3) make the repo public (or use GitHub Pro) and turn Pages on.
 
 ## Desk: a darker portrait, steadier dots (2026-11-11)
 - The portrait poster prints darker (`halftone` gained `tone`; the desk uses `tone: 3`, `cell: 6`).
