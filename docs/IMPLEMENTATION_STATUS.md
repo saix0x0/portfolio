@@ -1,6 +1,15 @@
 # Implementation status
 
-_Last updated: 2026-11-11, repo made public-ready._
+_Last updated: 2026-11-14, first deploy._
+
+## First deploy (2026-11-14)
+- Owner: deploy now, to `saix0x0.github.io/portfolio`; leave out the encrypted rooms until they're re-sealed; don't include the game at all for now.
+- Not deployed (files stay in the repo, the workflow's rsync leaves them out): the hotel (`hotel/`, `assets/js/world/`, `world.css`, `content/notes.js`) and the encrypted rooms (`vault/`, `observatory/` and their scripts). The new `site.rooms: false` hides the Vault nav link and the observatory's search command and telescope link.
+- The desk no longer needs the game's code: `sound.js` moved from `assets/js/world/` to `assets/js/core/`, and the hotel pill's pixel avatar (`world/actors.js`) loads only when `site.game` is on. The pill is now added by JS, so its link isn't in the HTML.
+- `vault/sealed.json` and `observatory/sealed.json` are removed from every commit and git-ignored; the local copies stay. To bring the rooms back: re-seal with your own passphrases, set `rooms: true`, un-ignore the two files, and drop them from the workflow's excludes.
+- Fixed: on mid-size screens the music card sat over the bottom menu, which showed through it (`body.in-pop` now hides the menu, socials and hint while the card is open).
+- The old private repo was renamed `portfolio-old`. Because its 3 early commits still carry the old email, it stays private. The cleaned history went to a new public `saix0x0/portfolio`.
+- Tested before pushing: a fresh clone, staged exactly like the workflow, serves `/`, `/desk/`, `/work/`, `/library/`, `/compass/`, `/lab/` and `/portfolio/` with no failed requests and no links to the hotel, vault or observatory; no horizontal overflow at 375px; `npm run check` passes.
 
 ## Repo made public-ready (2026-11-11)
 - Owner: make the code public-ready with no personal metadata and a proper structure; keep the game's files but don't link it; deploy later, after a final structure and feature check.

@@ -301,7 +301,7 @@ function closeAll() {
     el.hidden = true;
     el.innerHTML = '';
   }
-  document.body.classList.remove('in-app', 'in-sheet', 'in-plaque');
+  document.body.classList.remove('in-app', 'in-sheet', 'in-plaque', 'in-pop');
 }
 function route(hash) {
   const [name, sub] = hash.split('/');
@@ -343,6 +343,7 @@ function route(hash) {
     apply(deskView());
     pop.hidden = false;
     pop.dataset.at = o.id;
+    document.body.classList.add('in-pop');
     cleanup = musicCard(pop, { ...ctx, tab: sub });
     requestAnimationFrame(() => pop.classList.add('open'));
   }
@@ -498,7 +499,8 @@ function paintMute() {
 
 // ── chrome: clock, mute, the light dial, the hotel door ─────────────────────────────────────
 function chrome() {
-  $$('.hotel-pill').forEach((a) => (a.hidden = !site.game)); // the hotel is off the site for now
+  // the hotel's door in the top bar, only while the game is on (site.game)
+  if (site.game) $('[data-palette]').parentElement.insertAdjacentHTML('beforeend', '<a class="hotel-pill" href="../hotel/" data-enter-hotel><span class="px-avatar" aria-hidden="true"></span>Enter game <span aria-hidden="true">▸</span></a>');
   const c = $('[data-clock]');
   const tick = () => (c.textContent = clockIn('Asia/Kolkata'));
   tick();

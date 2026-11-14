@@ -348,6 +348,7 @@ body.touched .hint { opacity: 0; }
 body.in-app .top, body.in-app .menu, body.in-app .socials, body.in-app .dial-box, body.in-app .hint,
 body.in-sheet .menu, body.in-sheet .socials, body.in-sheet .dial-box, body.in-sheet .hint,
 body.in-plaque .menu, body.in-plaque .socials, body.in-plaque .dial-box, body.in-plaque .hint,
+body.in-pop .menu, body.in-pop .socials, body.in-pop .hint,
 body.touring .menu, body.touring .socials, body.touring .hint, body.touring .top-r { opacity: 0; pointer-events: none; }
 body.in-sheet .top { opacity: 0.25; }
 

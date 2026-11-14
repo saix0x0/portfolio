@@ -31,7 +31,7 @@ jobs:
           mkdir _site
           rsync -a --exclude '.git' --exclude '.github' --exclude '.claude' --exclude 'private' --exclude 'scripts' --exclude 'docs' --exclude '*.md' \
             --exclude '/hotel' --exclude '/assets/js/world' --exclude '/assets/css/world.css' --exclude '/content/notes.js' \
-            --exclude '/vault' --exclude '/observatory' --exclude '/assets/js/pages/vault.js' --exclude '/assets/js/pages/observatory.js' --exclude '/assets/js/core/vault.js' \
+            --exclude '/_site' --exclude '/vault' --exclude '/observatory' --exclude '/assets/js/pages/vault.js' --exclude '/assets/js/pages/observatory.js' --exclude '/assets/js/core/vault.js' \
             ./ _site/
       - uses: actions/upload-pages-artifact@v3
       - id: deployment
