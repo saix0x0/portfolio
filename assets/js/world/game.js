@@ -13,7 +13,7 @@ import { IW, IH, IN_L, IN_R, ELV_X0, ELV_X1, ELV_CX, FLOORS, floorById, WALL, TI
 import { openPanel, closePanel, panelOpen, registerGame } from './panels.js';
 import { wallPieces, sideX, faceZ, top, onFace } from './kit.js';
 import { THEMES, INK } from './themes.js';
-import { loop, RECORDS, quack, chime, isMuted, setMuted } from './sound.js';
+import { loop, RECORDS, quack, chime, isMuted, setMuted } from '../core/sound.js';
 
 // Rubber ducks hidden around the hotel, one per floor. Find all seven → the golden duck.
 export const DUCKS = [

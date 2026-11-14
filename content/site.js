@@ -39,6 +39,10 @@ export const site = {
   // files stay, but nothing links to it. Set true to bring every door back.
   game: false,
 
+  // The two encrypted rooms (/vault/, /observatory/). Off until they're re-sealed
+  // with the owner's own passphrases: no links, and they aren't deployed.
+  rooms: false,
+
   // A link to your résumé PDF (e.g. 'assets/resume.pdf'). Empty → the button is hidden. TODO
   resume: '',
 

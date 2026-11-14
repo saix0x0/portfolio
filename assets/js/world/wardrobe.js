@@ -5,7 +5,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 import { drawPerson, playerLook, SKINS, HAIRS, HAIR_COLOURS, TOP_COLOURS, EXTRAS } from './actors.js';
 import { esc } from '../core/base.js';
-import { blip, chime } from './sound.js';
+import { blip, chime } from '../core/sound.js';
 
 const TOPS = ['hoodie', 'jacket', 'tee', 'coat', 'racesuit', 'suit'];
 const pick = (a) => a[(Math.random() * a.length) | 0];

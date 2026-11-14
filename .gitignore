@@ -7,6 +7,11 @@ node_modules/
 *.log
 .scratch/
 
+# The encrypted rooms' sealed files: kept out of the public repo until they're
+# re-sealed with the owner's own passphrases (site.rooms in content/site.js).
+vault/sealed.json
+observatory/sealed.json
+
 # Owner-only working notes (local, never published)
 notes/
 

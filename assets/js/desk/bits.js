@@ -9,7 +9,7 @@ import { $, esc, href } from '../core/base.js';
 import { site } from '../../../content/site.js';
 import { desk } from '../../../content/desk.js';
 import { music } from '../../../content/music.js';
-import { RECORDS, loop, isMuted, setMuted, note, key } from '../world/sound.js';
+import { RECORDS, loop, isMuted, setMuted, note, key } from '../core/sound.js';
 import { LAYOUT, onKey, press } from './keys.js';
 
 const close = '<button class="x" type="button" data-close aria-label="Back to the desk">×</button>';

@@ -3,6 +3,7 @@
 //  Full list (spoilers!) in docs/DESIGN_SYSTEM.md → "Easter eggs".
 // ─────────────────────────────────────────────────────────────────────────────
 import { $, store, toast, href, reducedMotion } from './base.js';
+import { site } from '../../../content/site.js';
 
 export const EGGS = {
   sun: 'You can set the sun',
@@ -37,7 +38,7 @@ export const EGG_COMMANDS = {
   aurora: { title: 'Summon the aurora', sub: 'Works anywhere', run: (sky) => (sky.aurora(), foundEgg('aurora', 'The sky lights up green.')) },
   fireworks: { title: 'Fireworks', sub: 'For no particular reason', run: (sky) => sky.fireworks() },
   meteors: { title: 'Meteor shower', sub: 'Make a wish', run: (sky) => sky.meteorShower() },
-  observatory: { title: 'The observatory', sub: 'Private — needs a passphrase', run: () => (location.href = href('observatory/')) },
+  ...(site.rooms ? { observatory: { title: 'The observatory', sub: 'Private — needs a passphrase', run: () => (location.href = href('observatory/')) } } : {}),
   sunset: { title: 'Back to golden hour', sub: 'Reset the sun', run: (sky) => sky.setShift(0) },
 };
 
@@ -90,7 +91,7 @@ export function initEggs(sky) {
       foundEgg('cabin', 'A cat keeps watch over the fjord.');
     } else if (id === 'telescope') {
       sky.meteorShower(8);
-      foundEgg('telescope', `Someone is watching the stars. <a href="${href('observatory/')}">Look through the telescope →</a>`);
+      foundEgg('telescope', site.rooms ? `Someone is watching the stars. <a href="${href('observatory/')}">Look through the telescope →</a>` : 'Someone is watching the stars.');
     }
   });
 

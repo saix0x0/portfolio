@@ -4,7 +4,7 @@
 //  Click it and it jumps somewhere new. It bobs along when music plays.
 //  Reduced motion: it sits on the monitor and stays there.
 // ─────────────────────────────────────────────────────────────────────────────
-import { note } from '../world/sound.js';
+import { note } from '../core/sound.js';
 
 // where it can stand: [x, y] of the surface under its feet, in stage px
 const PERCHES = [

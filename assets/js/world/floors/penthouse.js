@@ -13,7 +13,7 @@ import { register, todo } from '../panels.js';
 import { esc, href } from '../../core/base.js';
 import { site } from '../../../../content/site.js';
 import { notebook } from '../../../../content/notes.js';
-import { key, loop, RECORDS, blip } from '../sound.js';
+import { key, loop, RECORDS, blip } from '../../core/sound.js';
 import { wardrobePanel } from '../wardrobe.js';
 
 const T = THEMES.penthouse;

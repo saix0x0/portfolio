@@ -24,10 +24,9 @@ npm run check      # privacy, link and content checks; run before every commit
 | `/compass/` | A departures board of useful websites |
 | `/lab/` | Small sandboxed experiments |
 | `/portfolio/` | The earlier site: a scroll through five sunset cities |
-| `/vault/` · `/observatory/` | Two client-side encrypted rooms (see below) |
 | <kbd>⌘K</kbd> or <kbd>/</kbd> | Search everything, on any page |
 
-`/hotel/`, a playable pixel-art hotel, is in the repo but unlisted (`site.game: false` in `content/site.js`).
+Two parts are in the repo but switched off and not deployed for now: `/hotel/`, a playable pixel-art hotel (`site.game`), and the encrypted rooms `/vault/` and `/observatory/` (`site.rooms`).
 
 ## Structure
 

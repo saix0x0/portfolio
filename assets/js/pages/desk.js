@@ -10,8 +10,7 @@ import { $, $$, esc, seeded, clamp, reducedMotion, canHover } from '../core/base
 import { clockIn } from '../core/sun.js';
 import { desk } from '../../../content/desk.js';
 import { site } from '../../../content/site.js';
-import { drawPerson, LOOKS, playerLook } from '../world/actors.js';
-import { isMuted, setMuted, note, level } from '../world/sound.js';
+import { isMuted, setMuted, note, level } from '../core/sound.js';
 import { browserApp } from '../desk/browser.js';
 import { terminalApp, miniLaptop } from '../desk/terminal.js';
 import { contactSheet, typeSheet, musicCard } from '../desk/bits.js';
@@ -509,14 +508,16 @@ function chrome() {
   // the dial in the corner: turn it for the next colour, the button under it is the switch
   $('[data-dial]').addEventListener('click', () => lights.cycle());
   $('[data-power]').addEventListener('click', () => (lights.power(), toast(light.on ? 'Lights on' : 'Lights off')));
-  // the pixel-you avatar in the hotel pill
-  let look = LOOKS.player;
-  try { look = playerLook(JSON.parse(localStorage.getItem('hotel:v1'))?.flags?.look); } catch {}
-  const mini = document.createElement('canvas');
-  mini.width = 20;
-  mini.height = 26;
-  drawPerson(mini.getContext('2d'), 10, 25, look, 1, 0, false, false, 0);
-  $$('.px-avatar').forEach((s) => (s.style.backgroundImage = `url(${mini.toDataURL()})`));
+  // the pixel-you avatar in the hotel pill (the game's code loads only when it's on)
+  if (site.game) import('../world/actors.js').then(({ drawPerson, LOOKS, playerLook }) => {
+    let look = LOOKS.player;
+    try { look = playerLook(JSON.parse(localStorage.getItem('hotel:v1'))?.flags?.look); } catch {}
+    const mini = document.createElement('canvas');
+    mini.width = 20;
+    mini.height = 26;
+    drawPerson(mini.getContext('2d'), 10, 25, look, 1, 0, false, false, 0);
+    $$('.px-avatar').forEach((s) => (s.style.backgroundImage = `url(${mini.toDataURL()})`));
+  });
   // into the hotel: a pixel dissolve, then go
   const px = $('[data-pixelate]');
   document.addEventListener('click', (e) => {
