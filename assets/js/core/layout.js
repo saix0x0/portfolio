@@ -6,6 +6,7 @@ import { $, $$, h, esc, href, toast, copy, revealOnScroll, glowFollow } from './
 import { mountSky } from './sky.js';
 import { initEggs, EGG_COMMANDS } from './eggs.js';
 import { site } from '../../../content/site.js';
+import './visits.js';
 import { projects, CATEGORIES } from '../../../content/projects.js';
 import { extracurriculars } from '../../../content/extracurriculars.js';
 import { skillGroups } from '../../../content/skills.js';
@@ -35,9 +36,12 @@ export const CHAPTERS = [
 ];
 
 const navHref = (item) => href(item.path);
+// the bar, menu and footer of the older pages link home only (owner, 2026-11-14);
+// search still finds every page
+const MENU = NAV.filter((n) => n.key === 'front');
 
 function header(page) {
-  const links = NAV.filter((n) => n.key !== 'hire' || true)
+  const links = MENU
     .map((n) => `<a href="${navHref(n)}" class="${n.cls || ''}" ${n.key === page ? 'aria-current="page"' : ''}>${esc(n.label)}</a>`)
     .join('');
   const bar = h(`<header class="topbar">
@@ -47,7 +51,7 @@ function header(page) {
       <button class="search-btn" type="button" data-open-search aria-label="Search everything"><span class="label">Search</span><kbd>⌘K</kbd></button>
       <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Menu"><span></span><span></span></button>
     </div></header>`);
-  const menu = h(`<nav class="mobile-menu" id="mobile-menu" aria-label="Mobile">${NAV.map(
+  const menu = h(`<nav class="mobile-menu" id="mobile-menu" aria-label="Mobile">${MENU.map(
     (n) => `<a href="${navHref(n)}">${esc(n.label)} <small>${esc(n.note)}</small></a>`
   ).join('')}</nav>`);
   document.body.prepend(menu);
@@ -72,9 +76,9 @@ function footer() {
   const el = h(`<footer class="footer"><div class="wrap">
     <div class="footer-grid">
       <p class="sign">Made by hand under a thousand sunsets.</p>
-      <nav aria-label="Footer">${NAV.map((n) => `<a href="${navHref(n)}">${esc(n.label)}</a>`).join('')}${socials}<button class="chip" type="button" data-open-quick>60-second version</button></nav>
+      <nav aria-label="Footer">${MENU.map((n) => `<a href="${navHref(n)}">${esc(n.label)}</a>`).join('')}${socials}<button class="chip" type="button" data-open-quick>60-second version</button></nav>
     </div>
-    <div class="meta"><span>© ${new Date().getFullYear()} ${esc(site.fullName)}</span><span>No trackers · no cookies · static & free</span><span class="egg-count"></span></div>
+    <div class="meta"><span>© ${new Date().getFullYear()} ${esc(site.fullName)}</span><span>No cookies · static & free</span><span class="egg-count"></span></div>
   </div></footer>`);
   const main = $('main');
   (main?.parentNode || document.body).insertBefore(el, main?.nextSibling || null);

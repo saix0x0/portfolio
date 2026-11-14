@@ -46,9 +46,13 @@ docs/           architecture, design system, content schema, status, roadmap
 
 To change the content, edit [`content/`](content/). [docs/CONTENT_SCHEMA.md](docs/CONTENT_SCHEMA.md) describes every field.
 
+## Editing from the site
+
+`/edit/` is an editor for the words that change most: the intro, About, experience, current focus, the desk's research card, which books are read, and the visit counter's code. **Finalise** commits `content/live.js` through the GitHub API, which redeploys the site. Anyone can open the page, but publishing needs a GitHub token with write access to this repo. GitHub checks the token; it lives only in the owner's browser and is never stored in the repo.
+
 ## Deploy
 
-`.github/workflows/pages.yml` runs the checks and publishes to GitHub Pages on every push to `main`. It copies only public files: no `docs/`, `scripts/`, `private/` or Markdown. Turn it on once under **Settings → Pages → Source: GitHub Actions**. Any static host works too, with no build command.
+`scripts/stage.mjs` copies what the public site needs into `_site/`. `.github/workflows/pages.yml` runs the checks, stages the site and publishes it to GitHub Pages on every push to `main`. `vercel.json` does the same on Vercel: import the repo with no other settings.
 
 ## Encrypted rooms
 

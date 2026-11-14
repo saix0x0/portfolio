@@ -16,12 +16,16 @@ The personal portfolio of **Sai Siddhanth Challa** (IIIT Hyderabad, CS + Computi
 3. Run `npm run dev` and look at the page in a browser before and after your change.
 
 ## Hard rules
-- **Zero dependencies, zero build step.** Plain ES modules and CSS. Don't add npm packages, frameworks or bundlers without the owner's explicit OK (see the decision log in ARCHITECTURE.md). External scripts are not allowed. Google Fonts, the Open Library / DuckDuckGo image APIs, Jolpica F1, the public GitHub API (`core/github.js`) and the Spotify embed iframe on the desk's speaker (`open.spotify.com`, owner-requested) are the only network calls besides the optional Web3Forms POST.
+- **Zero dependencies, zero build step.** Plain ES modules and CSS. Don't add npm packages, frameworks or bundlers without the owner's explicit OK (see the decision log in ARCHITECTURE.md). External scripts are not allowed. Google Fonts, the Open Library / DuckDuckGo image APIs, Jolpica F1, the public GitHub API (`core/github.js`) the Spotify embed iframe on the desk's speaker (`open.spotify.com`, owner-requested), GoatCounter's count pixel (`core/visits.js`, only once a code is set) and the editor's GitHub API commits (`/edit/`) are the only network calls besides the optional Web3Forms POST.
 - **Never invent facts** about the owner: projects, awards, skills, metrics, jobs. Use `placeholder: true` or `TODO` and let the owner fill them in.
 - **Never read, print, commit or move `private/`.** It holds plaintext and starter passphrases. Only `*/sealed.json` is public. `npm run check` fails if private text leaks into a public file.
 - Don't describe the private rooms as "secure login". They are client-side encryption, and passphrase strength is the security (ARCHITECTURE.md → Private rooms).
 - Every important destination needs a plain link and a URL. Easter eggs are bonuses and never the only way to reach content.
 - Respect `prefers-reduced-motion`. Keep mobile working, with no horizontal overflow at 375px.
+
+## Live site and the editor
+- Live at https://saix0x0.github.io/portfolio/ (public repo `saix0x0/portfolio`, Pages deploys every push to `main`). `scripts/stage.mjs` decides what is published (Pages and Vercel both use it).
+- The owner edits words at `/edit/`; **Finalise** commits `content/live.js` straight to `main` on GitHub. So **`git pull` before working locally**, or a push will be rejected. Keep `content/live.js` as plain JSON after `export const live =`.
 
 ## Commands
 - `npm run dev`: static server on :4173 (mirrors GitHub Pages: folder → index.html, missing → 404.html)

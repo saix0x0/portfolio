@@ -1,2 +1,4 @@
 User-agent: *
-Disallow: /vault/
+Allow: /
+
+Sitemap: https://saix0x0.github.io/portfolio/sitemap.xml

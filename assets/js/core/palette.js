@@ -45,6 +45,10 @@ export function palette({ desk = false, extra = [] } = {}) {
     { t: 'GitHub profile', k: 'Profile', g: '⌥', run: open(`https://github.com/${site.github}`) },
     ...(site.hiring.resume ? [{ t: 'Download résumé', k: 'File', g: '⇩', run: () => (location.href = href(site.hiring.resume)), x: 'cv resume pdf' }] : []),
   ];
+  // the owner's browsers (connected at /edit/) also get a way into the editor
+  let owner = false;
+  try { owner = !!(localStorage.getItem('edit:token') || sessionStorage.getItem('edit:token')); } catch {}
+  const edit = owner ? [{ t: 'Edit the site', k: 'Owner', g: '✎', run: () => (location.href = href('edit/')), x: 'editor change words publish' }] : [];
   const game = { t: 'Enter game', k: 'Game', g: '▸', run: () => (location.href = href('hotel/')), x: 'hotel pixel play' };
   items = desk ? [
     { t: 'Overview', k: 'Page', g: '→', run: to('browser/overview'), x: 'start summary recruiter' },
@@ -57,6 +61,7 @@ export function palette({ desk = false, extra = [] } = {}) {
     { t: 'Typing test', k: 'Desk', g: '⌨', run: to('type'), x: 'keyboard wpm speed game' },
     ...(site.game ? [game] : []),
     ...projects.map((p) => ({ t: p.title, k: 'Project', g: '◆', run: to(`browser/p:${p.id}`), x: `${p.subtitle || ''} ${(p.tech || []).join(' ')} ${p.repo || ''}` })),
+    ...edit,
     ...extra,
   ] : [
     // the front page: sections scroll into view, projects open in place (#p/<id>)
@@ -67,6 +72,7 @@ export function palette({ desk = false, extra = [] } = {}) {
     ...contact,
     ...(site.game ? [game] : []),
     ...projects.filter((p) => !p.placeholder).map((p) => ({ t: p.title, k: 'Project', g: '◆', run: here(`p/${p.id}`), x: `${p.subtitle || ''} ${(p.tech || []).join(' ')} ${p.repo || ''}` })),
+    ...edit,
     ...extra,
   ];
   // repos arrive when GitHub answers (usually from cache)

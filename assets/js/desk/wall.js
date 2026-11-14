@@ -49,9 +49,9 @@ const P = {
   timeline: () => `<p class="pq-k">Projects</p><h2>Things I’ve <em>built.</em></h2>
     <ol class="pq-tl">${BUILT.map((p) => `<li><span class="pq-when">${esc(p.period || String(p.year))}</span><a href="${esc(href(`#p/${p.id}`))}"><b>${esc(p.title)}</b><small>${esc(p.subtitle || '')}</small></a><span class="pq-st">${esc(STATUS[p.status] || '')}</span></li>`).join('')}</ol>
     <p class="pq-links"><a href="#browser/projects">Open them on the tablet →</a></p>`,
-  progress: () => `<p class="pq-k">Progress</p><h2>What I’m doing <em>lately.</em></h2>
-    <ul class="pq-now">${NOW.map((n) => `<li><span>${esc(n.label)}</span>${esc(n.text)}</li>`).join('')}</ul>
-    <p class="pq-sub">Experience</p><ul class="pq-now">${site.experience.map((x) => `<li><span>${esc(x.period)}</span>${esc(x.role)}, ${esc(x.org)}. ${esc(x.note)}</li>`).join('')}</ul>`,
+  progress: () => `<p class="pq-k">Experience</p><h2>Experience &amp; <em>focus.</em></h2>
+    <ul class="pq-now">${site.experience.map((x) => `<li><span>${esc(x.period)}</span>${esc(x.role)}, ${esc(x.org)}. ${esc(x.note)}</li>`).join('')}</ul>
+    ${NOW.length ? `<p class="pq-sub">Current focus</p><ul class="pq-now">${NOW.map((n) => `<li><span>${esc(n.label)}</span>${esc(n.text)}</li>`).join('')}</ul>` : ''}`,
   research: () => hasResearch
     ? `<p class="pq-k">Research</p><h2>${esc(R.title)}</h2>${R.lab ? `<p class="pq-sub">${esc(R.lab)}</p>` : ''}${R.question ? `<p>${esc(R.question)}</p>` : ''}${R.status ? `<p class="pq-st">${esc(R.status)}</p>` : ''}`
     : `<p class="pq-k">Research</p><h2>This page is waiting for its <em>paper.</em></h2><p class="muted">I study Computing &amp; Human Sciences by Research. The research goes here once there’s something worth pinning up.</p>`,

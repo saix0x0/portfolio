@@ -15,6 +15,7 @@ import { $, $$, esc, href, reducedMotion, canHover, copy, clamp } from '../core/
 import { gh, ago, langColour, cleanReadme } from '../core/github.js';
 import { clockIn } from '../core/sun.js';
 import { palette } from '../core/palette.js';
+import '../core/visits.js';
 import { pool } from '../front/pool.js';
 import { halftone } from '../front/halftone.js';
 import { site } from '../../../content/site.js';

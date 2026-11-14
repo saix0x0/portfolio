@@ -15,6 +15,7 @@ import { browserApp } from '../desk/browser.js';
 import { terminalApp, miniLaptop } from '../desk/terminal.js';
 import { contactSheet, typeSheet, musicCard } from '../desk/bits.js';
 import { palette } from '../core/palette.js';
+import '../core/visits.js';
 import { ledBoard, plaque, PLAQUES } from '../desk/wall.js';
 import { room as drawRoom, lockScreen } from '../desk/room.js';
 import { onKey } from '../desk/keys.js';
@@ -35,7 +36,7 @@ const OBJ = [
   { id: 'board', label: 'LED board', what: 'Live from GitHub', route: 'browser/github', box: [1730, 886, 1912, 1072] },
   { id: 'portrait', label: 'Portrait', what: 'About me', route: 'wall/about', box: [220, 430, 532, 800] },
   { id: 'poster', label: 'Poster', what: 'Projects timeline', route: 'wall/timeline', box: [1690, 430, 1962, 800] },
-  { id: 'lately', label: 'Note', what: 'What I’m doing lately', route: 'wall/progress', box: [600, 492, 784, 704] },
+  { id: 'lately', label: 'Note', what: 'Experience', route: 'wall/progress', box: [600, 492, 784, 704] },
   { id: 'research', label: 'Index card', what: 'Research', route: 'wall/research', box: [2044, 654, 2210, 806] },
   { id: 'books', label: 'Bookshelf', what: 'Philosophy & psychology', route: 'wall/books', box: [1664, 140, 2184, 352] },
   { id: 'speaker', label: 'Speaker', what: 'Spotify & music', route: 'music', box: [1950, 846, 2262, 1072] },

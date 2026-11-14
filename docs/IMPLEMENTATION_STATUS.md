@@ -1,6 +1,51 @@
 # Implementation status
 
-_Last updated: 2026-11-14, first deploy._
+_Last updated: 2026-11-14, the editor, search tags and the library trim._
+
+## Editor, search, visits; library and wording (2026-11-14)
+- **Owner's requests:**
+  - Library: rename Philosophy to "Reading & philosophy" and remove every shelf after Maths & statistics.
+  - The older pages' menu (Home, Journey, Work, College, Hire me…) looked broken; show only Home.
+  - Make the site findable under the name; try Vercel.
+  - About: drop "asking why people do what they do"; frame it as writing code and applying it to the human sciences.
+  - Rename "Lately" to something professional.
+  - Know when people visit.
+  - The public repo should be view-only.
+  - An editor with a Finalise button that pushes.
+- **Library:**
+  - The `cs`, `ai` and `work` shelves are gone.
+  - The five books that sat only on those shelves were removed: Fluent Python, AI Engineering, Change by Design, Bulletproof Problem Solving and The McKinsey Way. That leaves 17.
+  - The lede now reads "…a few stories and some maths."
+- **Older pages** (`layout.js`): the top bar, mobile menu and footer link only Home (`MENU`). ⌘K search still finds every page.
+- **Wording:**
+  - `about` and `tagline` (the desk's About) now say the owner writes code and applies it to questions from the human sciences.
+  - `hero` is unchanged.
+  - The desk note "Lately" is now **Experience**, showing the first experience entry.
+  - Its page is "Experience & focus": experience first, then current focus. The `N` shortcut is relabelled.
+- **`content/live.js`** (new) holds the editable words as JSON: tagline, hero, about, experience, now, interests, `desk.wallLine`, `desk.research`, book statuses and the GoatCounter code. `site.js`, `desk.js` and `books.js` read from it.
+- **`/edit/`** (`edit/index.html`, `pages/edit.js`, `css/edit.css`; noindex and not linked):
+  - Edits the live.js fields, with a draft autosaved in the browser.
+  - **Finalise & publish** PUTs `content/live.js` through the GitHub Contents API, signed with the no-reply address, which triggers the deploy.
+  - Publishing needs a fine-grained token (this repo only, Contents: read and write), typed in by the owner and kept in session or local storage. It is never in the repo.
+  - If the file changed elsewhere, GitHub's sha check returns 409 and the editor says to reload; the draft is kept.
+  - ⌘K shows "Edit the site" only in browsers that hold a token.
+  - Tested against a mocked GitHub: connect, edit, then Finalise sends the right file with the header kept and the right sha and author.
+- **Visits** (`core/visits.js`): one GoatCounter image request per page view once `analytics.goatcounter` is set. No cookies and no third-party script. Skipped on localhost, with Do Not Track, and on browsers where the owner ticked "don't count me" in the editor. Off until the owner makes a GoatCounter account and adds the code.
+- **Search:**
+  - Every public page has a canonical URL, Open Graph and Twitter tags, and a 1200×630 preview image (`assets/og.jpg`, a headless capture of the desk with no metadata).
+  - The front page has JSON-LD for a Person, with GitHub and LinkedIn as `sameAs`.
+  - Added `sitemap.xml`; `robots.txt` points to it.
+  - The canonical host is GitHub Pages for now.
+- **Publishing** is one list in `scripts/stage.mjs` (`npm run stage` → `_site/`), used by the Pages workflow and by `vercel.json`. The repo is public and read-only to everyone else: only the owner can push or merge.
+- **Tested:**
+  - Library: 5 shelves, and the menu is Home only.
+  - Desk: Experience note and page.
+  - Editor: form, draft and mocked publish.
+  - No overflow at 375px on `/`, `/desk/`, `/library/` or `/edit/`.
+  - `npm run check` passes.
+- **Next:**
+  - The owner imports the repo on Vercel and makes a GoatCounter account.
+  - Then submit the sitemap to Google Search Console.
 
 ## First deploy (2026-11-14)
 - Owner: deploy now, to `saix0x0.github.io/portfolio`; leave out the encrypted rooms until they're re-sealed; don't include the game at all for now.

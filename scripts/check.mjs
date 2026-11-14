@@ -15,7 +15,7 @@ const rel = (p) => path.relative(ROOT, p);
 
 async function walk(dir, out = []) {
   for (const e of await fs.readdir(dir, { withFileTypes: true })) {
-    if (['.git', 'node_modules', 'private', '.claude'].includes(e.name)) continue;
+    if (['.git', 'node_modules', 'private', '.claude', '_site', 'notes', 'graphify-out'].includes(e.name)) continue;
     const p = path.join(dir, e.name);
     e.isDirectory() ? await walk(p, out) : out.push(p);
   }

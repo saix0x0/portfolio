@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Edit · Sai Siddhanth Challa</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#050505">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Doto:wght@600..900&family=Fragment+Mono&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&display=swap">
+  <link rel="stylesheet" href="../assets/css/edit.css">
+  <script type="module" src="../assets/js/pages/edit.js"></script>
+</head>
+<body>
+  <!-- The owner's editor: words in, Finalise commits content/live.js through
+       GitHub. Not linked from the site; only a token with write access to the
+       repo can publish (assets/js/pages/edit.js). -->
+  <header class="ed-top">
+    <a href="../">← Site</a>
+    <a href="../desk/">Desk</a>
+    <span data-who class="ed-who">Not connected</span>
+  </header>
+  <main class="ed">
+    <h1>Edit the site</h1>
+    <p class="ed-lede">Change the words, then press <b>Finalise</b>. That publishes to GitHub, and the live site updates about a minute later. Anyone can open this page, but only your GitHub token can publish from it.</p>
+    <section class="ed-card" data-connect></section>
+    <form data-form autocomplete="off"></form>
+  </main>
+  <div class="ed-bar" data-bar>
+    <span data-count>No changes</span>
+    <input data-msg placeholder="What changed? (optional)" aria-label="Note for this change">
+    <button type="button" class="ed-ghost" data-discard>Discard</button>
+    <button type="button" class="ed-go" data-final>Finalise &amp; publish</button>
+  </div>
+  <noscript><p class="ed">The editor needs JavaScript.</p></noscript>
+</body>
+</html>

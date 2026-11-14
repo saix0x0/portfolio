@@ -1,13 +1,14 @@
 {
-  "name": "skyline-portfolio",
+  "name": "sai-siddhanth-challa",
   "version": "1.0.0",
   "private": true,
-  "description": "A zero-dependency, forever-free personal portfolio: a journey through the world's sunsets.",
+  "description": "Personal site of Sai Siddhanth Challa. Zero dependencies, no build step.",
   "type": "module",
   "scripts": {
     "dev": "node scripts/serve.mjs",
     "seal": "node scripts/seal.mjs",
-    "check": "node scripts/check.mjs"
+    "check": "node scripts/check.mjs",
+    "stage": "node scripts/stage.mjs"
   },
   "engines": {
     "node": ">=18"

@@ -4,6 +4,8 @@
 //  Rule of this site: never publish a claim that isn't true.
 // ─────────────────────────────────────────────────────────────────────────────
 
+import { live } from './live.js';
+
 export const site = {
   name: 'Siddhanth', // short name for nav + hero
   fullName: 'Sai Siddhanth Challa',
@@ -12,14 +14,14 @@ export const site = {
   degree: 'Computer Science and Computing & Human Sciences by Research',
 
   // One sentence. Shown under your name in Paris.
-  tagline: 'Sophomore at IIIT Hyderabad, studying Computer Science and Computing & Human Sciences by Research. Curious about artificial intelligence, algorithms, and understanding why humans do the things they do.',
+  tagline: live.tagline, // the desk's About; content/live.js or /edit/
 
   // The front page's first screen, under the name (the degree is in About)
-  hero: 'Curious about artificial intelligence, algorithms, and why humans do the things they do.',
+  hero: live.hero, // edit in content/live.js or at /edit/
 
   // The front page's About section: the owner's own points (2026-11-08), rephrased
   // 2026-11-11. Paste your own version here any time.
-  about: 'I’m a sophomore at IIIT Hyderabad, studying Computer Science alongside Computing & Human Sciences by Research, so my days run between writing code and asking why people do what they do. Building things is what I love most. Away from the screen, it’s philosophy, art, the pool, and a lot of sport.',
+  about: live.about, // edit in content/live.js or at /edit/
   school: { name: 'IIIT Hyderabad', full: 'International Institute of Information Technology, Hyderabad', url: 'https://www.iiit.ac.in/', year: 'Sophomore', place: 'Hyderabad, India' },
 
   // Off the clock: what the owner does away from the desk, each hung beside a
@@ -43,6 +45,9 @@ export const site = {
   // with the owner's own passphrases: no links, and they aren't deployed.
   rooms: false,
 
+  // Visit counting (GoatCounter): the site code lives in content/live.js.
+  analytics: live.analytics,
+
   // A link to your résumé PDF (e.g. 'assets/resume.pdf'). Empty → the button is hidden. TODO
   resume: '',
 
@@ -54,29 +59,13 @@ export const site = {
     'Exploring broadly, building obsessively.',
   ],
 
-  interests: [
-    'AI & machine learning',
-    'Agentic systems',
-    'Software engineering',
-    'Human sciences',
-    'Economics',
-    'History',
-    'Philosophy',
-    'Research',
-    'Building products',
-  ],
+  interests: live.interests, // content/live.js
 
   // The "Now" list — what you're exploring at the moment. Update often.
-  now: [
-    { label: 'Exploring', text: 'AI agents and agentic systems' },
-    { label: 'Studying', text: 'TODO: this semester’s courses' },
-    { label: 'Reading', text: 'TODO: see the Library' },
-  ],
+  now: live.now, // content/live.js
 
   // Shown in the front page's Experience section (newest first)
-  experience: [
-    { role: 'Summer Intern', org: 'IBaseIT', kind: 'Internship', period: 'May 2026 to Jul 2026', note: 'Applied AI/ML with hands-on experience across real-world use cases.' },
-  ],
+  experience: live.experience, // content/live.js
 
   facts: [
     ['Year', 'Sophomore'],

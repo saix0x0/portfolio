@@ -185,7 +185,7 @@ export function musicCard(root, ctx) {
 // home row = white keys, the row above = the black ones (semitones from C4)
 const NOTES = { KeyA: 0, KeyW: 1, KeyS: 2, KeyE: 3, KeyD: 4, KeyF: 5, KeyT: 6, KeyG: 7, KeyY: 8, KeyH: 9, KeyU: 10, KeyJ: 11, KeyK: 12, KeyO: 13, KeyL: 14, KeyP: 15, Semicolon: 16, Quote: 17 };
 const NAMES = 'C C# D D# E F F# G G# A A# B'.split(' ');
-const SHORTCUTS = { KeyA: ['About', 'wall/about'], KeyP: ['Projects', 'browser/projects'], KeyG: ['GitHub', 'browser/github'], KeyT: ['Terminal', 'terminal'], KeyM: ['Music', 'music'], KeyC: ['Contact', 'contact'], KeyB: ['Books', 'wall/books'], KeyR: ['Research', 'wall/research'], KeyW: ['Work so far', 'wall/timeline'], KeyN: ['Lately', 'wall/progress'], KeyL: ['Next light', 'lamp'], KeyO: ['Lights off/on', 'power'], Escape: ['Back', 'leave'] };
+const SHORTCUTS = { KeyA: ['About', 'wall/about'], KeyP: ['Projects', 'browser/projects'], KeyG: ['GitHub', 'browser/github'], KeyT: ['Terminal', 'terminal'], KeyM: ['Music', 'music'], KeyC: ['Contact', 'contact'], KeyB: ['Books', 'wall/books'], KeyR: ['Research', 'wall/research'], KeyW: ['Work so far', 'wall/timeline'], KeyN: ['Experience', 'wall/progress'], KeyL: ['Next light', 'lamp'], KeyO: ['Lights off/on', 'power'], Escape: ['Back', 'leave'] };
 function board() {
   return LAYOUT.map((row) => `<div class="kb-row">${row.map((k) => typeof k === 'number' ? `<i style="flex:${k} ${k} 0"></i>`
     : k[0] === 'Knob' ? `<button type="button" class="k knob" data-k="Knob" style="flex:1 1 0" aria-label="Knob: turn for the next light colour"><i></i></button>`

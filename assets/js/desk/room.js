@@ -83,6 +83,7 @@ const frame = (cls, a, box) => a ? `<figure class="r-frame ${cls}" style="${box}
 
 export function room(root) {
   const NOW = site.now.filter((n) => real(n.text));
+  const XP = site.experience[0];
   const R = desk.research || {};
   root.innerHTML = `
   <div class="r-wall"></div>
@@ -99,7 +100,7 @@ export function room(root) {
     <span class="me-pic"><img src="../${desk.portrait.src || 'assets/img/portrait.jpg'}" alt=""><canvas></canvas></span>
     <b class="me-word">Curious.</b>
     <i class="me-cap">${esc(site.fullName || 'Sai Siddhanth Challa')}</i></span></span></figure>
-  <div class="r-note" data-thing="lately" style="${at(600, 492, 784, 704, -2.5)}"><i class="pin"></i><b>Lately</b><span>${NOW[0] ? esc(NOW[0].text) : 'Writing this down soon.'}</span></div>
+  <div class="r-note" data-thing="lately" style="${at(600, 492, 784, 704, -2.5)}"><i class="pin"></i><b>Experience</b><span>${XP ? `${esc(XP.role)}, ${esc(XP.org)}` : NOW[0] ? esc(NOW[0].text) : 'More soon.'}</span></div>
   <div class="r-switch" data-thing="switch" style="${at(64, 610, 116, 694)}"><i></i></div>
 
   <!-- above the monitor -->

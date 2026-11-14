@@ -12,6 +12,10 @@ node_modules/
 vault/sealed.json
 observatory/sealed.json
 
+# Build output (npm run stage) and the Vercel CLI's link
+_site/
+.vercel/
+
 # Owner-only working notes (local, never published)
 notes/
 

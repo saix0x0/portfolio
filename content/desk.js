@@ -7,9 +7,11 @@
 //  Rule of this site: never publish a claim that isn't true.
 // ─────────────────────────────────────────────────────────────────────────────
 
+import { live } from './live.js';
+
 export const desk = {
   // Under your name on the wall
-  wallLine: 'CS + Computing & Human Sciences · IIIT Hyderabad',
+  wallLine: live.desk.wallLine, // content/live.js or /edit/
   hint: 'Click anything in the room.',
   hintTouch: 'Drag to look around. Tap anything.',
 
@@ -20,7 +22,7 @@ export const desk = {
 
   // The research frame. Empty fields keep the frame as a visible placeholder.
   // TODO: title, lab / advisor, one line on the question, status.
-  research: { title: '', lab: '', question: '', status: '' },
+  research: live.desk.research, // content/live.js or /edit/
 
   // Film posters on the right wall. Original minimalist designs, not the real
   // posters. `motif` picks the drawing: 'top' (a spinning top), 'lighthouse'.
