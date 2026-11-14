@@ -38,7 +38,7 @@ const OBJ = [
   { id: 'poster', label: 'Poster', what: 'Projects timeline', route: 'wall/timeline', box: [1690, 430, 1962, 800] },
   { id: 'lately', label: 'Note', what: 'Experience', route: 'wall/progress', box: [600, 492, 784, 704] },
   { id: 'research', label: 'Index card', what: 'Research', route: 'wall/research', box: [2044, 654, 2210, 806] },
-  { id: 'books', label: 'Bookshelf', what: 'Philosophy & psychology', route: 'wall/books', box: [1664, 140, 2184, 352] },
+  { id: 'books', label: 'Bookshelf', what: 'Reading & philosophy', route: 'wall/books', box: [1664, 140, 2184, 352] },
   { id: 'speaker', label: 'Speaker', what: 'Spotify & music', route: 'music', box: [1950, 846, 2262, 1072] },
   { id: 'record', label: 'Record player', what: 'Original loops', route: 'music/loops', box: [300, 268, 610, 352] },
   { id: 'lightbar', label: 'Light bar', what: 'Change the light', act: 'lamp', box: [940, 622, 1460, 650] },

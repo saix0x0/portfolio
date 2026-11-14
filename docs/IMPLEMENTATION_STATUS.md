@@ -2,6 +2,9 @@
 
 _Last updated: 2026-11-14, the owner's door: password sign-in and a plain visit count._
 
+## "Reading & philosophy" everywhere (2026-11-14)
+- The library shelf was already renamed, but the front page's card and the desk's bookshelf still said "Philosophy". Both now read "Reading & philosophy" (`content/site.js`, `desk/wall.js`, `pages/desk.js`). Checked at 375px, no overflow.
+
 ## The owner's door: password sign-in, a plain visit count (2026-11-14)
 - **Owner's requests:** only a count of visits, not who visits; a small door icon beside "Desk →" that leads to a login page, where signing in allows editing; nobody can do the same by reading the public code; fewer things to remember.
 - **Door:** `index.html` has a door icon (`.ico.door`) right after the Desk button, linking to `/edit/`.

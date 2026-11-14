@@ -27,7 +27,7 @@ export const site = {
   // Off the clock: what the owner does away from the desk, each hung beside a
   // public-domain painting (Wikimedia Commons). Words from the owner, 2026-11-08.
   life: [
-    { k: 'Reading', title: 'Philosophy', line: 'I love reading philosophy.', link: ['library/', 'The reading list'],
+    { k: 'Books', title: 'Reading & philosophy', line: 'I love reading philosophy.', link: ['library/', 'The reading list'],
       art: { src: 'assets/art/wanderer.webp', w: 820, h: 1050, by: 'Caspar David Friedrich', name: 'Wanderer above the Sea of Fog', year: 'c. 1818', where: 'Hamburger Kunsthalle', alt: 'A man in a dark coat stands on a rocky peak, his back to us, looking out over a sea of fog.' } },
     { k: 'Making', title: 'Building things', line: 'I love building things: apps, tools, games, this site.', link: ['#work', 'See what I’ve built'],
       art: { src: 'assets/art/composition.webp', w: 1100, h: 732, by: 'Wassily Kandinsky', name: 'Composition VII', year: '1913', where: 'Tretyakov Gallery, Moscow', alt: 'An explosion of colour and line: hundreds of shapes crowd and overlap across the canvas.' } },

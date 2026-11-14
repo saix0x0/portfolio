@@ -55,7 +55,7 @@ const P = {
   research: () => hasResearch
     ? `<p class="pq-k">Research</p><h2>${esc(R.title)}</h2>${R.lab ? `<p class="pq-sub">${esc(R.lab)}</p>` : ''}${R.question ? `<p>${esc(R.question)}</p>` : ''}${R.status ? `<p class="pq-st">${esc(R.status)}</p>` : ''}`
     : `<p class="pq-k">Research</p><h2>This page is waiting for its <em>paper.</em></h2><p class="muted">I study Computing &amp; Human Sciences by Research. The research goes here once there’s something worth pinning up.</p>`,
-  books: () => `<p class="pq-k">The shelf</p><h2>Philosophy &amp; <em>psychology.</em></h2>
+  books: () => `<p class="pq-k">The shelf</p><h2>Reading &amp; <em>philosophy.</em></h2>
     <ul class="pq-books">${SHELF.map((b) => `<li><b>${esc(b.title)}</b><span>${esc(b.author)} · ${esc(STATUSES[b.status] || '')}</span></li>`).join('')}</ul>
     <p class="pq-links"><a href="${esc(href('library/'))}">The whole library →</a></p>`,
 };
