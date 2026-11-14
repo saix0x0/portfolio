@@ -6,16 +6,16 @@
 //  Read by content/site.js, content/desk.js and content/books.js.
 // ─────────────────────────────────────────────────────────────────────────────
 export const live = {
-  "tagline": "Sophomore at IIIT Hyderabad, studying Computer Science and Computing & Human Sciences by Research. I write code and apply it to questions from the human sciences, with a particular interest in artificial intelligence and algorithms.",
-  "hero": "Curious about artificial intelligence, algorithms, and why humans do the things they do.",
-  "about": "I’m a sophomore at IIIT Hyderabad, studying Computer Science alongside Computing & Human Sciences by Research, so I spend my days writing code and putting it to work on questions from the human sciences. Building things is what I love most. Away from the screen, it’s philosophy, art, the pool, and a lot of sport.",
+  "tagline": "Second-year at IIIT Hyderabad, studying Computer Science and Computing & Human Sciences by Research. I build software, mostly around AI, and I’m drawn to the mathematical side of the human sciences: models of how people decide, how markets move, and how institutions and ideas change over time.",
+  "hero": "I build software, mostly around AI, and use computation to ask questions about people: how they decide, trade, organise and remember.",
+  "about": "I’m a second-year student at IIIT Hyderabad, studying Computer Science alongside Computing & Human Sciences by Research. I build with AI, and I read economics, sociology, history and philosophy as closely as code: most problems in software turn out to be problems about people.",
   "experience": [
     {
       "role": "Summer Intern",
       "org": "IBaseIT",
       "kind": "Internship",
       "period": "May 2026 to Jul 2026",
-      "note": "Applied AI/ML with hands-on experience across real-world use cases."
+      "note": "Worked on applied AI and machine learning for real business use cases."
     }
   ],
   "now": [
@@ -36,12 +36,11 @@ export const live = {
     "AI & machine learning",
     "Agentic systems",
     "Software engineering",
-    "Human sciences",
     "Economics",
+    "Sociology",
     "History",
     "Philosophy",
-    "Research",
-    "Building products"
+    "Mathematical models of social systems"
   ],
   "desk": {
     "wallLine": "CS + Computing & Human Sciences · IIIT Hyderabad",

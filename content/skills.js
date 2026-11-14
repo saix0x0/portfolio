@@ -7,11 +7,12 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const skillGroups = [
-  { name: 'Languages', skills: ['Python', 'C++', 'C', 'JavaScript', 'SQL'] },
-  { name: 'AI & ML', skills: ['TODO: e.g. PyTorch', 'TODO: e.g. LLM APIs & agents'] },
-  { name: 'Web', skills: ['HTML', 'CSS', 'Canvas', 'SVG'] },
-  { name: 'Tools', skills: ['Git', 'Linux', 'Web Crypto'] },
-  { name: 'Concepts', skills: ['Algorithms', 'Data structures', 'Databases'] },
+  { name: 'Languages', skills: ['Python', 'JavaScript', 'TypeScript', 'C++', 'C', 'SQL', 'HTML', 'CSS'] },
+  { name: 'AI & ML', skills: ['Machine learning', 'Sarvam AI'] },
+  { name: 'Web & backend', skills: ['FastAPI', 'React', 'Vite', 'MapLibre GL', 'Canvas', 'SVG', 'PWA', 'GitHub API', 'Web Crypto'] },
+  { name: 'Data', skills: ['MySQL', 'MongoDB'] },
+  { name: 'Tools', skills: ['Git', 'Linux'] },
+  { name: 'Areas of study', skills: ['Algorithms', 'Data structures', 'Databases', 'Computing & human sciences'] },
 ];
 
 export const learningNow = ['AI agents', 'TODO']; // shown as "currently learning"

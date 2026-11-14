@@ -108,6 +108,7 @@ main, .foot { position: relative; z-index: 1; }
 /* ── 01 about ─────────────────────────────────────────────────────────── */
 .about-top { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 90px); align-items: start; }
 .about-lede { margin: 0; font: 350 clamp(26px, 3.1vw, 46px)/1.2 var(--serif); letter-spacing: -0.012em; }
+.about-more { margin: 22px 0 0; }
 .cogito { margin: 28px 0 0; font-size: 19px; color: var(--dim); }
 .cogito em { color: var(--ink); }
 .cogito span { margin-left: 10px; font: 400 11px var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint); }
@@ -198,6 +199,8 @@ main, .foot { position: relative; z-index: 1; }
 .track-end small { font: 400 11px var(--mono); color: var(--faint); letter-spacing: 0.08em; }
 
 /* ── 04 skills ────────────────────────────────────────────────────────── */
+.kit-k { margin: clamp(30px, 4vw, 48px) 0 4px; }
+.kit > .kit-k:first-of-type { margin-top: 0; }
 .used { list-style: none; margin: 0; padding: 0; columns: 2; column-gap: clamp(30px, 5vw, 80px); }
 .used li { display: grid; grid-template-columns: minmax(120px, 0.8fr) 40px minmax(0, 1.4fr); gap: 12px; align-items: baseline; padding: 14px 0; border-top: 1px solid var(--line); break-inside: avoid; }
 .used b { font: 400 14px var(--mono); }

@@ -2,6 +2,18 @@
 
 _Last updated: 2026-11-14, the owner's door: password sign-in and a plain visit count._
 
+## Content refinement, on branch `content/refine` (2026-11-14)
+- **Owner's brief:** sharper words in every section without touching the design. The previous state is saved as branch `saved/before-content-refine` so this can be reverted.
+- **Hero:** "I build software, mostly around AI, and use computation to ask questions about people: how they decide, trade, organise and remember."
+- **About (front):** two sentences: the degree, building with AI, reading economics, sociology, history and philosophy. Off-screen hobbies are left to the paintings below. New link under it to the desk's About (`desk/#wall/about`) for the longer version.
+- **Desk About (`tagline`):** the longer version, including mathematical models of social systems.
+- **Experience:** note reworded only; it still needs specifics from the owner (team, what was built, stack).
+- **Interests:** added Sociology and "Mathematical models of social systems" (the owner's list); dropped the umbrella items "Human sciences", "Research", "Building products".
+- **Projects:** problem-first summaries kept under the card's 170-character clip; subtitles now say what each one does. The chess bot is now "Pawn Coach", the name in its own README. Facts unchanged.
+- **Skills:** `skills.js` regrouped into Languages, AI & ML, Web & backend, Data, Tools, Areas of study, all taken from project tech or the earlier list. The front page lists project-backed skills under each category heading (`.kit-k`), then the rest as chips.
+- **Not done (needs the owner):** résumé PDF (`site.resume`), internship specifics, research card, essays or reading notes for the desk.
+- **Tested:** desktop and 375px (no overflow), skills grouping, desk About link opens the plaque. `npm run check` passes.
+
 ## "Reading & philosophy" everywhere (2026-11-14)
 - The library shelf was already renamed, but the front page's card and the desk's bookshelf still said "Philosophy". Both now read "Reading & philosophy" (`content/site.js`, `desk/wall.js`, `pages/desk.js`). Checked at 375px, no overflow.
 

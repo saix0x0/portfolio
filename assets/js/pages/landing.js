@@ -124,12 +124,16 @@ function about() {
   if (me) halftone($('canvas', me), $('img', me), { cell: 5, ink: '#1a0b05', invert: true });
 }
 
-// ── the toolkit: every tool in a project, linked to it; then the rest ───────
+// ── the toolkit, by kind: each tool used in a project links to it; the rest
+//    (coursework, everyday tools) follow as chips ──────────────────────────
 function kit() {
   const uses = new Map();
   for (const p of ALL) for (const t of p.tech || []) uses.set(t, [...(uses.get(t) || []), p]);
-  const rows = [...uses].sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]));
-  $('[data-used]').innerHTML = rows.map(([t, ps]) => `<li><b>${esc(t)}</b><span class="n">×${ps.length}</span><span>${ps.map((p) => `<a href="#p/${esc(p.id)}" data-open="${esc(p.id)}">${esc(p.title)}</a>`).join('')}</span></li>`).join('');
+  const known = new Set(skillGroups.flatMap((g) => g.skills));
+  const kinds = [...skillGroups, { name: 'Other', skills: [...uses.keys()].filter((t) => !known.has(t)) }];
+  const row = ([t, ps]) => `<li><b>${esc(t)}</b><span class="n">×${ps.length}</span><span>${ps.map((p) => `<a href="#p/${esc(p.id)}" data-open="${esc(p.id)}">${esc(p.title)}</a>`).join('')}</span></li>`;
+  $('[data-used]').outerHTML = kinds.map((g) => [g.name, g.skills.filter((x) => uses.has(x)).map((x) => [x, uses.get(x)]).sort((a, b) => b[1].length - a[1].length)])
+    .filter(([, l]) => l.length).map(([n, l]) => `<p class="kick kit-k">${esc(n)}</p><ul class="used rv">${l.map(row).join('')}</ul>`).join('');
   const groups = skillGroups.map((g) => [g.name, g.skills.filter((x) => !/^TODO/.test(x) && !uses.has(x))]).filter(([, l]) => l.length);
   $('[data-also]').innerHTML = groups.length ? `<p class="kick">Also in the toolkit</p>${groups.map(([n, l]) => `<div><span>${esc(n)}</span><ul class="chips">${l.map((x) => `<li>${esc(x)}</li>`).join('')}</ul></div>`).join('')}` : '';
 }
