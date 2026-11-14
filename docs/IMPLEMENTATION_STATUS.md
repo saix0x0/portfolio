@@ -2,6 +2,11 @@
 
 _Last updated: 2026-11-14, the owner's door: password sign-in and a plain visit count._
 
+## Desk: no slide-in on load (2026-11-14)
+- **Owner:** "initially when clicked the desk area is glitching a bit".
+- **Cause:** on load, `route('')` placed the camera with the animated glide on, so the stage glided from its unset transform (scale 1, top-left) to the desk view over about 0.9 s while fading in. The "click." intro hid it on the first visit only.
+- **Fix** (`pages/desk.js`): `apply()` never glides before the first painted frame (`settled`). Measured frame by frame: the stage now shows its final transform on the first frame, with and without the intro. Clicking objects still glides; deep links (`#wall/about`) land instantly. Checked at 375px.
+
 ## Content refinement, on branch `content/refine` (2026-11-14)
 - **Owner's brief:** sharper words in every section without touching the design. The previous state is saved as branch `saved/before-content-refine` so this can be reverted.
 - **Hero:** "I build software, mostly around AI, and use computation to ask questions about people: how they decide, trade, organise and remember."

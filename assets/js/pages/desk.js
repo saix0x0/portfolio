@@ -94,9 +94,12 @@ function zoomView([x0, y0, x1, y1], area = { top: 0, h: 1, fill: 1 }) {
   const s = Math.min(vw / (x1 - x0), vh / (y1 - y0)) * area.fill;
   return { s, x: innerWidth * left + vw / 2 - ((x0 + x1) / 2) * s, y: innerHeight * area.top + vh / 2 - ((y0 + y1) / 2) * s };
 }
+// Until the first frame is painted every move is instant: gliding from the
+// stage's unset transform made the room slide in from the wrong place on load.
+let settled = false;
 function apply(v, animate = true) {
   view = v;
-  stage.classList.toggle('glide', animate && !RM);
+  stage.classList.toggle('glide', animate && settled && !RM);
   stage.style.transform = `translate3d(${v.x.toFixed(1)}px,${v.y.toFixed(1)}px,0) scale(${v.s.toFixed(4)})`;
   stage.style.setProperty('--inv', (1 / v.s).toFixed(4));
   document.documentElement.classList.toggle('narrow', narrow());
@@ -580,4 +583,7 @@ addEventListener('resize', () => {
 document.documentElement.classList.toggle('touch', !canHover());
 apply(deskView(), false);
 route(location.hash.slice(1));
-requestAnimationFrame(() => document.body.classList.add('ready'));
+requestAnimationFrame(() => {
+  document.body.classList.add('ready');
+  settled = true;
+});
