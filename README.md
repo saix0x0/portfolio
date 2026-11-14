@@ -48,7 +48,9 @@ To change the content, edit [`content/`](content/). [docs/CONTENT_SCHEMA.md](doc
 
 ## Editing from the site
 
-`/edit/` is an editor for the words that change most: the intro, About, experience, current focus, the desk's research card, which books are read, and the visit counter's code. **Finalise** commits `content/live.js` through the GitHub API, which redeploys the site. Anyone can open the page, but publishing needs a GitHub token with write access to this repo. GitHub checks the token; it lives only in the owner's browser and is never stored in the repo.
+The door icon beside **Desk →** on the front page opens `/edit/`, where the owner signs in with a password and edits the words that change most: the intro, About, experience, current focus, the desk's research card and which books are read. **Finalise** commits `content/live.js` through the GitHub API, which redeploys the site. It also shows the visit count: one anonymous number from [Abacus](https://abacus.jasoncameron.dev), nothing about who visited.
+
+Publishing needs a GitHub token with write access to this repo, and GitHub checks it. The token is kept in the repo only as `edit/lock.json`, encrypted in the browser with the owner's password (PBKDF2-SHA256, 1,000,000 rounds, AES-256-GCM). Reading the code or the lock gets nobody in without the password.
 
 ## Deploy
 

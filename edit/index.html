@@ -14,21 +14,21 @@
   <script type="module" src="../assets/js/pages/edit.js"></script>
 </head>
 <body>
-  <!-- The owner's editor: words in, Finalise commits content/live.js through
-       GitHub. Not linked from the site; only a token with write access to the
-       repo can publish (assets/js/pages/edit.js). -->
+  <!-- The owner's door: a password unlocks the editor, Finalise commits
+       content/live.js through GitHub. The password decrypts a token kept only
+       as ciphertext in edit/lock.json (assets/js/pages/edit.js). -->
   <header class="ed-top">
     <a href="../">← Site</a>
     <a href="../desk/">Desk</a>
-    <span data-who class="ed-who">Not connected</span>
+    <span data-who class="ed-who"></span>
   </header>
   <main class="ed">
-    <h1>Edit the site</h1>
-    <p class="ed-lede">Change the words, then press <b>Finalise</b>. That publishes to GitHub, and the live site updates about a minute later. Anyone can open this page, but only your GitHub token can publish from it.</p>
-    <section class="ed-card" data-connect></section>
-    <form data-form autocomplete="off"></form>
+    <h1>Owner</h1>
+    <p class="ed-lede">Sign in to change the site’s words. <b>Finalise</b> publishes them, and the live site updates about a minute later.</p>
+    <div data-gate><p class="ed-dim">Opening…</p></div>
+    <div data-form hidden></div>
   </main>
-  <div class="ed-bar" data-bar>
+  <div class="ed-bar" data-bar hidden>
     <span data-count>No changes</span>
     <input data-msg placeholder="What changed? (optional)" aria-label="Note for this change">
     <button type="button" class="ed-ghost" data-discard>Discard</button>

@@ -1,6 +1,18 @@
 # Implementation status
 
-_Last updated: 2026-11-14, the editor, search tags and the library trim._
+_Last updated: 2026-11-14, the owner's door: password sign-in and a plain visit count._
+
+## The owner's door: password sign-in, a plain visit count (2026-11-14)
+- **Owner's requests:** only a count of visits, not who visits; a small door icon beside "Desk →" that leads to a login page, where signing in allows editing; nobody can do the same by reading the public code; fewer things to remember.
+- **Door:** `index.html` has a door icon (`.ico.door`) right after the Desk button, linking to `/edit/`.
+- **Sign-in** (`assets/js/pages/edit.js`, `edit/index.html`):
+  - Setup, once: the owner pastes a fine-grained GitHub token (portfolio only, Contents: Read and write) and picks a password of 12+ characters. The token is checked against the API, encrypted in the browser (PBKDF2-SHA256, 1,000,000 rounds → AES-256-GCM) and committed as `edit/lock.json`. The password is never stored or sent.
+  - After that: the door, the password, done. "Stay signed in on this device" keeps the token in local storage; otherwise it lasts the browser session. Sign out, Change password (re-encrypts and recommits the lock) and "Set up again" (if the password is forgotten) are on the page.
+  - Why the public repo doesn't help: GitHub only accepts writes with the token, and the repo holds only the ciphertext. The one attack is guessing the password offline, so setup insists on a long one. The token can be revoked on GitHub at any time.
+- **Visits** (`core/visits.js`): GoatCounter is gone. One anonymous +1 per browser session to an Abacus counter (`abacus.jasoncameron.dev`, no account); nothing about the visitor is sent. The total shows at the top of the editor, with the "don't count my visits" switch. `analytics` was removed from `content/live.js` and `site.js`.
+- **Tested** with GitHub mocked in the browser: setup commits `edit/lock.json` with the right fields and the no-reply author; sign out returns to the gate and clears the token; a wrong password says so; the right one opens the editor; an edit and Finalise commit `content/live.js` with the header kept. Door checked at desktop and 375px (no overflow). No real token was used.
+- **Next:** the owner sets up sign-in once on the live site (`/edit/`, needs a new GitHub token). Vercel import and Search Console are still theirs to do.
+
 
 ## Editor, search, visits; library and wording (2026-11-14)
 - **Owner's requests:**

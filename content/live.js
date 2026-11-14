@@ -52,8 +52,5 @@ export const live = {
       "status": ""
     }
   },
-  "books": {},
-  "analytics": {
-    "goatcounter": ""
-  }
+  "books": {}
 };

@@ -50,6 +50,7 @@ main, .foot { position: relative; z-index: 1; }
 .bar-r { display: flex; align-items: center; gap: 8px; }
 .search, .ico { display: inline-flex; align-items: center; gap: 10px; height: 32px; padding: 0 12px; border: 1px solid var(--line); background: rgba(5, 5, 5, 0.5); text-decoration: none; cursor: pointer; font: inherit; letter-spacing: inherit; color: var(--dim); transition: color 0.2s, border-color 0.2s; }
 .ico { padding: 0 10px; text-transform: lowercase; }
+.door { padding: 0 9px; }
 .search:hover, .ico:hover { color: var(--ink); border-color: rgba(236, 235, 228, 0.4); }
 .search kbd { font: inherit; color: var(--faint); }
 .desk-btn { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; border: 1px solid var(--hot); color: var(--hot); background: rgba(5, 5, 5, 0.5); text-decoration: none; white-space: nowrap; transition: background 0.2s, color 0.2s; }

@@ -45,9 +45,6 @@ export const site = {
   // with the owner's own passphrases: no links, and they aren't deployed.
   rooms: false,
 
-  // Visit counting (GoatCounter): the site code lives in content/live.js.
-  analytics: live.analytics,
-
   // A link to your résumé PDF (e.g. 'assets/resume.pdf'). Empty → the button is hidden. TODO
   resume: '',
 

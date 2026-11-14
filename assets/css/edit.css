@@ -32,6 +32,14 @@ a { color: var(--hot); }
 .ed-card summary { cursor: pointer; color: var(--dim); margin-bottom: 8px; }
 .ed-dim { color: var(--faint); font-size: 15px; }
 .ed-err { color: var(--err); }
+.ed-gate { max-width: 520px; }
+.ed-gate .ed-go { margin: 6px 0 14px; }
+.ed-link { padding: 0; border: 0; background: none; color: var(--hot); text-decoration: underline; font: inherit; }
+.ed-who button { padding: 0; border: 0; background: none; color: var(--dim); font: inherit; letter-spacing: inherit; text-decoration: underline; }
+.ed-who button:hover { color: var(--ink); }
+.ed-count { font: 400 15px var(--serif); color: var(--dim); }
+.ed-count b { font: 800 44px/1 var(--dot); color: var(--ink); margin-right: 8px; vertical-align: -4px; }
+[hidden] { display: none !important; }
 
 .ed-f { display: grid; gap: 6px; margin: 0 0 14px; }
 .ed-f > span { font: 400 10.5px var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); }
